@@ -1,17 +1,27 @@
+@import url("https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Space+Grotesk:wght@300..700&display=swap");
 @import "tailwindcss";
 
 @theme {
-  --color-bg: #111111;
-  --color-section: #1A1A1A;
-  --color-surface: #232323;
-  --color-accent: #FF6B00;
-  --color-accent-hover: #E55A00;
-  --color-text-primary: #F5F5F5;
-  --color-text-secondary: #A1A1A1;
-  --color-border: #2C2C2C;
-  --font-heading: 'Inter', sans-serif;
-  --font-body: 'Inter', sans-serif;
-  --font-accent: 'DM Sans', sans-serif;
+  /* Core Brand Colors */
+  --color-primary: #f8fafc; /* Ghost White: For high-impact headlines and main text */
+  --color-accent: #94a3b8; /* Muted Steel: For subheadlines, secondary info, and icons */
+  --color-accent-hover: #cbd5e1; /* Light Sheen: Subtle interactive state for links/buttons */
+
+  /* Deep Backgrounds & Surfaces */
+  --color-bg: #020617; /* Midnight Navy Black: Deepest layer for maximum contrast */
+  --color-section: #0f172a; /* Slate Deep: For alternating sections or cards */
+  --color-surface: #1e293b; /* Charcoal Slate: For elevated UI elements like dropdowns */
+
+  /* Text & Border Utility */
+  --color-text-primary: #f1f5f9; /* Off-white: For standard body copy legibility */
+  --color-text-secondary: #64748b; /* Neutral Slate: For metadata or footer text */
+  --color-border: #334155; /* Steel Gray: Thin, subtle borders for glassmorphism */
+
+  /* Typography Definition */
+  --font-heading: "Bebas Neue", sans-serif; /* Impact & Authority */
+  --font-body: "Inter", sans-serif; /* Precision & Readability */
+  --font-sub: "Space Grotesk", sans-serif; /* Engineered/Premium Vibe */
+  --font-mono: "JetBrains Mono", monospace; /* The "Code" & Data */
 }
 
 @layer base {
@@ -25,9 +35,8 @@
   }
 }
 
-/* ===================================
-   ANIMATIONS & GSAP
-   =================================== */
+/* ANIMATIONS & GSAP */
+
 /* GSAP initial states */
 .gsap-fade-up {
   opacity: 0;
@@ -43,9 +52,7 @@
   transform: scale(0.96);
 }
 
-/* ===================================
-   SCROLLBAR
-   =================================== */
+/* SCROLLBAR */
 ::-webkit-scrollbar {
   width: 4px;
   height: 4px;
@@ -57,4 +64,3 @@
   background: var(--color-accent);
   border-radius: 2px;
 }
-

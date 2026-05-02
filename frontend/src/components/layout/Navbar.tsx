@@ -1,148 +1,227 @@
-import { useState, useEffect } from 'react'
-import { Link, NavLink, useLocation } from 'react-router-dom'
+import { useEffect, useState } from "react";
+import { Link, NavLink, useLocation } from "react-router-dom";
+import { motion, Variants } from "framer-motion";
+import StaggeredMenu from "./StaggeredMenu";
 
-const navLinks = [
-  { to: '/', label: 'Home' },
-  { to: '/about', label: 'About' },
-  { to: '/crew', label: 'Crew' },
-  { to: '/rides', label: 'Rides' },
-  { to: '/routes', label: 'Routes' },
-  { to: '/gallery', label: 'Gallery' },
-  { to: '/events', label: 'Events' },
-  { to: '/contact', label: 'Contact' },
-]
+const EASE_PREMIUM: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
-export default function Navbar() {
-  const [scrolled, setScrolled] = useState(false)
-  const [menuOpen, setMenuOpen] = useState(false)
-  const location = useLocation()
+interface NavLinkItem {
+  to: string;
+  label: string;
+}
+
+const navLinks: NavLinkItem[] = [
+  { to: "/", label: "Home" },
+  { to: "/about", label: "About" },
+  { to: "/crew", label: "Crew" },
+  { to: "/rides", label: "Rides" },
+  { to: "/events", label: "Events" },
+  { to: "/contact", label: "Contact" },
+];
+
+/* ===================== ANIMATIONS ===================== */
+
+const navbarVariants: Variants = {
+  hidden: {
+    opacity: 0,
+    y: -20,
+    filter: "blur(4px)",
+  },
+  visible: {
+    opacity: 1,
+    y: 0,
+    filter: "blur(0px)",
+    transition: {
+      duration: 1,
+      ease: EASE_PREMIUM,
+    },
+  },
+};
+
+const navItemVariants: Variants = {
+  hidden: {
+    opacity: 0,
+    y: -10,
+  },
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: {
+      delay: 0.1 + i * 0.05,
+      duration: 0.8,
+      ease: EASE_PREMIUM,
+    },
+  }),
+};
+
+/* ===================== COMPONENT ===================== */
+
+const Navbar: React.FC = () => {
+  const [scrolled, setScrolled] = useState<boolean>(false);
+  const [windowWidth, setWindowWidth] = useState<number>(window.innerWidth);
+  const [menuOpen, setMenuOpen] = useState<boolean>(false);
+  const location = useLocation();
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 40)
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
+    const onScroll = () => setScrolled(window.scrollY > 20);
+    const onResize = () => setWindowWidth(window.innerWidth);
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onResize);
+
+    onScroll();
+
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onResize);
+    };
+  }, []);
 
   useEffect(() => {
-    setMenuOpen(false)
-  }, [location.pathname])
+    document.body.style.overflow = menuOpen ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [menuOpen]);
 
   useEffect(() => {
-    document.body.style.overflow = menuOpen ? 'hidden' : ''
-    return () => { document.body.style.overflow = '' }
-  }, [menuOpen])
+    if (windowWidth >= 768) setMenuOpen(false);
+  }, [windowWidth]);
+
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [location.pathname]);
+
+  const menuItems = navLinks.map((item) => ({
+    label: item.label,
+    ariaLabel: item.label,
+    link: "#",
+  }));
+
+  const staggeredSocials = [
+    { label: "Instagram", link: "#" },
+  ];
+
+  /* Desktop navbar width logic */
+  let maxWidth = windowWidth;
+  let marginLeft = 0;
+
+  if (scrolled && windowWidth >= 768) {
+    if (windowWidth >= 1440) maxWidth = windowWidth * 0.6;
+    else if (windowWidth >= 1024) maxWidth = windowWidth * 0.8;
+    else maxWidth = windowWidth * 0.95;
+
+    marginLeft = (windowWidth - maxWidth) / 2;
+  }
 
   return (
     <>
-      <nav
-        className={`fixed top-0 left-0 w-full z-[100] transition-all duration-500 ${
-          scrolled ? 'bg-black/80 backdrop-blur-md border-b border-border py-3' : 'py-5'
-        }`}
-      >
-        <div className="max-w-7xl mx-auto px-6 lg:px-12 w-full flex items-center justify-between">
-          {/* Logo */}
-          <Link
-            to="/"
-            className="flex items-center gap-2 group"
-            aria-label="MotoXCode Home"
-          >
-            <div className="w-8 h-8 bg-accent rounded-sm flex items-center justify-center transition-all duration-300 group-hover:scale-110">
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                <path d="M2 12L8 4L14 12H2Z" fill="white" fillOpacity="0.9"/>
-              </svg>
-            </div>
-            <span className="font-heading font-black text-lg tracking-[0.15em] text-primary uppercase">
-              Moto<span className="text-accent">X</span>Code
-            </span>
-          </Link>
-
-          {/* Desktop Nav */}
-          <div className="hidden lg:flex items-center gap-1">
-            {navLinks.map((link) => (
-              <NavLink
-                key={link.to}
-                to={link.to}
-                end={link.to === '/'}
-                className={({ isActive }) =>
-                  `font-accent text-sm font-medium px-4 py-2 rounded-sm transition-all duration-200 tracking-wide ${
-                    isActive
-                      ? 'text-accent'
-                      : 'text-secondary hover:text-primary'
-                  }`
-                }
+      {/* ================= DESKTOP / TABLET ================= */}
+      {windowWidth >= 768 && (
+        <motion.header
+          variants={navbarVariants}
+          initial="hidden"
+          animate="visible"
+          className={`fixed ${scrolled ? "top-5" : "top-0"} left-0 z-50`}
+          style={{
+            width: "100%",
+            maxWidth,
+            marginLeft,
+            padding: scrolled ? "1rem 2rem" : "1.5rem 2rem",
+            borderRadius: scrolled ? "2.5rem" : "0rem",
+            backgroundColor: scrolled
+              ? "rgba(10,10,10,0.8)"
+              : "var(--color-bg)",
+            backdropFilter: scrolled ? "blur(18px)" : "none",
+            boxShadow: scrolled ? "0 12px 32px rgba(0,0,0,0.4)" : "none",
+            border: scrolled ? "1px solid rgba(255,255,255,0.1)" : "none",
+            transition: "all 0.5s cubic-bezier(0.22, 1, 0.36, 1)",
+          }}
+        >
+          <div className="w-full xl:max-w-7xl mx-auto flex items-center justify-between">
+            <motion.div
+              custom={0}
+              variants={navItemVariants}
+              initial="hidden"
+              animate="visible"
+            >
+              <Link
+                to="/"
+                className="flex items-center gap-2 group"
+                aria-label="MotoXCode Home"
               >
-                {link.label}
-              </NavLink>
-            ))}
-          </div>
+                <div className="w-8 h-8 bg-[var(--color-primary)] rounded-full flex items-center justify-center transition-all duration-300 group-hover:scale-110">
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <path
+                      d="M2 12L8 4L14 12H2Z"
+                      fill="var(--color-bg)"
+                      fillOpacity="0.9"
+                    />
+                  </svg>
+                </div>
+              </Link>
+            </motion.div>
 
-          {/* CTA + Hamburger */}
-          <div className="flex items-center gap-4">
-            <Link
-              to="/join"
-              className="hidden lg:inline-flex items-center gap-2 bg-accent text-white font-accent font-semibold text-xs tracking-[0.06em] uppercase px-5 py-2.5 rounded transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_32px_rgba(255,107,0,0.35)]"
-            >
-              Join the Crew
-            </Link>
-            <button
-              id="nav-menu-toggle"
-              className="lg:hidden flex flex-col gap-1.5 p-2 group"
-              onClick={() => setMenuOpen(!menuOpen)}
-              aria-label="Toggle menu"
-            >
-              <span
-                className={`block h-0.5 w-6 bg-primary transition-all duration-300 ${
-                  menuOpen ? 'rotate-45 translate-y-2' : ''
-                }`}
-              />
-              <span
-                className={`block h-0.5 w-6 bg-primary transition-all duration-300 ${
-                  menuOpen ? 'opacity-0' : ''
-                }`}
-              />
-              <span
-                className={`block h-0.5 w-6 bg-primary transition-all duration-300 ${
-                  menuOpen ? '-rotate-45 -translate-y-2' : ''
-                }`}
-              />
-            </button>
-          </div>
-        </div>
-      </nav>
+            <ul className="flex md:gap-5 xl:gap-8 items-cen ter">
+              {navLinks.map((item, i) => (
+                <motion.li
+                  key={item.to}
+                  custom={i + 1}
+                  variants={navItemVariants}
+                  initial="hidden"
+                  animate="visible"
+                >
+                  <NavLink
+                    to={item.to}
+                    end={item.to === "/"}
+                    className={({ isActive }) =>
+                      `font-[var(--font-body)] text-sm font-medium transition-all duration-200 tracking-wide ${
+                        isActive
+                          ? "text-[var(--color-primary)]"
+                          : "text-[var(--color-text-primary)] hover:text-[var(--color-primary)]"
+                      }`
+                    }
+                  >
+                    {item.label}
+                  </NavLink>
+                </motion.li>
+              ))}
+            </ul>
 
-      {/* Mobile Menu */}
-      <div
-        className={`fixed inset-0 z-40 flex flex-col transition-all duration-500 bg-[#0F0F0F]/98 backdrop-blur-xl ${
-          menuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
-        }`}
-      >
-        <div className="max-w-7xl mx-auto px-6 lg:px-12 w-full flex flex-col items-start justify-center h-full gap-2 pt-20">
-          {navLinks.map((link, i) => (
-            <NavLink
-              key={link.to}
-              to={link.to}
-              end={link.to === '/'}
-              className={({ isActive }) =>
-                `font-heading font-bold text-4xl sm:text-5xl py-2 transition-all duration-200 ${
-                  isActive ? 'text-accent' : 'text-primary hover:text-accent'
-                }`
-              }
-              style={{
-                transitionDelay: menuOpen ? `${i * 50}ms` : '0ms',
-                transform: menuOpen ? 'translateX(0)' : 'translateX(-20px)',
-              }}
+            <motion.div
+              custom={navLinks.length + 1}
+              variants={navItemVariants}
+              initial="hidden"
+              animate="visible"
+              className="flex md:gap-4 xl:gap-5"
             >
-              {link.label}
-            </NavLink>
-          ))}
-          <Link
-            to="/join"
-            className="inline-flex items-center gap-2 bg-accent text-white font-accent font-semibold text-sm tracking-[0.06em] uppercase px-8 py-[0.875rem] rounded transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_32px_rgba(255,107,0,0.35)] mt-6"
-          >
-            Join the Crew
-          </Link>
-        </div>
-      </div>
+              <Link
+                to="/join"
+                className="hidden sm:inline-flex items-center gap-2 bg-white text-black font-[var(--font-body)] font-semibold text-xs tracking-[0.06em] uppercase px-5 py-2.5 rounded-full transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_32px_rgba(255,255,255,0.2)]"
+              >
+                Join the Crew
+              </Link>
+            </motion.div>
+          </div>
+        </motion.header>
+      )}
+
+      {/* ================= MOBILE ================= */}
+      {windowWidth < 768 && (
+        <StaggeredMenu
+          items={menuItems}
+          socialItems={staggeredSocials}
+          displaySocials={true}
+          colors={["var(--color-primary)", "var(--color-bg)"]}
+          menuButtonColor="var(--color-text-primary)"
+          openMenuButtonColor="var(--color-text-primary)"
+          accentColor="var(--color-primary)"
+          onMenuOpen={() => setMenuOpen(true)}
+          onMenuClose={() => setMenuOpen(false)}
+        />
+      )}
     </>
-  )
-}
+  );
+};
+
+export default Navbar;
