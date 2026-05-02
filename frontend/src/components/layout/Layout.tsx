@@ -12,8 +12,7 @@ export default function Layout() {
 
   return (
     <div
-      className="min-h-screen flex flex-col"
-      style={{ background: 'var(--color-bg)', color: 'var(--color-text-primary)' }}
+      className="min-h-screen flex flex-col bg-bg text-text-primary"
     >
       <Navbar />
       <main className="flex-1">

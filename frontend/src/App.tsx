@@ -1,16 +1,23 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import Layout from './components/layout/Layout'
-import Home from './pages/Home'
-import About from './pages/About'
-import Crew from './pages/Crew'
-import Rides from './pages/Rides'
-import Gallery from './pages/Gallery'
-import RoutesPage from './pages/Routes'
-import Join from './pages/Join'
-import Events from './pages/Events'
-import Contact from './pages/Contact'
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Layout from "./components/layout/Layout";
+import Home from "./pages/Home";
+import About from "./pages/About";
+import Crew from "./pages/Crew";
+import Rides from "./pages/Rides";
+import Gallery from "./pages/Gallery";
+import RoutesPage from "./pages/Routes";
+import Join from "./pages/Join";
+import Events from "./pages/Events";
+import Contact from "./pages/Contact";
+import { useEffect } from "react";
+import { socketListeners } from "./socket/socketListeners";
+import socket from "./socket/socketSetup";
 
 export default function App() {
+  useEffect(() => {
+    socketListeners(socket);
+  }, []);
+
   return (
     <BrowserRouter>
       <Routes>
@@ -27,5 +34,5 @@ export default function App() {
         </Route>
       </Routes>
     </BrowserRouter>
-  )
+  );
 }
