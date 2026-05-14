@@ -32,7 +32,7 @@ export default function Routes() {
   return (
     <>
       {/* Hero */}
-      <section className="relative flex items-end overflow-hidden bg-bg pt-28 pb-20">
+      <section className="relative flex items-end overflow-hidden bg-[var(--color-bg)] pt-28 pb-20">
         <div className="absolute inset-0 bg-gradient-to-br from-[#1A1A1A] to-[#0F0F0F]" />
         <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-accent to-transparent" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_40%_80%,rgba(255,107,0,0.07)_0%,transparent_60%)]" />
@@ -48,7 +48,7 @@ export default function Routes() {
       </section>
 
       {/* Route Grid */}
-      <section className="py-20">
+      <section className="py-20 bg-gradient-to-b from-[var(--color-bg)] via-[var(--color-surface)] to-[var(--color-section)]">
         <div className="max-w-7xl mx-auto px-6 lg:px-12 w-full">
           <div
             ref={gridRef}
@@ -64,7 +64,7 @@ export default function Routes() {
       </section>
 
       {/* Submit a route */}
-      <section className="py-20 bg-section border-t border-border">
+      <section className="py-20 bg-gradient-to-b from-[var(--color-section)] via-[var(--color-bg)] to-black border-t border-[var(--color-border)]/10">
         <div className="max-w-7xl mx-auto px-6 lg:px-12 w-full text-center">
           <h2 className="font-heading font-bold mb-4 text-[clamp(1.5rem,3vw,2.25rem)] text-primary">
             Know a route we should add?

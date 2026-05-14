@@ -1,6 +1,7 @@
 import React, { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import "./StaggeredMenu.css";
+import { Link } from "react-router-dom";
 
 export interface StaggeredMenuItem {
   label: string;
@@ -439,7 +440,7 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
 
   return (
     <div
-      className={`sm-scope fixed top-0 left-0 w-screen h-screen overflow-hidden z-40 ${
+      className={`sm-scope fixed top-0 left-0 w-full h-[100dvh] overflow-hidden z-40 ${
         open ? "pointer-events-auto" : "pointer-events-none"
       }`}
     >
@@ -491,28 +492,32 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
       flex items-center justify-between gap-6
       px-5 py-3
       rounded-full
-      bg-[var(--color-surface)]/70 backdrop-blur-xl
+      bg-[var(--color-navbar-bg)] backdrop-blur-xl
       border border-white/10
       shadow-xl
     "
           >
             {/* LEFT: NAME */}
-            <span className="flex items-center gap-2 group">
+            <Link
+              to="/"
+              className="flex items-center gap-2 group"
+              aria-label="MotoXCode Home"
+            >
               <div className="w-8 h-8 bg-[var(--color-primary)] rounded-full flex items-center justify-center transition-all duration-300 group-hover:scale-110">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="black">
                   <path
                     d="M2 12L8 4L14 12H2Z"
-                    fill="var(--color-text)"
+                    fill="var(--color-bg)"
                     fillOpacity="0.9"
                   />
                 </svg>
               </div>
-            </span>
+            </Link>
 
             {/* RIGHT: EXISTING MENU BUTTON */}
             <button
               ref={toggleBtnRef}
-              className={`sm-toggle text-[var(--color-text)]`}
+              className="sm-toggle"
               aria-label={open ? "Close menu" : "Open menu"}
               aria-expanded={open}
               aria-controls="staggered-menu-panel"
@@ -546,7 +551,7 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
         <aside
           id="staggered-menu-panel"
           ref={panelRef}
-          className="staggered-menu-panel absolute top-0 right-0 h-[100dvh] max-h-[100dvh] bg-[var(--color-bg)]/80 flex flex-col p-[6em_2em_2em_2em] overflow-y-auto z-10 backdrop-blur-[12px]"
+          className="staggered-menu-panel absolute top-0 right-0 h-[100dvh] max-h-[100dvh] bg-[var(--color-navbar-bg)]/80 flex flex-col p-[6em_2em_2em_2em] overflow-y-auto z-10 backdrop-blur-[12px]"
           style={{
             WebkitBackdropFilter: "blur(12px)",
             pointerEvents: open ? "auto" : "none",
@@ -583,9 +588,9 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
                   className="sm-panel-itemWrap relative overflow-hidden leading-none"
                   aria-hidden="true"
                 >
-                  <span className="sm-panel-item relative font-semibold text-[4rem] cursor-pointer leading-none tracking-[-2px] uppercase transition-[background,color] duration-150 ease-linear inline-block no-underline pr-[1.4em]">
+                  <span className="sm-panel-item relative font-semibold cursor-pointer leading-none tracking-[-2px] uppercase transition-[background,color] duration-150 ease-linear inline-block no-underline text-[2.5rem] pr-[2.2em] sm:text-[3rem] pr-[1.2em]">
                     <span className="sm-panel-itemLabel inline-block [transform-origin:50%_100%] will-change-transform">
-                      No items
+                      Menu is not available right now
                     </span>
                   </span>
                 </li>
@@ -597,7 +602,7 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
                 className="sm-socials mt-auto pt-8 flex flex-col gap-3"
                 aria-label="Social links"
               >
-                <h3 className="sm-socials-title m-0 text-base font-medium [color:var(--sm-accent,var(--foreground))]">
+                <h3 className="sm-socials-title m-0 text-base font-medium">
                   Socials
                 </h3>
                 <ul
@@ -611,7 +616,7 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
                         onClick={toggleMenu}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="sm-socials-link text-[1.2rem] font-medium text-[var(--color-text-primary)] no-underline relative inline-block py-[2px] transition-[color,opacity] duration-300 ease-linear"
+                        className="sm-socials-link text-[1.2rem] font-medium no-underline relative inline-block py-[2px] transition-[color,opacity] duration-300 ease-linear"
                       >
                         {s.label}
                       </a>

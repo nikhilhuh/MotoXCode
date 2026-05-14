@@ -33,7 +33,7 @@ export default function GalleryPreview() {
   }, [])
 
   return (
-    <section ref={galleryRef} className="py-32">
+    <section ref={galleryRef} className="py-24 lg:py-32 relative overflow-hidden bg-gradient-to-b from-[var(--color-section)] to-[var(--color-surface)]">
       <div className="max-w-7xl mx-auto px-6 lg:px-12 w-full">
         <div className="flex flex-col text-center items-center mb-16">
           <h2 className="font-heading font-black mb-6 text-[clamp(2.5rem,5vw,4.5rem)] text-primary leading-tight">

@@ -33,12 +33,23 @@ export default function Values() {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
+      // Header Animation
+      gsap.fromTo(
+        valuesRef.current?.querySelectorAll('.section-header') ?? [],
+        { opacity: 0, y: 40 },
+        {
+          opacity: 1, y: 0, duration: 1, ease: 'power3.out',
+          scrollTrigger: { trigger: valuesRef.current, start: 'top 80%', once: true },
+        }
+      )
+
+      // Value Items Animation
       gsap.fromTo(
         valuesRef.current?.querySelectorAll('.value-item') ?? [],
         { opacity: 0, y: 60 },
         {
-          opacity: 1, y: 0, duration: 1, stagger: 0.2, ease: 'power3.out',
-          scrollTrigger: { trigger: valuesRef.current, start: 'top 75%', once: true },
+          opacity: 1, y: 0, duration: 1.2, stagger: 0.2, ease: 'power3.out',
+          scrollTrigger: { trigger: valuesRef.current, start: 'top 60%', once: true },
         }
       )
     })
@@ -46,52 +57,61 @@ export default function Values() {
   }, [])
 
   return (
-    <section ref={valuesRef} className="py-32 bg-gradient-to-b from-[#0F0F0F] to-section relative">
-      <div className="max-w-7xl mx-auto px-6 lg:px-12 w-full">
-        <div className="mb-24 text-center max-w-3xl mx-auto">
-          <h2 className="font-heading font-black mb-6 text-[clamp(2.5rem,5vw,4.5rem)] text-primary leading-tight">
-            The MotoXCode Way
+    <section ref={valuesRef} className="py-12 lg:py-22 bg-gradient-to-b from-[var(--color-section)] via-[var(--color-bg)] to-[var(--color-surface)] relative overflow-hidden">
+      {/* Decorative Blur Backgrounds */}
+      <div className="absolute top-[10%] right-[5%] w-[40%] h-[40%] bg-[var(--color-primary)]/5 rounded-full blur-[120px] pointer-events-none"></div>
+      <div className="absolute bottom-[10%] left-[5%] w-[30%] h-[50%] bg-[var(--color-accent)]/5 rounded-full blur-[120px] pointer-events-none"></div>
+
+      <div className="max-w-7xl mx-auto px-6 lg:px-12 w-full relative z-10">
+        
+        <div className="mb-12 lg:mb-22 text-center max-w-4xl mx-auto">
+          <h2 className="section-heading">
+            THE MOTOXCODE WAY
           </h2>
-          <p className="font-body text-xl text-secondary leading-relaxed">
+          <p className="section-subheading">
             We don't just share a passion for motorcycles. We share a code.
           </p>
         </div>
 
-        <div className="flex flex-col gap-24 lg:gap-32">
+        <div className="flex flex-col gap-10 lg:gap-20">
           {values.map((v, i) => (
             <div
               key={v.number}
-              className={`value-item flex flex-col lg:flex-row items-center gap-12 lg:gap-24 ${
+              className={`value-item flex flex-col lg:flex-row items-center gap-8 lg:gap-16 group ${
                 i % 2 !== 0 ? 'lg:flex-row-reverse' : ''
               }`}
             >
               {/* Text Content */}
-              <div className="flex-1 max-w-2xl">
-                <span className="inline-flex items-center gap-1.5 text-[0.6875rem] font-semibold tracking-[0.12em] uppercase px-4 py-1.5 rounded-full bg-accent/10 text-accent mb-6">
+              <div className="flex-1 max-w-2xl flex flex-col items-start text-left relative">
+                <span className="relative z-10 inline-flex items-center gap-2 text-[clamp(0.65rem,1.5vw,0.85rem)] font-bold tracking-[0.2em] uppercase px-5 py-2 rounded-full text-[var(--color-primary)] bg-[var(--color-surface)]/40 border border-[var(--color-border)]/50 backdrop-blur-md mb-8 group-hover:border-[var(--color-primary)]/30 transition-all duration-500">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-primary)] opacity-70"></span>
                   {v.tag}
                 </span>
-                <div className="flex items-end gap-4 mb-6">
-                  <span className="font-heading font-black text-6xl text-border leading-none">
+                
+                <div className="relative mb-6">
+                  <span className="absolute -top-10 lg:-top-20 -left-2 lg:-left-4 font-[var(--font-heading)] font-black text-[clamp(5rem,15vw,12rem)] leading-none tracking-tighter text-transparent [-webkit-text-stroke:2px_var(--color-accent)] opacity-40 select-none pointer-events-none group-hover:opacity-80 group-hover:[-webkit-text-stroke:2px_var(--color-primary)] transition-all duration-700">
                     {v.number}
                   </span>
-                  <h3 className="font-heading font-bold text-4xl lg:text-5xl text-primary">
+                  <h3 className="relative z-10 font-[var(--font-heading)] font-bold text-[clamp(2.5rem,5vw,4.5rem)] text-[var(--color-primary)] leading-[1.05] tracking-tight">
                     {v.title}
                   </h3>
                 </div>
-                <p className="font-body text-lg lg:text-xl leading-relaxed text-secondary">
+                
+                <p className="relative z-10 font-[var(--font-body)] text-[clamp(1rem,2vw,1.25rem)] leading-relaxed text-[var(--color-text-primary)]/80 pl-4 border-l-2 border-[var(--color-border)]/50 group-hover:border-[var(--color-accent)]/80 transition-colors duration-500">
                   {v.body}
                 </p>
               </div>
               
               {/* Image */}
-              <div className="flex-1 w-full">
-                <div className="relative rounded-2xl overflow-hidden aspect-[4/3] shadow-[0_20px_50px_rgba(0,0,0,0.5)] group">
+              <div className="w-full lg:flex-1">
+                <div className="relative rounded-[1.5rem] lg:rounded-[2rem] overflow-hidden aspect-[21/9] sm:aspect-[16/9] lg:aspect-[16/10] bg-[var(--color-surface)]/20 border border-[var(--color-border)]/40 shadow-[0_20px_50px_rgba(0,0,0,0.3)] group-hover:shadow-[0_30px_60px_rgba(0,0,0,0.5)] transition-all duration-700">
                   <img
                     src={v.image}
                     alt={v.title}
-                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
+                    className="absolute inset-0 w-full h-full object-cover scale-100 group-hover:scale-105 transition-transform duration-1000 ease-out aspect-1"
                   />
-                  <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-700" />
+                  {/* Premium overlay gradient */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-[var(--color-bg)]/90 via-[var(--color-bg)]/20 to-transparent opacity-80 group-hover:opacity-50 transition-opacity duration-700 pointer-events-none" />
                 </div>
               </div>
             </div>

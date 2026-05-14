@@ -6,6 +6,7 @@
   --color-primary: #f8fafc; /* Ghost White: For high-impact headlines and main text */
   --color-accent: #94a3b8; /* Muted Steel: For subheadlines, secondary info, and icons */
   --color-accent-hover: #cbd5e1; /* Light Sheen: Subtle interactive state for links/buttons */
+  --color-navbar-bg: rgba(15, 23, 42, 0.55); /* Glassmorphism: Semi-transparent deep slate for navbar background */
 
   /* Deep Backgrounds & Surfaces */
   --color-bg: #020617; /* Midnight Navy Black: Deepest layer for maximum contrast */
@@ -14,7 +15,7 @@
 
   /* Text & Border Utility */
   --color-text-primary: #f1f5f9; /* Off-white: For standard body copy legibility */
-  --color-text-secondary: #64748b; /* Neutral Slate: For metadata or footer text */
+  --color-text-secondary: #94a3b8; /* Lighter slate for secondary text */
   --color-border: #334155; /* Steel Gray: Thin, subtle borders for glassmorphism */
 
   /* Typography Definition */
@@ -63,4 +64,29 @@
 ::-webkit-scrollbar-thumb {
   background: var(--color-accent);
   border-radius: 2px;
+}
+
+@layer components {
+  /* ── Buttons ── */
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 bg-[var(--color-primary)] text-[var(--color-bg)] font-[var(--font-body)] font-bold tracking-[0.06em] uppercase rounded-full transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_12px_40px_rgba(248,250,252,0.3)];
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 border border-[var(--color-border)] text-[var(--color-primary)] font-[var(--font-body)] font-bold tracking-[0.08em] uppercase rounded-full transition-all duration-300 bg-[var(--color-bg)]/40 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] hover:bg-[var(--color-bg)]/70 hover:border-[var(--color-primary)] hover:-translate-y-1 hover:shadow-[0_16px_48px_rgba(0,0,0,0.6)];
+  }
+
+  /* Rectangular border-only button (no rounded-full) */
+  .btn-outline {
+    @apply inline-flex items-center justify-center gap-2 border border-[var(--color-border)] text-[var(--color-primary)] font-[var(--font-body)] font-bold tracking-[0.08em] uppercase rounded-sm transition-all duration-300 bg-[var(--color-bg)]/40 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] hover:bg-[var(--color-bg)]/70 hover:border-[var(--color-primary)]  hover:shadow-[0_16px_48px_rgba(0,0,0,0.6)];
+  }
+
+  /* ── Section Typography ── */
+  .section-heading {
+    @apply font-[var(--font-heading)] font-black mb-6 text-[clamp(2.5rem,8vw,5.5rem)] text-[var(--color-primary)] leading-[0.95] tracking-tight drop-shadow-md uppercase;
+  }
+
+  .section-subheading {
+    @apply font-[var(--font-sub)] font-bold text-[clamp(0.7rem,2vw,1.2rem)] text-[var(--color-text-secondary)] leading-relaxed tracking-[0.2em] uppercase;
+  }
 }

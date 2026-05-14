@@ -191,7 +191,7 @@ export default function Events() {
 
                   {/* RSVP */}
                   <div className="flex-shrink-0">
-                    <a href="/join" className="inline-flex items-center gap-2 bg-accent text-white font-accent font-semibold text-xs tracking-[0.06em] uppercase px-5 py-2.5 rounded transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_32px_rgba(255,107,0,0.35)]">
+                    <a href="/join" className="btn-primary px-5 py-2.5 text-xs">
                       RSVP
                     </a>
                   </div>

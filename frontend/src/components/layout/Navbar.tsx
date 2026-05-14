@@ -122,7 +122,7 @@ const Navbar: React.FC = () => {
           variants={navbarVariants}
           initial="hidden"
           animate="visible"
-          className={`fixed ${scrolled ? "top-5" : "top-0"} left-0 z-50`}
+          className={`fixed ${scrolled ? "top-5" : "top-0"} left-0 z-40`}
           style={{
             width: "100%",
             maxWidth,
@@ -130,8 +130,8 @@ const Navbar: React.FC = () => {
             padding: scrolled ? "1rem 2rem" : "1.5rem 2rem",
             borderRadius: scrolled ? "2.5rem" : "0rem",
             backgroundColor: scrolled
-              ? "rgba(10,10,10,0.8)"
-              : "var(--color-bg)",
+              ? "var(--color-navbar-bg)"
+              : "transparent",
             backdropFilter: scrolled ? "blur(18px)" : "none",
             boxShadow: scrolled ? "0 12px 32px rgba(0,0,0,0.4)" : "none",
             border: scrolled ? "1px solid rgba(255,255,255,0.1)" : "none",
@@ -151,7 +151,7 @@ const Navbar: React.FC = () => {
                 aria-label="MotoXCode Home"
               >
                 <div className="w-8 h-8 bg-[var(--color-primary)] rounded-full flex items-center justify-center transition-all duration-300 group-hover:scale-110">
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="black">
                     <path
                       d="M2 12L8 4L14 12H2Z"
                       fill="var(--color-bg)"
@@ -162,7 +162,7 @@ const Navbar: React.FC = () => {
               </Link>
             </motion.div>
 
-            <ul className="flex md:gap-5 xl:gap-8 items-cen ter">
+            <ul className="flex md:gap-5 xl:gap-8 items-center">
               {navLinks.map((item, i) => (
                 <motion.li
                   key={item.to}
@@ -175,14 +175,25 @@ const Navbar: React.FC = () => {
                     to={item.to}
                     end={item.to === "/"}
                     className={({ isActive }) =>
-                      `font-[var(--font-body)] text-sm font-medium transition-all duration-200 tracking-wide ${
+                      `relative font-[var(--font-body)] text-sm font-medium transition-colors duration-300 tracking-wide py-1 group ${
                         isActive
                           ? "text-[var(--color-primary)]"
-                          : "text-[var(--color-text-primary)] hover:text-[var(--color-primary)]"
+                          : "text-[var(--color-accent)] hover:text-[var(--color-accent-hover)]"
                       }`
                     }
                   >
-                    {item.label}
+                    {({ isActive }) => (
+                      <>
+                        {item.label}
+                        <span
+                          className={`absolute left-0 bottom-0 h-[2px] rounded-full transition-all duration-300 ease-out ${
+                            isActive
+                              ? "w-full bg-[var(--color-primary)]"
+                              : "w-0 bg-[var(--color-accent-hover)] group-hover:w-full"
+                          }`}
+                        />
+                      </>
+                    )}
                   </NavLink>
                 </motion.li>
               ))}
@@ -197,7 +208,7 @@ const Navbar: React.FC = () => {
             >
               <Link
                 to="/join"
-                className="hidden sm:inline-flex items-center gap-2 bg-white text-black font-[var(--font-body)] font-semibold text-xs tracking-[0.06em] uppercase px-5 py-2.5 rounded-full transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_32px_rgba(255,255,255,0.2)]"
+                className="btn-primary hidden sm:inline-flex px-5 py-2.5 text-xs"
               >
                 Join the Crew
               </Link>

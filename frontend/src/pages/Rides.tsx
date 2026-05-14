@@ -44,7 +44,7 @@ export default function Rides() {
   return (
     <>
       {/* Hero */}
-      <section className="relative flex items-end overflow-hidden bg-bg pt-28 pb-20">
+      <section className="relative flex items-end overflow-hidden bg-[var(--color-bg)] pt-28 pb-20">
         <div className="absolute inset-0 bg-gradient-to-br from-[#1A1A1A] to-[#0F0F0F]" />
         <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-accent to-transparent" />
         <div className="max-w-7xl mx-auto px-6 lg:px-12 w-full relative z-10" ref={heroRef}>
@@ -59,7 +59,7 @@ export default function Rides() {
       </section>
 
       {/* Filter + Grid */}
-      <section className="py-20">
+      <section className="py-20 bg-gradient-to-b from-[var(--color-bg)] via-[var(--color-section)] to-black">
         <div className="max-w-7xl mx-auto px-6 lg:px-12 w-full">
           {/* Filter tabs */}
           <div className="flex gap-2 mb-12">

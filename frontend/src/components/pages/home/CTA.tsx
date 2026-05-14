@@ -23,7 +23,7 @@ export default function CTA() {
   }, [])
 
   return (
-    <section ref={ctaRef} className="py-40 relative overflow-hidden bg-section border-t border-white/5">
+    <section ref={ctaRef} className="py-24 lg:py-40 relative overflow-hidden bg-gradient-to-b from-[var(--color-surface)] via-[var(--color-bg)] to-black border-t border-[var(--color-border)]/20">
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(255,107,0,0.08)_0%,transparent_60%)]" />
 
       <div className="max-w-7xl mx-auto px-6 lg:px-12 w-full text-center relative z-10 flex flex-col items-center">

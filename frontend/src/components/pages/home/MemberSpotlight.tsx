@@ -25,8 +25,7 @@ export default function MemberSpotlight() {
   }, [])
 
   return (
-    <section ref={crewRef} className="py-32 bg-section relative">
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[#0F0F0F] opacity-50 pointer-events-none" />
+    <section ref={crewRef} className="py-24 lg:py-32 relative overflow-hidden bg-gradient-to-b from-[var(--color-bg)] to-[var(--color-section)]">
       <div className="max-w-7xl mx-auto px-6 lg:px-12 w-full relative z-10">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
           <div className="max-w-2xl">

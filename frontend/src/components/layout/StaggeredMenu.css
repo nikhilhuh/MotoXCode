@@ -5,7 +5,7 @@
   background: transparent;
   border: none;
   cursor: pointer;
-  color: var(--color-text);
+  color: var(--color-primary);
   font-weight: 500;
   line-height: 1;
   overflow: visible;
@@ -101,7 +101,7 @@
   margin: 0;
   font-size: 1rem;
   font-weight: 500;
-  color: var(--sm-accent, var(--color-text));
+  color: var(--color-text-secondary);
 }
 .sm-scope .sm-socials-list {
   list-style: none;
@@ -180,7 +180,7 @@
   transform-origin: 50% 100%;
 }
 .sm-scope .sm-panel-item:hover {
-  color: var(--sm-accent, var(--color-text));
+  color: var(--color-text-primary);
 }
 .sm-scope .sm-panel-list[data-numbering] {
   counter-reset: smItem;
@@ -193,7 +193,7 @@
   right: 3.2em;
   font-size: 18px;
   font-weight: 400;
-  color: var(--sm-accent, var(--color-text));
+  color: var(--color-text-secondary);
   letter-spacing: 0;
   pointer-events: none;
   user-select: none;

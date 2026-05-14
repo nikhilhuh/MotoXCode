@@ -1,13 +1,19 @@
 export interface Ride {
   id: string;
   title: string;
-  location: string;
+  location: {
+    from: string;
+    to: string;
+  };
   date: string;
   distance: string;
-  difficulty: 'Easy' | 'Medium' | 'Hard';
+  routeType: 'Inter-state' | 'Inter-city' | 'Intra-city';
   image: string;
-  description?: string;
-  elevation?: string;
-  duration?: string;
+  meetupTime: string;
+  meetupLocation: string;
+  membersJoined: number;
+  description: string;
+  duration: string;
   past?: boolean;
 }
+
