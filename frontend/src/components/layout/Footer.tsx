@@ -1,5 +1,9 @@
+import { useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
+gsap.registerPlugin(ScrollTrigger)
 
 const footerGroups = [
   {
@@ -7,8 +11,6 @@ const footerGroups = [
     links: [
       { to: '/about', label: 'About Us' },
       { to: '/crew', label: 'Our Crew' },
-      { to: '/routes', label: 'Routes' },
-      { to: '/gallery', label: 'Gallery' },
     ],
   },
   {
@@ -62,8 +64,32 @@ const socials = [
 ]
 
 export default function Footer() {
+  const footerRef = useRef<HTMLElement>(null)
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        '.footer-anim',
+        { opacity: 0, y: 30 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          stagger: 0.1,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: footerRef.current,
+            start: 'top 92%',
+            once: true,
+          },
+        }
+      )
+    }, footerRef)
+    return () => ctx.revert()
+  }, [])
+
   return (
-    <footer className="relative border-t border-[var(--color-border)]/20 bg-black overflow-hidden">
+    <footer ref={footerRef} className="relative border-t border-[var(--color-border)]/20 bg-black overflow-hidden">
       {/* Ambient glow */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[60%] h-[1px] bg-gradient-to-r from-transparent via-[var(--color-border)]/60 to-transparent" />
       <div className="absolute -top-[20%] left-[10%] w-[40%] h-[50%] rounded-full bg-[var(--color-primary)]/3 blur-[140px] pointer-events-none" />
@@ -75,7 +101,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
 
           {/* Brand — spans 2 cols on lg */}
-          <div className="lg:col-span-2">
+          <div className="lg:col-span-2 footer-anim">
             <Link to="/" className="flex items-center gap-2.5 mb-6 group w-fit">
               <div className="w-9 h-9 bg-[var(--color-primary)] rounded-full flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:shadow-[0_0_20px_rgba(248,250,252,0.3)]">
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -108,7 +134,7 @@ export default function Footer() {
 
           {/* Link columns */}
           {footerGroups.map((group) => (
-            <div key={group.heading}>
+            <div key={group.heading} className="footer-anim">
               <h4 className="font-accent text-[0.65rem] font-bold tracking-[0.2em] text-[var(--color-text-secondary)] uppercase mb-5">
                 {group.heading}
               </h4>
@@ -133,7 +159,7 @@ export default function Footer() {
         <div className="h-px bg-gradient-to-r from-transparent via-[var(--color-border)]/40 to-transparent mb-8" />
 
         {/* Bottom bar */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 footer-anim">
           <p className="font-accent text-xs text-[var(--color-text-secondary)]/60">
             © {new Date().getFullYear()} MotoXCode. All rights reserved.
           </p>
