@@ -3,11 +3,15 @@ import { Link } from 'react-router-dom'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import MemberCard from '../../ui/MemberCard'
-import { crew } from '../../../data/crew'
+import { Member } from '@/types/member'
 
 gsap.registerPlugin(ScrollTrigger)
 
-export default function MemberSpotlight() {
+interface MemberSpotlightProps {
+  mvpCrew: Member[];
+}
+
+export default function MemberSpotlight({mvpCrew}: MemberSpotlightProps) {
   const sectionRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -41,7 +45,7 @@ export default function MemberSpotlight() {
       {/* Grid */}
       <div className="max-w-7xl mx-auto px-6 lg:px-12 w-full pb-12 relative z-10">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-          {crew.slice(0, 3).map((member) => (
+          {mvpCrew.map((member) => (
             <MemberCard key={member.id} member={member} />
           ))}
         </div>

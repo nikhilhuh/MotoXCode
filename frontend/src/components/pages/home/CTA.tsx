@@ -2,23 +2,31 @@ import { useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { Stat } from '@/types/stat'
 
 gsap.registerPlugin(ScrollTrigger)
 
-export default function CTA() {
+interface CTAProps {
+  statsData: Stat[];
+}
+export default function CTA({ statsData }: CTAProps) {
   const ctaRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const ctx = gsap.context(() => {
       gsap.fromTo(
-        ctaRef.current?.querySelectorAll('.cta-item') ?? [],
+        '.cta-item',
         { opacity: 0, y: 50 },
         {
-          opacity: 1, y: 0, duration: 0.9, stagger: 0.12, ease: 'power3.out',
+          opacity: 1,
+          y: 0,
+          duration: 0.9,
+          stagger: 0.12,
+          ease: 'power3.out',
           scrollTrigger: { trigger: ctaRef.current, start: 'top 80%', once: true },
         }
       )
-    })
+    }, ctaRef)
     return () => ctx.revert()
   }, [])
 
@@ -66,14 +74,10 @@ export default function CTA() {
 
         {/* Social proof / stat row */}
         <div className="cta-item mt-16 flex flex-wrap items-center justify-center gap-8 text-center">
-          {[
-            { stat: '500+', label: 'Active Members' },
-            { stat: '120+', label: 'Rides Completed' },
-            { stat: '40,000+', label: 'km Ridden Together' },
-          ].map(({ stat, label }) => (
-            <div key={label} className="flex flex-col items-center gap-1">
-              <span className="font-heading font-black text-3xl text-[var(--color-primary)] leading-none">{stat}</span>
-              <span className="font-accent text-[0.65rem] tracking-[0.18em] text-[var(--color-text-secondary)] uppercase">{label}</span>
+          {statsData.map((stat) => (
+            <div key={stat.id} className="flex flex-col items-center gap-1">
+              <span className="font-heading font-black text-3xl text-[var(--color-primary)] leading-none">{stat.target}{stat.suffix}</span>
+              <span className="font-accent text-[0.65rem] tracking-[0.18em] text-[var(--color-text-secondary)] uppercase">{stat.label}</span>
             </div>
           ))}
         </div>

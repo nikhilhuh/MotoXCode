@@ -9,4 +9,5 @@ export interface Member {
   location: string;
   instagram?: string;
   whatsapp?: string;
+  mvp?: boolean;
 }
