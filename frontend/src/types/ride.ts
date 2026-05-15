@@ -14,6 +14,6 @@ export interface Ride {
   membersJoined: number;
   description: string;
   duration: string;
-  past?: boolean;
+  past: boolean;
 }
 

@@ -8,16 +8,16 @@ import { crew } from '../../../data/crew'
 gsap.registerPlugin(ScrollTrigger)
 
 export default function MemberSpotlight() {
-  const crewRef = useRef<HTMLDivElement>(null)
+  const sectionRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const ctx = gsap.context(() => {
       gsap.fromTo(
-        crewRef.current?.querySelectorAll('.crew-item') ?? [],
-        { opacity: 0, y: 50 },
+        sectionRef.current,
+        { opacity: 0, y: 40 },
         {
-          opacity: 1, y: 0, duration: 0.8, stagger: 0.15, ease: 'power3.out',
-          scrollTrigger: { trigger: crewRef.current, start: 'top 75%', once: true },
+          opacity: 1, y: 0, duration: 0.8, ease: 'power3.out',
+          scrollTrigger: { trigger: sectionRef.current, start: 'top 80%', once: true },
         }
       )
     })
@@ -25,32 +25,36 @@ export default function MemberSpotlight() {
   }, [])
 
   return (
-    <section ref={crewRef} className="py-24 lg:py-32 relative overflow-hidden bg-gradient-to-b from-[var(--color-bg)] to-[var(--color-section)]">
-      <div className="max-w-7xl mx-auto px-6 lg:px-12 w-full relative z-10">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
-          <div className="max-w-2xl">
-            <h2 className="font-heading font-black mb-4 text-[clamp(2.5rem,5vw,4.5rem)] text-primary leading-tight">
-              Meet the Crew
-            </h2>
-            <p className="font-body text-xl text-secondary">
-              The people who make this community what it is.
-            </p>
-          </div>
-          <Link to="/crew" className="inline-flex items-center gap-2 border border-border text-primary font-accent font-semibold text-sm tracking-[0.06em] uppercase px-6 py-3 rounded transition-all duration-300 hover:border-accent hover:text-accent hover:-translate-y-0.5 shrink-0 hidden sm:inline-flex">
-            Full Roster
-            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
-              <path fillRule="evenodd" d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"/>
-            </svg>
-          </Link>
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+    <section ref={sectionRef} className="py-12 lg:py-22 relative overflow-hidden bg-gradient-to-b from-[var(--color-bg)] to-[var(--color-surface)]">
+      {/* Decorative ambient lighting */}
+      <div className="absolute -top-[10%] left-[10%] w-[40%] h-[40%] rounded-full bg-[var(--color-primary)]/5 blur-[120px] pointer-events-none z-0" />
+      <div className="absolute top-[30%] -right-[10%] w-[40%] h-[50%] rounded-full bg-[var(--color-accent)]/5 blur-[120px] pointer-events-none z-0" />
+
+      {/* Section header — centered */}
+      <div className="max-w-7xl mx-auto px-6 lg:px-12 w-full mb-16 relative z-10 text-center flex flex-col items-center gap-4">
+        <h2 className="section-heading">Meet the Crew</h2>
+        <p className="section-subheading text-center">
+          The people who make this community what it is.
+        </p>
+      </div>
+
+      {/* Grid */}
+      <div className="max-w-7xl mx-auto px-6 lg:px-12 w-full pb-12 relative z-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
           {crew.slice(0, 3).map((member) => (
-            <div key={member.id} className="crew-item">
-              <MemberCard member={member} />
-            </div>
+            <MemberCard key={member.id} member={member} />
           ))}
         </div>
+      </div>
+
+      {/* Full Roster — centered below grid */}
+      <div className="flex justify-center pt-4 pb-4 relative z-10">
+        <Link to="/crew" className="btn-outline px-8 py-3 text-sm">
+          Full Roster
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+            <path fillRule="evenodd" d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z" />
+          </svg>
+        </Link>
       </div>
     </section>
   )

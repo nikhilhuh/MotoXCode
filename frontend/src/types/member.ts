@@ -5,7 +5,8 @@ export interface Member {
   bike: string;
   image: string;
   bio: string;
-  years?: number;
-  location?: string;
+  years: number;
+  location: string;
   instagram?: string;
+  whatsapp?: string;
 }
