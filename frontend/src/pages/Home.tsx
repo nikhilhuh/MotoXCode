@@ -8,11 +8,11 @@ import CTA from "../components/pages/home/CTA";
 import { Stat } from "@/types/stat";
 import { Value } from "@/types/value";
 import { Ride } from "@/types/ride";
+import { Member } from "@/types/member";
+import { GalleryImage } from "@/types/galleryImage";
 
 // this static data will become dynamic and come from server
 import HeroBg from "/assets/images/home/hero.png";
-import { Member } from "@/types/member";
-import { GalleryImage } from "@/types/galleryImage";
 const statsData: Stat[] = [
   {
     id: "stat1",

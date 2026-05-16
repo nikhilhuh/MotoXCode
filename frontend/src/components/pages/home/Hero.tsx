@@ -24,7 +24,7 @@ export default function Hero({ HeroBg }: HeroProp) {
   return (
     <section
       ref={heroRef}
-      className="relative w-full min-h-[100dvh] flex flex-col items-center justify-center overflow-hidden pt-20"
+      className="relative w-full min-h-[100dvh] flex flex-col items-center justify-center overflow-hidden"
     >
       <div
         className="absolute inset-0 w-full h-full bg-cover bg-center"
@@ -39,7 +39,7 @@ export default function Hero({ HeroBg }: HeroProp) {
       />
 
       <div className="relative z-10 w-full" ref={heroTextRef}>
-        <div className="max-w-5xl mx-auto text-center flex flex-col items-center justify-center px-4 py-10 md:px-6 md:py-12 lg:px-12 lg:py-20">
+        <div className="max-w-7xl mx-auto text-center flex flex-col items-center justify-center px-4 py-10 md:px-6 md:py-12 lg:px-12 lg:py-20">
           <div className="hero-anim mb-6">
             <span className="inline-flex items-center gap-2.5 text-[0.7rem] md:text-xs lg:text-sm font-bold tracking-[0.05em] uppercase px-4 md:px-6 py-2.5 rounded-full text-[var(--color-bg)] bg-[var(--color-primary)] shadow-[0_8px_32px_rgba(248,250,252,0.2)]">
               Premium Riding Community
@@ -84,7 +84,7 @@ export default function Hero({ HeroBg }: HeroProp) {
         </div>
       </div>
 
-      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-3 hero-anim text-[var(--color-text-primary)] opacity-60">
+      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 hero-anim text-[var(--color-text-primary)] opacity-60">
         <span className="font-[var(--font-body)] text-xs tracking-widest uppercase">
           Scroll
         </span>
