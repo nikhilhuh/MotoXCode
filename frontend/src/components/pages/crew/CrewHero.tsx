@@ -1,37 +1,104 @@
-import { useEffect, useRef } from 'react'
-import gsap from 'gsap'
+import { useEffect, useRef } from "react";
+import gsap from "gsap";
 
-export default function CrewHero() {
-  const heroRef = useRef<HTMLDivElement>(null)
+interface CrewHeroProps {
+  CrewHeroBg: string;
+}
+
+export default function CrewHero({ CrewHeroBg }: CrewHeroProps) {
+  const heroRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      gsap.fromTo(
-        '.hero-item',
+      const tl = gsap.timeline({ delay: 0.3 });
+      tl.fromTo(
+        ".hero-anim",
         { opacity: 0, y: 50 },
-        { opacity: 1, y: 0, duration: 1.2, stagger: 0.15, ease: 'power3.out', delay: 0.2 }
-      )
-    }, heroRef)
-    return () => ctx.revert()
-  }, [])
+        { 
+          opacity: 1, 
+          y: 0, 
+          duration: 1, 
+          stagger: 0.15, 
+          ease: "power3.out" 
+        }
+      );
+    }, contentRef);
+    return () => ctx.revert();
+  }, []);
 
   return (
-    <section className="relative flex items-end overflow-hidden bg-bg pt-40 pb-24 min-h-[55vh]">
-      <div className="absolute inset-0 bg-gradient-to-br from-[#1A1A1A] to-[#0F0F0F]" />
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-accent to-transparent" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_70%_60%,rgba(255,107,0,0.1)_0%,transparent_70%)]" />
-      <div className="max-w-7xl mx-auto px-6 lg:px-12 w-full relative z-10" ref={heroRef}>
-        <div className="hero-item mb-8">
-          <span className="inline-flex items-center gap-1.5 text-[0.6875rem] font-semibold tracking-[0.12em] uppercase px-5 py-2 rounded-full border border-none text-accent bg-accent/10">The Roster</span>
+    <section
+      ref={heroRef}
+      className="relative w-full min-h-[100dvh] flex flex-col items-center justify-center overflow-hidden"
+    >
+      <div
+        className="absolute inset-0 w-full h-full bg-cover bg-center"
+        style={{ backgroundImage: `url(${CrewHeroBg})` }}
+      />
+      <div
+        className="absolute inset-0"
+        style={{
+          background:
+            "linear-gradient(to bottom, rgba(2,6,23,0.95) 0%, rgba(2,6,23,0.4) 40%, rgba(2,6,23,0.4) 60%, rgba(2,6,23,1) 100%)",
+        }}
+      />
+
+      <div className="relative z-10 w-full" ref={contentRef}>
+        <div className="max-w-7xl mx-auto text-center flex flex-col items-center justify-center px-4 py-10 md:px-6 md:py-12 lg:px-12 lg:py-20">
+          <div className="hero-anim mb-6">
+            <span className="inline-flex items-center gap-2.5 text-[0.7rem] md:text-xs lg:text-sm font-bold tracking-[0.05em] uppercase px-4 md:px-6 py-2.5 rounded-full text-[var(--color-bg)] bg-[var(--color-primary)] shadow-[0_8px_32px_rgba(248,250,252,0.2)]">
+              The Roster
+            </span>
+          </div>
+
+          <h1
+            className="
+              hero-anim
+              font-[var(--font-heading)]
+              font-black
+              leading-[0.9]
+              tracking-tighter
+              mb-4 sm:mb-6
+              text-[clamp(3.5rem,10vw,8rem)]
+              text-center
+              text-[var(--color-primary)]
+              drop-shadow-[0_10px_30px_rgba(0,0,0,0.8)]
+              uppercase
+            "
+          >
+            People Who<br />
+            <span className="text-[var(--color-accent)]">Make It Move</span>
+          </h1>
+
+          <p className="hero-anim font-[var(--font-body)] font-medium max-w-2xl mx-auto text-sm md:text-base lg:text-xl text-[var(--color-text-primary)] opacity-90 leading-relaxed mb-10">
+            Behind every great ride is an even greater team. Meet the core crew 
+            of MotoXCode — the architects of your next adventure.
+          </p>
+
+          <div className="hero-anim flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 w-full max-w-[16rem] sm:max-w-none mx-auto">
+            <a
+              href="#crew-grid"
+              className="btn-primary w-full sm:w-auto px-8 py-4 text-sm lg:text-base"
+            >
+              Meet the Crew
+            </a>
+            <a
+              href="#join"
+              className="btn-secondary w-full sm:w-auto px-8 py-4 text-sm lg:text-base"
+            >
+              Join the Pack
+            </a>
+          </div>
         </div>
-        <h1 className="hero-item font-heading font-black mb-6 text-[clamp(3.5rem,8vw,7rem)] text-primary leading-tight">
-          People Who<br />
-          <span className="text-accent">Make It Move</span>
-        </h1>
-        <p className="hero-item font-body text-xl lg:text-2xl max-w-2xl leading-relaxed text-secondary">
-          Behind every great ride is an even greater team. Meet the core crew of MotoXCode.
-        </p>
+      </div>
+
+      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 hero-anim text-[var(--color-text-primary)] opacity-60">
+        <span className="font-[var(--font-body)] text-xs tracking-widest uppercase">
+          Scroll
+        </span>
+        <div className="w-px h-6 bg-gradient-to-b from-[var(--color-text-primary)] to-transparent" />
       </div>
     </section>
-  )
+  );
 }

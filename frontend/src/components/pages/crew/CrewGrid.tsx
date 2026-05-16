@@ -1,35 +1,48 @@
-import { useEffect, useRef } from 'react'
-import gsap from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import MemberCard from '../../ui/MemberCard'
-import { crew } from '../../../data/crew'
+import { useEffect, useRef } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import MemberCard from "../../ui/MemberCard";
+import { Member } from "@/types/member";
 
-gsap.registerPlugin(ScrollTrigger)
+gsap.registerPlugin(ScrollTrigger);
 
-export default function CrewGrid() {
-  const gridRef = useRef<HTMLDivElement>(null)
+interface CrewGridProps {
+  crew: Member[];
+}
+export default function CrewGrid({ crew }: CrewGridProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
       gsap.fromTo(
-        '.crew-card',
-        { opacity: 0, y: 40 },
+        ".crew-card",
+        { opacity: 0, y: 40, filter: "blur(10px)" },
         {
-          opacity: 1, y: 0, duration: 0.8, stagger: 0.12, ease: 'power3.out',
-          scrollTrigger: { trigger: gridRef.current, start: 'top 75%', once: true },
+          opacity: 1,
+          y: 0,
+          filter: "blur(0px)",
+          duration: 0.8,
+          stagger: 0.12,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: containerRef.current,
+            start: "top 80%",
+            once: true,
+          },
         }
-      )
-    }, gridRef)
-    return () => ctx.revert()
-  }, [])
+      );
+    }, containerRef);
+    return () => ctx.revert();
+  }, []);
 
   return (
-    <section className="py-32">
-      <div className="max-w-7xl mx-auto px-6 lg:px-12 w-full">
-        <div
-          ref={gridRef}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-        >
+    <section
+      id="crew-grid"
+      ref={containerRef}
+      className="py-12 lg:py-22 bg-[var(--color-bg)] relative overflow-hidden"
+    >
+      <div className="max-w-7xl mx-auto px-6 lg:px-12 w-full relative z-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10">
           {crew.map((member) => (
             <div key={member.id} className="crew-card">
               <MemberCard member={member} />
@@ -38,5 +51,5 @@ export default function CrewGrid() {
         </div>
       </div>
     </section>
-  )
+  );
 }

@@ -3,11 +3,11 @@ import AboutPhilosophy from "../components/pages/about/AboutPhilosophy";
 import AboutJourney from "../components/pages/about/AboutJourney";
 import AboutRidingCode from "../components/pages/about/AboutRidingCode";
 import { Philosophy } from "@/types/philosophy";
+import { Timeline } from "@/types/timeline";
+import { RidingCode } from "@/types/ridingCode";
 
 // this static data will become dynamic and come from server
 import AboutHeroBg from "/assets/images/about/hero.png";
-import { Timeline } from "@/types/timeline";
-import { RidingCode } from "@/types/ridingCode";
 const philosophy: Philosophy = {
   id: "philosophy1",
   quote: "The road is not a destination. It's a conversation.",
