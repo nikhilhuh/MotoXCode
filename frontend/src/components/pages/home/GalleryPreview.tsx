@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { Link } from "react-router-dom";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { GalleryImage } from "@/types/galleryImage";
@@ -145,19 +144,6 @@ export default function GalleryPreview({
               </div>
             ))}
           </div>
-        </div>
-
-        {/* View Full Gallery — centered below grid */}
-        <div className="flex justify-center pt-4 pb-4 relative z-10">
-          <Link to="/gallery" className="btn-outline px-8 py-3 text-sm">
-            View Full Gallery
-            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
-              <path
-                fillRule="evenodd"
-                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
-              />
-            </svg>
-          </Link>
         </div>
       </section>
     </>
