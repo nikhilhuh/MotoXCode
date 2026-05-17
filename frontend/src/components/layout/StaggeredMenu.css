@@ -104,25 +104,6 @@
 .sm-scope .staggered-menu-wrapper[data-open] .sm-tacho-shiftlight {
   animation: shift-flash 0.15s infinite;
 }
-.sm-scope .sm-sprocket-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: var(--color-surface);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: var(--color-primary);
-  transition: color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
-  will-change: transform;
-}
-.sm-scope .sm-sprocket-container:hover,
-.sm-scope .group:hover .sm-sprocket-container {
-  color: var(--color-highlight, #ff5a1f);
-  border-color: var(--color-highlight, #ff5a1f);
-  box-shadow: 0 0 15px rgba(255, 90, 31, 0.35);
-}
 .sm-scope .sm-panel-itemWrap {
   position: relative;
   overflow: hidden;

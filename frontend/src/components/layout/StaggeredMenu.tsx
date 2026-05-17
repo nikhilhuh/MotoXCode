@@ -56,8 +56,6 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
   const revTlRef = useRef<gsap.core.Timeline | null>(null);
   const rumbleTweenRef = useRef<gsap.core.Tween | null>(null);
 
-  const sprocketRef = useRef<HTMLDivElement | null>(null);
-  const sprocketTlRef = useRef<gsap.core.Timeline | null>(null);
   const needleVibeRef = useRef<gsap.core.Tween | null>(null);
 
   const textInnerRef = useRef<HTMLSpanElement | null>(null);
@@ -77,7 +75,6 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
   const handleMouseEnter = useCallback(() => {
     const needle = needleRef.current;
     const tacho = tachoRef.current;
-    const sprocket = sprocketRef.current;
     if (!needle) return;
 
     revTlRef.current?.kill();
@@ -122,23 +119,6 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
         }
       });
     }
-
-    if (sprocket) {
-      sprocketTlRef.current?.kill();
-      const tl = gsap.timeline();
-      tl.to(sprocket, {
-        rotate: "+=360",
-        scale: 1.1,
-        duration: 0.7,
-        ease: "power3.out"
-      }).to(sprocket, {
-        rotate: "+=360",
-        duration: 2.8,
-        repeat: -1,
-        ease: "none"
-      }, "-=0.15");
-      sprocketTlRef.current = tl;
-    }
   }, []);
 
   const handleMouseLeave = useCallback(() => {
@@ -152,17 +132,6 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
           ease: "power2.out"
         });
       }
-    }
-
-    const sprocket = sprocketRef.current;
-    if (sprocket) {
-      sprocketTlRef.current?.kill();
-      gsap.to(sprocket, {
-        rotate: "+=180",
-        scale: 1,
-        duration: 1.1,
-        ease: "power4.out"
-      });
     }
   }, []);
 
@@ -619,21 +588,13 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
               className="flex items-center gap-2 group"
               aria-label="MotoXCode Home"
             >
-              <div ref={sprocketRef} className="sm-sprocket-container">
-                {/* Custom Sprocket SVG */}
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  {/* Outer gear teeth */}
-                  <circle cx="12" cy="12" r="9" strokeWidth="1.5" strokeDasharray="3 2" />
-                  {/* Outer solid rim */}
-                  <circle cx="12" cy="12" r="7.5" strokeWidth="1" />
-                  {/* Inner hub */}
-                  <circle cx="12" cy="12" r="3.5" strokeWidth="1.5" />
-                  <circle cx="12" cy="12" r="1.5" fill="currentColor" />
-                  {/* Sprocket Spokes */}
-                  <line x1="12" y1="4.5" x2="12" y2="8.5" strokeWidth="1.5" />
-                  <line x1="12" y1="15.5" x2="12" y2="19.5" strokeWidth="1.5" />
-                  <line x1="4.5" y1="12" x2="8.5" y2="12" strokeWidth="1.5" />
-                  <line x1="15.5" y1="12" x2="19.5" y2="12" strokeWidth="1.5" />
+              <div className="w-8 h-8 bg-[var(--color-primary)] rounded-full flex items-center justify-center transition-all duration-300 group-hover:scale-110">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="black">
+                  <path
+                    d="M2 12L8 4L14 12H2Z"
+                    fill="var(--color-bg)"
+                    fillOpacity="0.9"
+                  />
                 </svg>
               </div>
             </Link>
