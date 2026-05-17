@@ -54,17 +54,22 @@ export default function Hero({ HeroBg }: HeroProp) {
               leading-[0.9]
               tracking-tighter
               mb-4 sm:mb-6
-              text-[clamp(3rem,12vw,10rem)]
+              text-[clamp(3rem,8vw,7rem)]
               text-center
               text-[var(--color-primary)]
               drop-shadow-[0_10px_30px_rgba(0,0,0,0.8)]
+              uppercase
             "
           >
-            MOTOXCODE
+            MOTOXCODE <br />
+            <span className="text-[var(--color-accent)] text-[clamp(2.4rem,6.5vw,5.5rem)]">
+              Ride Beyond Ordinary
+            </span>
           </h1>
 
-          <p className="hero-anim font-[var(--font-sub)] font-bold tracking-[0.4em] uppercase mb-10 sm:mb-12 text-xs md:text-sm lg:text-lg text-white drop-shadow-[0_4px_12px_rgba(0,0,0,0.8)]">
-            BORN TO RIDE. BUILT TO BELONG.
+          <p className="hero-anim font-[var(--font-body)] font-medium max-w-2xl mx-auto text-sm md:text-base lg:text-xl text-[var(--color-text-primary)] opacity-90 leading-relaxed mb-10">
+            Born from late-night rides, endless highways, and a passion for
+            adventure — MotoXCode is more than a riding group.
           </p>
 
           <div className="hero-anim flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 w-full max-w-[16rem] sm:max-w-none mx-auto">
@@ -84,11 +89,11 @@ export default function Hero({ HeroBg }: HeroProp) {
         </div>
       </div>
 
-      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 hero-anim text-[var(--color-text-primary)] opacity-60">
+      <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 hero-anim text-[var(--color-text-primary)] opacity-60">
         <span className="font-[var(--font-body)] text-xs tracking-widest uppercase">
           Scroll
         </span>
-        <div className="w-px h-16 bg-gradient-to-b from-[var(--color-text-primary)] to-transparent" />
+        <div className="w-px h-6 bg-gradient-to-b from-[var(--color-text-primary)] to-transparent" />
       </div>
     </section>
   );
