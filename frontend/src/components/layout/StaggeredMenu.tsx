@@ -51,9 +51,14 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
   const preLayersRef = useRef<HTMLDivElement | null>(null);
   const preLayerElsRef = useRef<HTMLElement[]>([]);
 
-  const plusHRef = useRef<HTMLSpanElement | null>(null);
-  const plusVRef = useRef<HTMLSpanElement | null>(null);
-  const iconRef = useRef<HTMLSpanElement | null>(null);
+  const needleRef = useRef<HTMLSpanElement | null>(null);
+  const tachoRef = useRef<HTMLSpanElement | null>(null);
+  const revTlRef = useRef<gsap.core.Timeline | null>(null);
+  const rumbleTweenRef = useRef<gsap.core.Tween | null>(null);
+
+  const sprocketRef = useRef<HTMLDivElement | null>(null);
+  const sprocketTlRef = useRef<gsap.core.Timeline | null>(null);
+  const needleVibeRef = useRef<gsap.core.Tween | null>(null);
 
   const textInnerRef = useRef<HTMLSpanElement | null>(null);
   const textWrapRef = useRef<HTMLSpanElement | null>(null);
@@ -61,7 +66,6 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
 
   const openTlRef = useRef<gsap.core.Timeline | null>(null);
   const closeTweenRef = useRef<gsap.core.Tween | null>(null);
-  const spinTweenRef = useRef<gsap.core.Timeline | null>(null);
   const textCycleAnimRef = useRef<gsap.core.Tween | null>(null);
   const colorTweenRef = useRef<gsap.core.Tween | null>(null);
 
@@ -70,17 +74,107 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
 
   const itemEntranceTweenRef = useRef<gsap.core.Tween | null>(null);
 
+  const handleMouseEnter = useCallback(() => {
+    const needle = needleRef.current;
+    const tacho = tachoRef.current;
+    const sprocket = sprocketRef.current;
+    if (!needle) return;
+
+    revTlRef.current?.kill();
+    rumbleTweenRef.current?.kill();
+
+    if (!openRef.current) {
+      const tl = gsap.timeline({ defaults: { ease: "power2.out" } });
+      tl.to(needle, { rotate: 20, duration: 0.16 })
+        .to(needle, { rotate: -60, duration: 0.14 })
+        .to(needle, { rotate: 50, duration: 0.18 })
+        .to(needle, { rotate: -120, duration: 0.45, ease: "bounce.out" });
+      revTlRef.current = tl;
+
+      if (tacho) {
+        rumbleTweenRef.current = gsap.to(tacho, {
+          x: "random(-1.2, 1.2)",
+          y: "random(-1.2, 1.2)",
+          duration: 0.05,
+          repeat: 12,
+          yoyo: true,
+          clearProps: "x,y"
+        });
+      }
+    } else {
+      if (tacho) {
+        rumbleTweenRef.current = gsap.to(tacho, {
+          x: "random(-0.8, 0.8)",
+          y: "random(-0.8, 0.8)",
+          duration: 0.05,
+          repeat: 6,
+          yoyo: true,
+          clearProps: "x,y"
+        });
+      }
+      gsap.to(needle, {
+        rotate: "random(42, 58)",
+        duration: 0.04,
+        repeat: 6,
+        yoyo: true,
+        onComplete: () => {
+          gsap.to(needle, { rotate: 50, duration: 0.1, ease: "power2.out" });
+        }
+      });
+    }
+
+    if (sprocket) {
+      sprocketTlRef.current?.kill();
+      const tl = gsap.timeline();
+      tl.to(sprocket, {
+        rotate: "+=360",
+        scale: 1.1,
+        duration: 0.7,
+        ease: "power3.out"
+      }).to(sprocket, {
+        rotate: "+=360",
+        duration: 2.8,
+        repeat: -1,
+        ease: "none"
+      }, "-=0.15");
+      sprocketTlRef.current = tl;
+    }
+  }, []);
+
+  const handleMouseLeave = useCallback(() => {
+    if (!openRef.current) {
+      revTlRef.current?.kill();
+      rumbleTweenRef.current?.kill();
+      if (needleRef.current) {
+        gsap.to(needleRef.current, {
+          rotate: -120,
+          duration: 0.3,
+          ease: "power2.out"
+        });
+      }
+    }
+
+    const sprocket = sprocketRef.current;
+    if (sprocket) {
+      sprocketTlRef.current?.kill();
+      gsap.to(sprocket, {
+        rotate: "+=180",
+        scale: 1,
+        duration: 1.1,
+        ease: "power4.out"
+      });
+    }
+  }, []);
+
   useLayoutEffect(() => {
     const ctx = gsap.context(() => {
       const panel = panelRef.current;
       const preContainer = preLayersRef.current;
 
-      const plusH = plusHRef.current;
-      const plusV = plusVRef.current;
-      const icon = iconRef.current;
+      const needle = needleRef.current;
       const textInner = textInnerRef.current;
 
-      if (!panel || !plusH || !plusV || !icon || !textInner) return;
+      if (!panel || !needle || !textInner) return;
 
       let preLayers: HTMLElement[] = [];
       if (preContainer) {
@@ -93,9 +187,7 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
       const offscreen = position === "left" ? -100 : 100;
       gsap.set([panel, ...preLayers], { xPercent: offscreen });
 
-      gsap.set(plusH, { transformOrigin: "50% 50%", rotate: 0 });
-      gsap.set(plusV, { transformOrigin: "50% 50%", rotate: 90 });
-      gsap.set(icon, { rotate: 0, transformOrigin: "50% 50%" });
+      gsap.set(needle, { transformOrigin: "0% 50%", rotate: -120 });
 
       gsap.set(textInner, { yPercent: 0 });
 
@@ -293,26 +385,34 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
   }, [position]);
 
   const animateIcon = useCallback((opening: boolean) => {
-    const icon = iconRef.current;
-    const h = plusHRef.current;
-    const v = plusVRef.current;
-    if (!icon || !h || !v) return;
+    const needle = needleRef.current;
+    if (!needle) return;
 
-    spinTweenRef.current?.kill();
+    revTlRef.current?.kill();
+    needleVibeRef.current?.kill();
+    needleVibeRef.current = null;
 
     if (opening) {
-      // ensure container never rotates
-      gsap.set(icon, { rotate: 0, transformOrigin: "50% 50%" });
-      spinTweenRef.current = gsap
-        .timeline({ defaults: { ease: "power4.out" } })
-        .to(h, { rotate: 45, duration: 0.5 }, 0)
-        .to(v, { rotate: -45, duration: 0.5 }, 0);
+      gsap.to(needle, {
+        rotate: 50,
+        duration: 0.55,
+        ease: "power4.out",
+        onComplete: () => {
+          needleVibeRef.current = gsap.to(needle, {
+            rotate: "random(49.2, 51.5)",
+            duration: 0.05,
+            repeat: -1,
+            yoyo: true,
+            ease: "none"
+          });
+        }
+      });
     } else {
-      spinTweenRef.current = gsap
-        .timeline({ defaults: { ease: "power3.inOut" } })
-        .to(h, { rotate: 0, duration: 0.35 }, 0)
-        .to(v, { rotate: 90, duration: 0.35 }, 0)
-        .to(icon, { rotate: 0, duration: 0.001 }, 0);
+      gsap.to(needle, {
+        rotate: -120,
+        duration: 0.45,
+        ease: "power3.inOut"
+      });
     }
   }, []);
 
@@ -519,13 +619,21 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
               className="flex items-center gap-2 group"
               aria-label="MotoXCode Home"
             >
-              <div className="w-8 h-8 bg-[var(--color-primary)] rounded-full flex items-center justify-center transition-all duration-300 group-hover:scale-110">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="black">
-                  <path
-                    d="M2 12L8 4L14 12H2Z"
-                    fill="var(--color-bg)"
-                    fillOpacity="0.9"
-                  />
+              <div ref={sprocketRef} className="sm-sprocket-container">
+                {/* Custom Sprocket SVG */}
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  {/* Outer gear teeth */}
+                  <circle cx="12" cy="12" r="9" strokeWidth="1.5" strokeDasharray="3 2" />
+                  {/* Outer solid rim */}
+                  <circle cx="12" cy="12" r="7.5" strokeWidth="1" />
+                  {/* Inner hub */}
+                  <circle cx="12" cy="12" r="3.5" strokeWidth="1.5" />
+                  <circle cx="12" cy="12" r="1.5" fill="currentColor" />
+                  {/* Sprocket Spokes */}
+                  <line x1="12" y1="4.5" x2="12" y2="8.5" strokeWidth="1.5" />
+                  <line x1="12" y1="15.5" x2="12" y2="19.5" strokeWidth="1.5" />
+                  <line x1="4.5" y1="12" x2="8.5" y2="12" strokeWidth="1.5" />
+                  <line x1="15.5" y1="12" x2="19.5" y2="12" strokeWidth="1.5" />
                 </svg>
               </div>
             </Link>
@@ -538,6 +646,8 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
               aria-expanded={open}
               aria-controls="staggered-menu-panel"
               onClick={toggleMenu}
+              onMouseEnter={handleMouseEnter}
+              onMouseLeave={handleMouseLeave}
               type="button"
             >
               {/* TEXT ANIMATION */}
@@ -555,10 +665,28 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
                 </span>
               </span>
 
-              {/* PLUS ICON */}
-              <span ref={iconRef} className="sm-icon" aria-hidden="true">
-                <span ref={plusHRef} className="sm-icon-line" />
-                <span ref={plusVRef} className="sm-icon-line sm-icon-line-v" />
+              {/* TACHOMETER ICON */}
+              <span 
+                ref={tachoRef} 
+                className="sm-tacho" 
+                aria-hidden="true"
+              >
+                {/* SVG Dial Ticks */}
+                <svg className="absolute inset-0 w-full h-full text-white/30" viewBox="0 0 32 32" fill="none">
+                  {/* Outer ticks ring */}
+                  <circle cx="16" cy="16" r="13" stroke="currentColor" strokeWidth="1.2" strokeDasharray="2 2" />
+                  {/* Redline sector */}
+                  <path d="M 25.19 6.81 A 13 13 0 0 1 29 16" fill="none" stroke="var(--color-highlight, #ff5a1f)" strokeWidth="2" />
+                </svg>
+                {/* Central pivot hub */}
+                <span className="sm-tacho-hub" />
+                {/* Shift light indicator */}
+                <span className="sm-tacho-shiftlight" />
+                {/* Tachometer needle */}
+                <span
+                  ref={needleRef}
+                  className="sm-tacho-needle"
+                />
               </span>
             </button>
           </div>
