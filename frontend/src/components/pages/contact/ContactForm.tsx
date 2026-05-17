@@ -1,174 +1,334 @@
-import { useEffect, useRef, useState } from 'react'
-import gsap from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { useEffect, useRef, useState } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import {
+  FaMapPin,
+  FaEnvelope,
+  FaInstagram,
+  FaWhatsapp,
+  FaPhone,
+  FaGlobe,
+} from "react-icons/fa6";
+import { ContactInfoItem } from "@/types/contactInfo";
+import { ContactFormData } from "@/types/contactForm";
 
-gsap.registerPlugin(ScrollTrigger)
+gsap.registerPlugin(ScrollTrigger);
 
-interface ContactFormData {
-  name: string
-  email: string
-  subject: string
-  message: string
+interface ContactFormProps {
+  contactInfo: ContactInfoItem[];
 }
 
-const contactInfo = [
-  {
-    icon: (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-        <circle cx="12" cy="10" r="3"/>
-      </svg>
-    ),
-    label: 'Base',
-    value: 'Mumbai, Maharashtra, India',
-  },
-  {
-    icon: (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-        <polyline points="22,6 12,13 2,6"/>
-      </svg>
-    ),
-    label: 'Email',
-    value: 'hello@motoxcode.in',
-  },
-  {
-    icon: (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-        <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
-        <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
-        <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
-      </svg>
-    ),
-    label: 'Instagram',
-    value: '@motoxcode.in',
-  },
-]
+function renderContactIcon(type?: string, label?: string) {
+  const normType = (type || label || "").toLowerCase().trim();
 
-export default function ContactForm() {
-  const contentRef = useRef<HTMLDivElement>(null)
-  const [submitted, setSubmitted] = useState(false)
+  // 1. Matches for Base / Location
+  if (
+    normType.includes("base") ||
+    normType.includes("location") ||
+    normType.includes("address") ||
+    normType.includes("map")
+  ) {
+    return <FaMapPin className="w-5 h-5 text-[var(--color-primary)]" />;
+  }
+  // 2. Matches for Email
+  if (normType.includes("email") || normType.includes("mail")) {
+    return <FaEnvelope className="w-5 h-5 text-[var(--color-primary)]" />;
+  }
+  // 3. Matches for Instagram
+  if (normType.includes("instagram") || normType.includes("ig")) {
+    return <FaInstagram className="w-5 h-5 text-[var(--color-primary)]" />;
+  }
+  // 4. Matches for WhatsApp
+  if (normType.includes("whatsapp") || normType.includes("wa")) {
+    return <FaWhatsapp className="w-5 h-5 text-[var(--color-primary)]" />;
+  }
+  // 5. Matches for Phone / Mobile / Call
+  if (
+    normType.includes("phone") ||
+    normType.includes("tel") ||
+    normType.includes("mobile") ||
+    normType.includes("call") ||
+    normType.includes("contact")
+  ) {
+    return <FaPhone className="w-5 h-5 text-[var(--color-primary)]" />;
+  }
+  // 6. Matches for Website / Web / Link / Globe
+  if (
+    normType.includes("web") ||
+    normType.includes("website") ||
+    normType.includes("globe") ||
+    normType.includes("link")
+  ) {
+    return <FaGlobe className="w-5 h-5 text-[var(--color-primary)]" />;
+  }
+
+  // 7. Fallback character badge (very premium and clean)
+  const initial = label ? label.charAt(0).toUpperCase() : "?";
+  return (
+    <span className="font-[var(--font-mono)] text-sm font-bold text-[var(--color-primary)]">
+      {initial}
+    </span>
+  );
+}
+
+export default function ContactForm({ contactInfo }: ContactFormProps) {
+  const contentRef = useRef<HTMLDivElement>(null);
+  const [submitted, setSubmitted] = useState(false);
   const [formData, setFormData] = useState<ContactFormData>({
-    name: '', email: '', subject: '', message: '',
-  })
+    name: "",
+    email: "",
+    subject: "",
+    message: "",
+  });
 
   useEffect(() => {
     const ctx = gsap.context(() => {
       gsap.fromTo(
-        '.anim-item',
+        ".anim-item",
         { opacity: 0, y: 30 },
         {
-          opacity: 1, y: 0, duration: 0.8, stagger: 0.12, ease: 'power3.out',
-          scrollTrigger: { trigger: contentRef.current, start: 'top 80%', once: true },
-        }
-      )
-    }, contentRef)
-    return () => ctx.revert()
-  }, [])
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          stagger: 0.12,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: contentRef.current,
+            start: "top 80%",
+            once: true,
+          },
+        },
+      );
+    }, contentRef);
+    return () => ctx.revert();
+  }, []);
 
-  function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
-    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }))
+  function handleChange(
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) {
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   }
 
   function handleSubmit(e: React.FormEvent) {
-    e.preventDefault()
-    setSubmitted(true)
+    e.preventDefault();
+    setSubmitted(true);
   }
 
   return (
-    <section className="py-20">
-      <div className="max-w-7xl mx-auto px-6 lg:px-12 w-full">
-        <div ref={contentRef} className="grid grid-cols-1 lg:grid-cols-5 gap-16">
-          {/* Info */}
-          <div className="lg:col-span-2 space-y-10 anim-item">
-            {contactInfo.map((item) => (
-              <div key={item.label} className="flex items-start gap-5">
-                <div className="w-10 h-10 bg-surface border border-border text-accent rounded-sm flex items-center justify-center flex-shrink-0">
-                  {item.icon}
+    <section
+      id="contact-content"
+      className="py-12 lg:py-22 relative overflow-hidden bg-gradient-to-b from-[var(--color-bg)] via-[var(--color-section)] to-black border-t border-[var(--color-border)]/20"
+    >
+      {/* Decorative ambient lighting */}
+      <div className="absolute top-[10%] right-[5%] w-[40%] h-[40%] bg-[var(--color-primary)]/5 rounded-full blur-[120px] pointer-events-none z-0"></div>
+      <div className="absolute bottom-[10%] left-[5%] w-[30%] h-[50%] bg-[var(--color-accent)]/5 rounded-full blur-[120px] pointer-events-none z-0"></div>
+
+      <div className="max-w-7xl mx-auto px-6 lg:px-12 w-full relative z-10">
+        <div
+          ref={contentRef}
+          className="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-12 items-stretch"
+        >
+          {/* Info Card */}
+          <div className="lg:col-span-2 anim-item bg-transparent lg:bg-[var(--color-bg)]/40 lg:border lg:border-[var(--color-border)]/50 lg:backdrop-blur-2xl lg:p-6 lg:rounded-2xl lg:shadow-[0_20px_50px_-10px_rgba(0,0,0,0.8)] relative overflow-hidden flex flex-col justify-between">
+            <div className="hidden lg:block absolute -top-10 -right-10 w-32 h-32 bg-[var(--color-primary)]/5 rounded-full blur-2xl pointer-events-none z-0"></div>
+
+            <div className="relative z-10 flex flex-col h-full justify-between gap-6 border-b border-[var(--color-border)]/20 lg:border-0 pb-8">
+              <div>
+                <div className="mb-8 text-center lg:text-left">
+                  <h3 className="font-[var(--font-heading)] font-black text-2xl md:text-3xl lg:text-4xl text-[var(--color-primary)] tracking-wide uppercase mb-1">
+                    Contact Info
+                  </h3>
+                  <p className="font-[var(--font-body)] text-xs lg:text-sm text-[var(--color-text-secondary)]">
+                    Reach out directly through any of our channels.
+                  </p>
                 </div>
-                <div>
-                  <div className="font-accent text-xs font-semibold uppercase tracking-widest mb-1 text-secondary">
-                    {item.label}
-                  </div>
-                  <div className="font-body text-base text-primary">
-                    {item.value}
-                  </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-x-8 gap-y-6">
+                  {contactInfo &&
+                    contactInfo.map((item) => (
+                      <div
+                        key={item.label}
+                        className="flex items-center gap-4 group"
+                      >
+                        <div className="w-12 h-12 bg-[var(--color-surface)] border border-[var(--color-border)] text-[var(--color-accent)] rounded-xl flex items-center justify-center flex-shrink-0 transition-colors duration-300 group-hover:text-[var(--color-primary)] group-hover:border-[var(--color-primary)]/30 z-10 shadow-[0_4px_12px_rgba(0,0,0,0.2)]">
+                          {renderContactIcon(item.type, item.label)}
+                        </div>
+                        <div>
+                          <div className="font-[var(--font-sub)] text-[0.65rem] font-bold uppercase tracking-widest mb-0.5 text-[var(--color-text-secondary)]">
+                            {item.label}
+                          </div>
+                          <div className="font-[var(--font-body)] text-sm text-[var(--color-text-primary)]">
+                            {item.value}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
                 </div>
               </div>
-            ))}
-
-            <div className="pt-8 border-t border-border">
-              <p className="font-accent text-sm leading-relaxed text-secondary">
-                We typically respond within 48 hours. For ride inquiries, please check the{' '}
-                <a href="/rides" className="text-accent">Rides page</a> first.
-              </p>
             </div>
           </div>
 
-          {/* Form */}
-          <div className="lg:col-span-3 anim-item">
+          {/* Form Card */}
+          <div className="lg:col-span-3 anim-item bg-transparent lg:bg-[var(--color-bg)]/40 lg:border lg:border-[var(--color-border)]/50 lg:backdrop-blur-2xl lg:p-6 lg:rounded-2xl lg:shadow-[0_20px_50px_-10px_rgba(0,0,0,0.8)] relative overflow-hidden flex flex-col justify-between">
+            <div className="hidden lg:blockabsolute -bottom-10 -left-10 w-32 h-32 bg-[var(--color-accent)]/5 rounded-full blur-2xl pointer-events-none z-0"></div>
+
             {submitted ? (
-              <div className="text-center py-16 rounded-sm bg-surface border border-border">
-                <div className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-5 bg-accent/15 text-accent">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M20 6 9 17l-5-5"/>
+              <div className="text-center py-16 relative z-10 w-full h-full flex flex-col items-center justify-center">
+                <div className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-5 bg-[var(--color-primary)]/10 text-[var(--color-primary)] border border-[var(--color-primary)]/20 shadow-[0_0_20px_rgba(248,250,252,0.15)] animate-pulse">
+                  <svg
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <path d="M20 6 9 17l-5-5" />
                   </svg>
                 </div>
-                <h2 className="font-heading font-bold text-xl mb-2 text-primary">
+                <h2 className="font-[var(--font-heading)] font-black text-4xl mb-2 text-[var(--color-primary)] tracking-wide uppercase">
                   Message Sent
                 </h2>
-                <p className="font-body text-sm text-secondary">
+                <p className="font-[var(--font-body)] text-sm text-[var(--color-text-secondary)]">
                   Thanks, {formData.name}. We'll get back to you shortly.
                 </p>
               </div>
             ) : (
-              <form id="contact-form" onSubmit={handleSubmit} className="space-y-5">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                  <div>
-                    <label htmlFor="contact-name" className="block font-accent text-xs font-semibold tracking-widest uppercase text-secondary mb-2">Name *</label>
-                    <input
-                      id="contact-name" name="name" type="text" required
-                      className="w-full bg-surface border border-border rounded py-3.5 px-5 text-primary font-body text-[0.9375rem] transition-colors duration-200 outline-none placeholder:text-secondary placeholder:opacity-60 focus:border-accent" placeholder="Your name"
-                      value={formData.name} onChange={handleChange}
-                    />
-                  </div>
-                  <div>
-                    <label htmlFor="contact-email" className="block font-accent text-xs font-semibold tracking-widest uppercase text-secondary mb-2">Email *</label>
-                    <input
-                      id="contact-email" name="email" type="email" required
-                      className="w-full bg-surface border border-border rounded py-3.5 px-5 text-primary font-body text-[0.9375rem] transition-colors duration-200 outline-none placeholder:text-secondary placeholder:opacity-60 focus:border-accent" placeholder="you@email.com"
-                      value={formData.email} onChange={handleChange}
-                    />
-                  </div>
-                </div>
+              <div className="relative z-10 flex flex-col h-full justify-between">
                 <div>
-                  <label htmlFor="contact-subject" className="block font-accent text-xs font-semibold tracking-widest uppercase text-secondary mb-2">Subject</label>
-                  <input
-                    id="contact-subject" name="subject" type="text"
-                    className="w-full bg-surface border border-border rounded py-3.5 px-5 text-primary font-body text-[0.9375rem] transition-colors duration-200 outline-none placeholder:text-secondary placeholder:opacity-60 focus:border-accent" placeholder="What's this about?"
-                    value={formData.subject} onChange={handleChange}
-                  />
+                  <div className="mb-8 text-center lg:text-left">
+                    <h3 className="font-[var(--font-heading)] font-black text-2xl md:text-3xl lg:text-4xl text-[var(--color-primary)] tracking-wide uppercase mb-1">
+                      Send a Message
+                    </h3>
+                    <p className="font-[var(--font-body)] text-xs lg:text-sm lg:text-base text-[var(--color-text-secondary)]">
+                      Fill out the form below and we'll get back to you as soon
+                      as possible.
+                    </p>
+                  </div>
+
+                  <form
+                    id="contact-form"
+                    onSubmit={handleSubmit}
+                    className="space-y-6"
+                  >
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                      <div>
+                        <label
+                          htmlFor="contact-name"
+                          className="block font-[var(--font-sub)] text-[0.7rem] font-bold tracking-widest uppercase text-[var(--color-text-secondary)] mb-2"
+                        >
+                          Name *
+                        </label>
+                        <input
+                          id="contact-name"
+                          name="name"
+                          type="text"
+                          required
+                          autoComplete="name"
+                          className="w-full bg-[var(--color-surface)]/50 border border-[var(--color-border)] rounded-lg py-3.5 px-5 text-[var(--color-text-primary)] font-[var(--font-body)] text-[0.9375rem] transition-all duration-300 outline-none placeholder:text-[var(--color-text-secondary)] placeholder:opacity-50 focus:border-[var(--color-primary)] focus:bg-[var(--color-surface)] focus:shadow-[0_0_15px_rgba(248,250,252,0.05)]"
+                          placeholder="Your name"
+                          value={formData.name}
+                          onChange={handleChange}
+                        />
+                      </div>
+                      <div>
+                        <label
+                          htmlFor="contact-email"
+                          className="block font-[var(--font-sub)] text-[0.7rem] font-bold tracking-widest uppercase text-[var(--color-text-secondary)] mb-2"
+                        >
+                          Email *
+                        </label>
+                        <input
+                          id="contact-email"
+                          name="email"
+                          type="email"
+                          required
+                          autoComplete="email"
+                          className="w-full bg-[var(--color-surface)]/50 border border-[var(--color-border)] rounded-lg py-3.5 px-5 text-[var(--color-text-primary)] font-[var(--font-body)] text-[0.9375rem] transition-all duration-300 outline-none placeholder:text-[var(--color-text-secondary)] placeholder:opacity-50 focus:border-[var(--color-primary)] focus:bg-[var(--color-surface)] focus:shadow-[0_0_15px_rgba(248,250,252,0.05)]"
+                          placeholder="you@email.com"
+                          value={formData.email}
+                          onChange={handleChange}
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <label
+                        htmlFor="contact-subject"
+                        className="block font-[var(--font-sub)] text-[0.7rem] font-bold tracking-widest uppercase text-[var(--color-text-secondary)] mb-2"
+                      >
+                        Subject
+                      </label>
+                      <input
+                        id="contact-subject"
+                        name="subject"
+                        type="text"
+                        autoComplete="off"
+                        className="w-full bg-[var(--color-surface)]/50 border border-[var(--color-border)] rounded-lg py-3.5 px-5 text-[var(--color-text-primary)] font-[var(--font-body)] text-[0.9375rem] transition-all duration-300 outline-none placeholder:text-[var(--color-text-secondary)] placeholder:opacity-50 focus:border-[var(--color-primary)] focus:bg-[var(--color-surface)] focus:shadow-[0_0_15px_rgba(248,250,252,0.05)]"
+                        placeholder="What's this about?"
+                        value={formData.subject}
+                        onChange={handleChange}
+                      />
+                    </div>
+                    <div>
+                      <label
+                        htmlFor="contact-message"
+                        className="block font-[var(--font-sub)] text-[0.7rem] font-bold tracking-widest uppercase text-[var(--color-text-secondary)] mb-2"
+                      >
+                        Message *
+                      </label>
+                      <textarea
+                        id="contact-message"
+                        name="message"
+                        required
+                        rows={5}
+                        autoComplete="off"
+                        className="w-full bg-[var(--color-surface)]/50 border border-[var(--color-border)] rounded-lg py-3.5 px-5 text-[var(--color-text-primary)] font-[var(--font-body)] text-[0.9375rem] transition-all duration-300 outline-none placeholder:text-[var(--color-text-secondary)] placeholder:opacity-50 focus:border-[var(--color-primary)] focus:bg-[var(--color-surface)] focus:shadow-[0_0_15px_rgba(248,250,252,0.05)] resize-none"
+                        placeholder="Tell us everything..."
+                        value={formData.message}
+                        onChange={handleChange}
+                      />
+                    </div>
+                    <button
+                      type="submit"
+                      id="contact-submit"
+                      className="btn-primary w-full py-4 text-sm font-semibold tracking-[0.06em] uppercase cursor-pointer"
+                    >
+                      Send Message
+                      <svg
+                        width="14"
+                        height="14"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        className="transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-0.5"
+                      >
+                        <line x1="22" y1="2" x2="11" y2="13" />
+                        <polygon points="22 2 15 22 11 13 2 9 22 2" />
+                      </svg>
+                    </button>
+                  </form>
                 </div>
-                <div>
-                  <label htmlFor="contact-message" className="block font-accent text-xs font-semibold tracking-widest uppercase text-secondary mb-2">Message *</label>
-                  <textarea
-                    id="contact-message" name="message" required rows={6}
-                    className="w-full bg-surface border border-border rounded py-3.5 px-5 text-primary font-body text-[0.9375rem] transition-colors duration-200 outline-none placeholder:text-secondary placeholder:opacity-60 focus:border-accent" placeholder="Tell us everything..."
-                    value={formData.message} onChange={handleChange}
-                  />
-                </div>
-                <button type="submit" id="contact-submit" className="inline-flex items-center gap-2 bg-accent text-white font-accent font-semibold text-sm tracking-[0.06em] uppercase px-8 py-[0.875rem] rounded transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_32px_rgba(255,107,0,0.35)] w-full justify-center">
-                  Send Message
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <line x1="22" y1="2" x2="11" y2="13"/>
-                    <polygon points="22 2 15 22 11 13 2 9 22 2"/>
-                  </svg>
-                </button>
-              </form>
+              </div>
             )}
           </div>
         </div>
+
+        {/* note */}
+        <div className="pt-4 md:pt-6 lg:pt-8 text-center">
+          <p className="font-[var(--font-body)] text-sm leading-relaxed text-[var(--color-text-secondary)]/90">
+            We typically respond within 48 hours. For ride inquiries, please
+            check the{" "}
+            <a
+              href="/rides"
+              className="text-[var(--color-primary)] hover:underline font-semibold"
+            >
+              Rides page
+            </a>{" "}
+            first.
+          </p>
+        </div>
       </div>
     </section>
-  )
+  );
 }
