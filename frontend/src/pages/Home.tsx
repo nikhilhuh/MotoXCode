@@ -12,7 +12,7 @@ import { Member } from "@/types/member";
 import { GalleryImage } from "@/types/galleryImage";
 
 // this static data will become dynamic and come from server
-import HeroBg from "/assets/images/home/hero.png";
+import HeroBg from "/assets/images/home/homeHero.png";
 const statsData: Stat[] = [
   {
     id: "stat1",
@@ -34,7 +34,7 @@ const statsData: Stat[] = [
     suffix: "L+",
     label: "Collective KMs",
     isFloat: true,
-    image: "/assets/images/home/collective_kms.png",
+    image: "/assets/images/home/collective.png",
   },
   {
     id: "stat4",
@@ -50,21 +50,21 @@ const valuesData: Value[] = [
     title: "The Code of the Road",
     body: "Every rider carries a responsibility — to themselves, to their machine, and to every other soul on the asphalt. We don't just ride fast. We ride right.",
     tag: "Safety First",
-    image: "/assets/images/home/img-1.jpg",
+    image: "/assets/images/home/value1.jpg",
   },
   {
     id: "value2",
     title: "Brotherhood Over Horsepower",
     body: "It doesn't matter what you ride. What matters is how you show up — for a fellow rider stranded on a highway, for a friend who needs a shoulder, for the community that built this.",
     tag: "Community",
-    image: "/assets/images/home/img-2.jpg",
+    image: "/assets/images/home/value2.jpg",
   },
   {
     id: "value3",
     title: "The Long Road as Teacher",
     body: "Every long ride strips away the noise. What remains is clarity. We ride not to escape life — but to meet it head-on, at speed, in the open air.",
     tag: "Philosophy",
-    image: "/assets/images/home/img-3.jpg",
+    image: "/assets/images/home/value3.jpg",
   },
 ];
 const upcomingRidesData: Ride[] = [
@@ -75,7 +75,7 @@ const upcomingRidesData: Ride[] = [
     date: "2026-05-10",
     distance: "480 km",
     routeType: "Inter-state",
-    image: "/assets/images/rides/ride-1.jpg",
+    image: "/assets/images/rides/ride1.jpg",
     meetupTime: "05:30 AM",
     meetupLocation: "Bavdhan Highway Cafe, Pune",
     membersJoined: 24,
@@ -91,7 +91,7 @@ const upcomingRidesData: Ride[] = [
     date: "2026-05-24",
     distance: "620 km",
     routeType: "Inter-city",
-    image: "/assets/images/rides/ride-2.jpg",
+    image: "/assets/images/rides/ride2.jpg",
     meetupTime: "06:00 AM",
     meetupLocation: "NH11 Toll Plaza, Jaipur",
     membersJoined: 18,
@@ -107,7 +107,7 @@ const upcomingRidesData: Ride[] = [
     date: "2026-06-14",
     distance: "1,100 km",
     routeType: "Inter-state",
-    image: "/assets/images/rides/ride-3.jpg",
+    image: "/assets/images/rides/ride3.jpg",
     meetupTime: "04:30 AM",
     meetupLocation: "Mall Road Square, Manali",
     membersJoined: 32,
@@ -123,7 +123,7 @@ const mvpCrew: Member[] = [
     name: "Arjun Mehta",
     role: "Founder & Ride Leader",
     bike: "Royal Enfield Himalayan 450",
-    image: "/assets/images/crew/member-1.jpg",
+    image: "/assets/images/crew/crew1.jpg",
     bio: "Started MotoXCode in 2019 with a single ride to Ladakh and a WhatsApp group of 12. Now a movement of hundreds. Arjun believes every machine has a soul — you just have to listen.",
     years: 7,
     location: "Mumbai, Maharashtra",
@@ -136,7 +136,7 @@ const mvpCrew: Member[] = [
     name: "Priya Nair",
     role: "Route Architect",
     bike: "KTM 390 Adventure",
-    image: "/assets/images/crew/member-2.jpg",
+    image: "/assets/images/crew/crew2.jpg",
     bio: "Priya maps every route like a military operation — elevation profiles, fuel stops, bail-out points, and the best chai stops. She's ridden 40,000+ km across India.",
     years: 5,
     location: "Pune, Maharashtra",
@@ -148,7 +148,7 @@ const mvpCrew: Member[] = [
     name: "Rajan Sharma",
     role: "Mechanic & Crew Chief",
     bike: "Bajaj Dominar 400",
-    image: "/assets/images/crew/member-3.jpg",
+    image: "/assets/images/crew/crew3.jpg",
     bio: "If your bike has a problem, Rajan has already fixed it in his head before you finish explaining. 15 years in the saddle, 20 years with a wrench.",
     years: 8,
     location: "Delhi, NCR",
@@ -160,32 +160,32 @@ const mvpCrew: Member[] = [
 const galleryPreviewImages: GalleryImage[] = [
   {
     id: "gallery1",
-    src: "/assets/images/gallery/img-1.jpg",
+    src: "/assets/images/gallery/gallery1.jpg",
     title: "Mountain Pass Celebration",
   },
   {
     id: "gallery2",
-    src: "/assets/images/gallery/img-2.jpg",
+    src: "/assets/images/gallery/gallery2.jpg",
     title: "Coastal Convoy",
   },
   {
     id: "gallery3",
-    src: "/assets/images/gallery/img-7.jpg",
+    src: "/assets/images/gallery/gallery3.jpg",
     title: "Rain Reflections",
   },
   {
     id: "gallery4",
-    src: "/assets/images/gallery/img-4.jpg",
+    src: "/assets/images/gallery/gallery4.jpg",
     title: "Desert Run",
   },
   {
     id: "gallery5",
-    src: "/assets/images/gallery/img-5.jpg",
+    src: "/assets/images/gallery/gallery5.jpg",
     title: "Himalayan Scale",
   },
   {
     id: "gallery6",
-    src: "/assets/images/gallery/img-6.jpg",
+    src: "/assets/images/gallery/gallery6.jpg",
     title: "Golden Hour Viewpoint",
   },
 ];

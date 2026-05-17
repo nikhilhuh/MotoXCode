@@ -7,12 +7,12 @@ import { Timeline } from "@/types/timeline";
 import { RidingCode } from "@/types/ridingCode";
 
 // this static data will become dynamic and come from server
-import AboutHeroBg from "/assets/images/about/hero.png";
+import AboutHeroBg from "/assets/images/about/aboutHero.png";
 const philosophy: Philosophy = {
   id: "philosophy1",
   quote: "The road is not a destination. It's a conversation.",
   author: "Arjun Mehta, Founder",
-  image: "/assets/images/about/img-1.jpg",
+  image: "/assets/images/about/about1.jpg",
 };
 const timeline: Timeline[] = [
   {
