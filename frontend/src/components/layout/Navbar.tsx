@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import { motion, Variants } from "framer-motion";
 import StaggeredMenu from "./StaggeredMenu";
+import { Social } from "@/types/social";
 
 const EASE_PREMIUM: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
@@ -55,8 +56,10 @@ const navItemVariants: Variants = {
 };
 
 /* ===================== COMPONENT ===================== */
-
-const Navbar: React.FC = () => {
+interface NavbarProps {
+  socials: Social[];
+}
+const Navbar: React.FC<NavbarProps> = ({ socials }) => {
   const [scrolled, setScrolled] = useState<boolean>(false);
   const [windowWidth, setWindowWidth] = useState<number>(window.innerWidth);
   const [menuOpen, setMenuOpen] = useState<boolean>(false);
@@ -95,12 +98,8 @@ const Navbar: React.FC = () => {
   const menuItems = navLinks.map((item) => ({
     label: item.label,
     ariaLabel: item.label,
-    link: "#",
+    link: item.to,
   }));
-
-  const staggeredSocials = [
-    { label: "Instagram", link: "#" },
-  ];
 
   /* Desktop navbar width logic */
   let maxWidth = windowWidth;
@@ -221,12 +220,12 @@ const Navbar: React.FC = () => {
       {windowWidth < 768 && (
         <StaggeredMenu
           items={menuItems}
-          socialItems={staggeredSocials}
+          socialItems={socials}
           displaySocials={true}
           colors={["var(--color-primary)", "var(--color-bg)"]}
           menuButtonColor="var(--color-text-primary)"
           openMenuButtonColor="var(--color-text-primary)"
-          accentColor="var(--color-primary)"
+          accentColor="var(--color-highlight)"
           onMenuOpen={() => setMenuOpen(true)}
           onMenuClose={() => setMenuOpen(false)}
         />

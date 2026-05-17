@@ -199,6 +199,12 @@
   user-select: none;
   opacity: var(--sm-num-opacity, 0);
 }
+.sm-scope .sm-panel-item-active {
+  color: var(--sm-accent, var(--color-highlight, #ff5a1f)) !important;
+}
+.sm-scope .sm-panel-list[data-numbering] .sm-panel-item-active::after {
+  color: var(--sm-accent, var(--color-highlight, #ff5a1f)) !important;
+}
 @media (max-width: 1024px) {
   .sm-scope .staggered-menu-panel {
     width: 100%;

@@ -1,7 +1,7 @@
 import React, { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import "./StaggeredMenu.css";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 export interface StaggeredMenuItem {
   label: string;
@@ -45,6 +45,7 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
 }: StaggeredMenuProps) => {
   const [open, setOpen] = useState(false);
   const openRef = useRef(false);
+  const location = useLocation();
 
   const panelRef = useRef<HTMLDivElement | null>(null);
   const preLayersRef = useRef<HTMLDivElement | null>(null);
@@ -382,6 +383,15 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
 
   const toggleMenu = useCallback(() => {
     const target = !openRef.current;
+
+    // Shift focus out of the menu before closing to avoid aria-hidden focus warnings
+    if (!target) {
+      if (document.activeElement instanceof HTMLElement) {
+        document.activeElement.blur();
+      }
+      toggleBtnRef.current?.focus();
+    }
+
     openRef.current = target;
     setOpen(target);
 
@@ -408,6 +418,12 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
 
   const closeMenu = useCallback(() => {
     if (openRef.current) {
+      // Shift focus out of the menu before closing to avoid aria-hidden focus warnings
+      if (document.activeElement instanceof HTMLElement) {
+        document.activeElement.blur();
+      }
+      toggleBtnRef.current?.focus();
+
       openRef.current = false;
       setOpen(false);
       onMenuClose?.();
@@ -557,6 +573,7 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
             pointerEvents: open ? "auto" : "none",
           }}
           aria-hidden={!open}
+          inert={!open ? true : undefined}
         >
           <div className="sm-panel-inner flex-1 flex flex-col gap-5">
             <ul
@@ -570,9 +587,11 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
                     className="sm-panel-itemWrap relative overflow-hidden leading-none"
                     key={it.label + idx}
                   >
-                    <a
-                      className="sm-panel-item relative font-semibold cursor-pointer leading-none tracking-[-2px] uppercase transition-[background,color] duration-150 ease-linear inline-block no-underline text-[2.5rem] pr-[2.2em] sm:text-[3rem] pr-[1.2em]"
-                      href={it.link}
+                    <Link
+                      className={`sm-panel-item relative font-semibold cursor-pointer leading-none tracking-[-2px] uppercase transition-[background,color] duration-150 ease-linear inline-block no-underline text-[2.5rem] pr-[2.2em] sm:text-[3rem] pr-[1.2em] ${
+                        location.pathname === it.link ? "sm-panel-item-active" : ""
+                      }`}
+                      to={it.link}
                       onClick={toggleMenu}
                       aria-label={it.ariaLabel}
                       data-index={idx + 1}
@@ -580,7 +599,7 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
                       <span className="sm-panel-itemLabel inline-block [transform-origin:50%_100%] will-change-transform">
                         {it.label}
                       </span>
-                    </a>
+                    </Link>
                   </li>
                 ))
               ) : (

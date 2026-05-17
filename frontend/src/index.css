@@ -7,6 +7,7 @@
   --color-accent: #94a3b8; /* Muted Steel: For subheadlines, secondary info, and icons */
   --color-accent-hover: #cbd5e1; /* Light Sheen: Subtle interactive state for links/buttons */
   --color-navbar-bg: rgba(15, 23, 42, 0.55); /* Glassmorphism: Semi-transparent deep slate for navbar background */
+  --color-highlight: #ff5a1f; /* Vibrant Moto Orange: Brand highlight accent for active states */
 
   /* Deep Backgrounds & Surfaces */
   --color-bg: #020617; /* Midnight Navy Black: Deepest layer for maximum contrast */

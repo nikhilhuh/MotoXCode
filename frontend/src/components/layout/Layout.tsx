@@ -2,6 +2,10 @@ import { Outlet, useLocation } from 'react-router-dom'
 import { useEffect } from 'react'
 import Navbar from './Navbar'
 import Footer from './Footer'
+import { Social } from '@/types/social';
+
+// this static data will become dynamic and come from server
+const socials: Social[] = [{ label: "Instagram", link: "#" }, { label: "YouTube", link: "#" }];
 
 export default function Layout() {
   const { pathname } = useLocation()
@@ -14,11 +18,11 @@ export default function Layout() {
     <div
       className="min-h-screen flex flex-col bg-bg text-text-primary"
     >
-      <Navbar />
+      <Navbar socials={socials}/>
       <main className="flex-1">
         <Outlet />
       </main>
-      <Footer />
+      <Footer socials={socials}/>
     </div>
   )
 }
