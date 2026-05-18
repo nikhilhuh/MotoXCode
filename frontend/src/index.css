@@ -23,6 +23,7 @@
   --font-heading: "Bebas Neue", sans-serif; /* Impact & Authority */
   --font-body: "Inter", sans-serif; /* Precision & Readability */
   --font-sub: "Space Grotesk", sans-serif; /* Engineered/Premium Vibe */
+  --font-accent: "Space Grotesk", sans-serif; /* Accent font for statistics/labels */
   --font-mono: "JetBrains Mono", monospace; /* The "Code" & Data */
 }
 

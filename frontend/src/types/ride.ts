@@ -1,3 +1,5 @@
+export type RideFilter = 'all' | 'upcoming' | 'past';
+
 export interface Ride {
   id: string;
   title: string;

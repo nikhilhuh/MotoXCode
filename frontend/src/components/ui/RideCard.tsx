@@ -54,15 +54,15 @@ export default function RideCard({ ride }: RideCardProps) {
       {/* Badges */}
       <div className="absolute top-5 left-5 right-5 flex justify-between items-start z-10">
         <span
-          className={`inline-flex items-center gap-1.5 text-[0.6875rem] font-semibold tracking-[0.12em] uppercase px-3 py-1 rounded-full bg-black/60 backdrop-blur-md ${routeTypeClass[ride.routeType]}`}
+          className={`inline-flex items-center gap-1.5 text-[0.6rem] font-semibold tracking-[0.12em] uppercase px-3 py-1 rounded-full bg-black/60 backdrop-blur-md ${routeTypeClass[ride.routeType]}`}
         >
           {ride.routeType}
         </span>
-        {ride.past && (
-          <span className="inline-flex items-center gap-1.5 text-[0.6875rem] font-semibold tracking-[0.12em] uppercase px-3 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/15 text-secondary">
-            Past Ride
+        
+          <span className="inline-flex items-center gap-1.5 text-[0.6rem] font-semibold tracking-[0.12em] uppercase px-3 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/15 text-secondary">
+            {ride.past ? "Past" : "Upcoming"}
           </span>
-        )}
+        
       </div>
 
       {/* Content aligned to bottom */}

@@ -1,11 +1,13 @@
 import { useEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
+import { motion } from 'framer-motion'
 import RideCard from '../../ui/RideCard'
-import { rides } from '../../../data/rides'
+import { Ride, RideFilter } from '@/types/ride'
 
-type RideFilter = 'all' | 'upcoming' | 'past'
-
-export default function RidesGrid() {
+interface RidesGridProps {
+  rides: Ride[];
+}
+export default function RidesGrid({ rides }: RidesGridProps) {
   const [filter, setFilter] = useState<RideFilter>('all')
   const contentRef = useRef<HTMLDivElement>(null)
 
@@ -27,30 +29,51 @@ export default function RidesGrid() {
   }, [filter])
 
   return (
-    <section className="py-20 bg-gradient-to-b from-[var(--color-bg)] via-[var(--color-section)] to-black">
-      <div className="max-w-7xl mx-auto px-6 lg:px-12 w-full">
+    <section id="rides-grid" className="py-12 lg:py-22 bg-gradient-to-b from-[var(--color-bg)] to-black relative overflow-hidden">
+      {/* Decorative premium ambient lighting */}
+      <div className="absolute -top-[10%] right-[10%] w-[40%] h-[40%] rounded-full bg-[var(--color-primary)]/5 blur-[120px] pointer-events-none z-0"></div>
+      <div className="absolute top-[30%] -left-[10%] w-[40%] h-[50%] rounded-full bg-[var(--color-accent)]/5 blur-[120px] pointer-events-none z-0"></div>
+
+      <div className="max-w-7xl mx-auto px-6 lg:px-12 w-full relative z-10">
+        {/* Section header — centered */}
+        <div className="mb-10 lg:mb-16 text-center max-w-4xl mx-auto">
+          <h2 className="section-heading">Our Ride Chronicles</h2>
+          <p className="section-subheading">
+            Ride Journal
+          </p>
+        </div>
+
         {/* Filter tabs */}
-        <div className="flex gap-2 mb-12">
-          {(['all', 'upcoming', 'past'] as RideFilter[]).map((f) => (
-            <button
-              key={f}
-              id={`filter-${f}`}
-              onClick={() => setFilter(f)}
-              className={`font-accent font-semibold text-xs uppercase tracking-widest px-5 py-2.5 rounded-sm transition-all duration-200 border ${
-                filter === f 
-                  ? 'bg-accent border-accent text-white' 
-                  : 'bg-surface border-border text-secondary hover:border-accent/50 hover:text-primary'
-              }`}
-            >
-              {f.charAt(0).toUpperCase() + f.slice(1)}
-            </button>
-          ))}
+        <div className="flex justify-center mb-10 lg:mb-16 relative z-10">
+          <div className="inline-flex p-1 rounded-full bg-[var(--color-surface)]/30 backdrop-blur-xl border border-[var(--color-border)]/40 shadow-[0_8px_32px_rgba(0,0,0,0.4)]">
+            {(['all', 'upcoming', 'past'] as RideFilter[]).map((f) => (
+              <button
+                key={f}
+                id={`filter-${f}`}
+                onClick={() => setFilter(f)}
+                className={`relative font-accent font-bold text-xs uppercase tracking-[0.12em] px-6 py-2.5 rounded-full transition-colors duration-300 cursor-pointer ${
+                  filter === f 
+                    ? 'text-[var(--color-bg)] z-10' 
+                    : 'text-[var(--color-text-secondary)] hover:text-[var(--color-primary)] z-10'
+                }`}
+              >
+                {filter === f && (
+                  <motion.span
+                    layoutId="active-ride-tab"
+                    className="absolute inset-0 bg-[var(--color-primary)] rounded-full -z-10 shadow-[0_4px_12px_rgba(248,250,252,0.2)]"
+                    transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                  />
+                )}
+                {f.charAt(0).toUpperCase() + f.slice(1)}
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* Grid */}
         <div
           ref={contentRef}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8"
         >
           {filtered.map((ride) => (
             <div key={ride.id} className="ride-card-anim">
@@ -61,7 +84,7 @@ export default function RidesGrid() {
 
         {filtered.length === 0 && (
           <div className="text-center py-20">
-            <p className="font-accent text-base text-secondary">
+            <p className="font-accent text-base text-[var(--color-text-secondary)]">
               No rides in this category yet.
             </p>
           </div>
