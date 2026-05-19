@@ -95,12 +95,6 @@ const Navbar: React.FC<NavbarProps> = ({ socials }) => {
     setMenuOpen(false);
   }, [location.pathname]);
 
-  const menuItems = navLinks.map((item) => ({
-    label: item.label,
-    ariaLabel: item.label,
-    link: item.to,
-  }));
-
   /* Desktop navbar width logic */
   let maxWidth = windowWidth;
   let marginLeft = 0;
@@ -219,7 +213,7 @@ const Navbar: React.FC<NavbarProps> = ({ socials }) => {
       {/* ================= MOBILE ================= */}
       {windowWidth < 768 && (
         <StaggeredMenu
-          items={menuItems}
+          items={navLinks}
           socialItems={socials}
           displaySocials={true}
           colors={["var(--color-primary)", "var(--color-bg)"]}

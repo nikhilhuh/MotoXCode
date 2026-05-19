@@ -5,8 +5,7 @@ import { Link, useLocation } from "react-router-dom";
 
 export interface StaggeredMenuItem {
   label: string;
-  ariaLabel: string;
-  link: string;
+  to: string;
 }
 export interface StaggeredMenuSocialItem {
   label: string;
@@ -95,7 +94,7 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
           duration: 0.05,
           repeat: 12,
           yoyo: true,
-          clearProps: "x,y"
+          clearProps: "x,y",
         });
       }
     } else {
@@ -106,7 +105,7 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
           duration: 0.05,
           repeat: 6,
           yoyo: true,
-          clearProps: "x,y"
+          clearProps: "x,y",
         });
       }
       gsap.to(needle, {
@@ -116,7 +115,7 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
         yoyo: true,
         onComplete: () => {
           gsap.to(needle, { rotate: 50, duration: 0.1, ease: "power2.out" });
-        }
+        },
       });
     }
   }, []);
@@ -129,7 +128,7 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
         gsap.to(needleRef.current, {
           rotate: -120,
           duration: 0.3,
-          ease: "power2.out"
+          ease: "power2.out",
         });
       }
     }
@@ -372,15 +371,15 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
             duration: 0.05,
             repeat: -1,
             yoyo: true,
-            ease: "none"
+            ease: "none",
           });
-        }
+        },
       });
     } else {
       gsap.to(needle, {
         rotate: -120,
         duration: 0.45,
-        ease: "power3.inOut"
+        ease: "power3.inOut",
       });
     }
   }, []);
@@ -627,27 +626,36 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
               </span>
 
               {/* TACHOMETER ICON */}
-              <span 
-                ref={tachoRef} 
-                className="sm-tacho" 
-                aria-hidden="true"
-              >
+              <span ref={tachoRef} className="sm-tacho" aria-hidden="true">
                 {/* SVG Dial Ticks */}
-                <svg className="absolute inset-0 w-full h-full text-white/30" viewBox="0 0 32 32" fill="none">
+                <svg
+                  className="absolute inset-0 w-full h-full text-white/30"
+                  viewBox="0 0 32 32"
+                  fill="none"
+                >
                   {/* Outer ticks ring */}
-                  <circle cx="16" cy="16" r="13" stroke="currentColor" strokeWidth="1.2" strokeDasharray="2 2" />
+                  <circle
+                    cx="16"
+                    cy="16"
+                    r="13"
+                    stroke="currentColor"
+                    strokeWidth="1.2"
+                    strokeDasharray="2 2"
+                  />
                   {/* Redline sector */}
-                  <path d="M 25.19 6.81 A 13 13 0 0 1 29 16" fill="none" stroke="var(--color-highlight, #ff5a1f)" strokeWidth="2" />
+                  <path
+                    d="M 25.19 6.81 A 13 13 0 0 1 29 16"
+                    fill="none"
+                    stroke="var(--color-highlight, #ff5a1f)"
+                    strokeWidth="2"
+                  />
                 </svg>
                 {/* Central pivot hub */}
                 <span className="sm-tacho-hub" />
                 {/* Shift light indicator */}
                 <span className="sm-tacho-shiftlight" />
                 {/* Tachometer needle */}
-                <span
-                  ref={needleRef}
-                  className="sm-tacho-needle"
-                />
+                <span ref={needleRef} className="sm-tacho-needle" />
               </span>
             </button>
           </div>
@@ -671,18 +679,20 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
               data-numbering={displayItemNumbering || undefined}
             >
               {items && items.length ? (
-                items.map((it, idx) => (
+                [...items, { label: "Join", to: "/join" }].map((it, idx) => (
                   <li
                     className="sm-panel-itemWrap relative overflow-hidden leading-none"
                     key={it.label + idx}
                   >
                     <Link
                       className={`sm-panel-item relative font-semibold cursor-pointer leading-none tracking-[-2px] uppercase transition-[background,color] duration-150 ease-linear inline-block no-underline text-[2.5rem] pr-[2.2em] sm:text-[3rem] pr-[1.2em] ${
-                        location.pathname === it.link ? "sm-panel-item-active" : ""
+                        location.pathname === it.to
+                          ? "sm-panel-item-active"
+                          : ""
                       }`}
-                      to={it.link}
+                      to={it.to}
                       onClick={toggleMenu}
-                      aria-label={it.ariaLabel}
+                      aria-label={it.label}
                       data-index={idx + 1}
                     >
                       <span className="sm-panel-itemLabel inline-block [transform-origin:50%_100%] will-change-transform">
