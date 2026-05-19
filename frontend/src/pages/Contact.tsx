@@ -1,9 +1,9 @@
 import ContactHero from "../components/pages/contact/ContactHero";
 import ContactForm from "../components/pages/contact/ContactForm";
+import { ContactInfoItem } from "@/types/contactInfo";
 
 // this static data will become dynamic and come from server
 import ContactHeroBg from "/assets/images/contact/contactHero.png";
-import { ContactInfoItem } from "@/types/contactInfo";
 const contactInfo: ContactInfoItem[] = [
   {
     label: "Base",

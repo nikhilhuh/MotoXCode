@@ -4,8 +4,6 @@ import Home from "./pages/Home";
 import About from "./pages/About";
 import Crew from "./pages/Crew";
 import Rides from "./pages/Rides";
-import Gallery from "./pages/Gallery";
-import RoutesPage from "./pages/Routes";
 import Join from "./pages/Join";
 import Events from "./pages/Events";
 import Contact from "./pages/Contact";
@@ -26,8 +24,6 @@ export default function App() {
           <Route path="/about" element={<About />} />
           <Route path="/crew" element={<Crew />} />
           <Route path="/rides" element={<Rides />} />
-          <Route path="/gallery" element={<Gallery />} />
-          <Route path="/routes" element={<RoutesPage />} />
           <Route path="/join" element={<Join />} />
           <Route path="/events" element={<Events />} />
           <Route path="/contact" element={<Contact />} />
