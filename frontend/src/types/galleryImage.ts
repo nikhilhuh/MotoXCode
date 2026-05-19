@@ -1,4 +1,4 @@
-export type GalleryPageType = "home" | "rides" | "events";
+export type GalleryPageType = "home" | "rides" | "events" | "join";
 
 export interface GalleryImage {
   id: string;
