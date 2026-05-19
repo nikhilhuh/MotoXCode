@@ -3,7 +3,7 @@ import Stats from "../components/pages/home/Stats";
 import Values from "../components/pages/home/Values";
 import UpcomingRides from "../components/pages/home/UpcomingRides";
 import MemberSpotlight from "../components/pages/home/MemberSpotlight";
-import GalleryPreview from "../components/pages/home/GalleryPreview";
+import GalleryPreview from "../components/ui/GalleryPreview";
 import CTA from "../components/pages/home/CTA";
 import { Stat } from "@/types/stat";
 import { Value } from "@/types/value";

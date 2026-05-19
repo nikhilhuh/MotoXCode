@@ -6,7 +6,7 @@ interface AboutPhilosophyProps {
 }
 export default function AboutPhilosophy({ philosophy }: AboutPhilosophyProps) {
   return (
-    <section id="philosophy" className="py-12 lg:py-22 bg-gradient-to-b from-[var(--color-bg)] to-[var(--color-section)] relative overflow-hidden">
+    <section id="philosophy" className="py-12 lg:py-22 relative overflow-hidden">
       {/* Decorative ambient lighting */}
       <div className="absolute top-[10%] right-[5%] w-[40%] h-[40%] bg-[var(--color-primary)]/5 rounded-full blur-[120px] pointer-events-none"></div>
       <div className="absolute bottom-[10%] left-[5%] w-[30%] h-[50%] bg-[var(--color-accent)]/5 rounded-full blur-[120px] pointer-events-none"></div>

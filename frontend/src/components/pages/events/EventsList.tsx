@@ -1,89 +1,30 @@
+import { Event, EventType } from "@/types/event";
 
+const typeColors: Record<EventType, string> = {
+  Ride: "var(--color-highlight)",
+  Meetup: "#38bdf8",
+  Workshop: "#c084fc",
+  Social: "#34d399",
+};
 
-interface EventItem {
-  id: string
-  date: string
-  title: string
-  location: string
-  type: 'Ride' | 'Meetup' | 'Workshop' | 'Social'
-  time: string
-  spots: number
-  spotsLeft: number
+interface EventsListProps {
+  events: Event[];
 }
-
-const events: EventItem[] = [
-  {
-    id: 'evt-001',
-    date: '2026-05-10',
-    title: 'Ghats of Fire — Group Ride',
-    location: 'Western Ghats, Maharashtra',
-    type: 'Ride',
-    time: '05:30 AM departure',
-    spots: 20,
-    spotsLeft: 7,
-  },
-  {
-    id: 'evt-002',
-    date: '2026-05-17',
-    title: 'Gear Check & Safety Workshop',
-    location: 'Pune, Maharashtra',
-    type: 'Workshop',
-    time: '10:00 AM – 1:00 PM',
-    spots: 30,
-    spotsLeft: 15,
-  },
-  {
-    id: 'evt-003',
-    date: '2026-05-24',
-    title: 'Desert Thunder — Rajasthan Ride',
-    location: 'Jaisalmer, Rajasthan',
-    type: 'Ride',
-    time: '06:00 AM departure',
-    spots: 25,
-    spotsLeft: 12,
-  },
-  {
-    id: 'evt-004',
-    date: '2026-06-01',
-    title: 'Community Meetup & New Member Welcome',
-    location: 'Mumbai, Maharashtra',
-    type: 'Meetup',
-    time: '07:00 PM',
-    spots: 60,
-    spotsLeft: 34,
-  },
-  {
-    id: 'evt-005',
-    date: '2026-06-14',
-    title: 'Himalayan Vigil Expedition',
-    location: 'Spiti Valley, Himachal Pradesh',
-    type: 'Ride',
-    time: '05:00 AM departure (Day 1)',
-    spots: 15,
-    spotsLeft: 3,
-  },
-]
-
-const typeColors: Record<EventItem['type'], string> = {
-  Ride: 'var(--color-highlight)',
-  Meetup: '#38bdf8',
-  Workshop: '#c084fc',
-  Social: '#34d399',
-}
-
-export default function EventsList() {
-
+export default function EventsList({ events }: EventsListProps) {
   function formatDate(dateStr: string) {
-    const d = new Date(dateStr)
+    const d = new Date(dateStr);
     return {
-      day: d.toLocaleDateString('en-IN', { day: '2-digit' }),
-      month: d.toLocaleDateString('en-IN', { month: 'short' }),
-      weekday: d.toLocaleDateString('en-IN', { weekday: 'long' }),
-    }
+      day: d.toLocaleDateString("en-IN", { day: "2-digit" }),
+      month: d.toLocaleDateString("en-IN", { month: "short" }),
+      weekday: d.toLocaleDateString("en-IN", { weekday: "long" }),
+    };
   }
 
   return (
-    <section id="events-list" className="py-24 relative overflow-hidden bg-gradient-to-b from-[var(--color-bg)] to-black">
+    <section
+      id="events-list"
+      className="py-24 relative overflow-hidden bg-gradient-to-b from-[var(--color-bg)] via-[var(--color-section)] to-[var(--color-surface)]"
+    >
       {/* Decorative premium ambient lighting */}
       <div className="absolute -top-[10%] right-[10%] w-[40%] h-[40%] rounded-full bg-[var(--color-primary)]/5 blur-[120px] pointer-events-none z-0"></div>
       <div className="absolute top-[35%] -left-[10%] w-[40%] h-[50%] rounded-full bg-[var(--color-accent)]/5 blur-[120px] pointer-events-none z-0"></div>
@@ -97,9 +38,10 @@ export default function EventsList() {
 
         <div className="space-y-6 md:space-y-8 relative z-10">
           {events.map((event) => {
-            const { day, month, weekday } = formatDate(event.date)
-            const fillPercent = ((event.spots - event.spotsLeft) / event.spots) * 100
-            const isAlmostFull = event.spotsLeft <= 5
+            const { day, month, weekday } = formatDate(event.date);
+            const fillPercent =
+              ((event.spots - event.spotsLeft) / event.spots) * 100;
+            const isAlmostFull = event.spotsLeft <= 5;
 
             return (
               <div
@@ -114,7 +56,10 @@ export default function EventsList() {
 
                 {/* Left: Date Block */}
                 <div className="flex-shrink-0 flex lg:flex-col items-center justify-center gap-3 lg:gap-0 w-full lg:w-28 h-16 lg:h-28 rounded-2xl bg-black/45 border border-white/5 shadow-inner">
-                  <span className="font-heading font-black text-4xl lg:text-5xl leading-none" style={{ color: typeColors[event.type] }}>
+                  <span
+                    className="font-heading font-black text-4xl lg:text-5xl leading-none"
+                    style={{ color: typeColors[event.type] }}
+                  >
                     {day}
                   </span>
                   <span className="font-accent text-xs font-bold uppercase tracking-[0.2em] lg:mt-1.5 text-[var(--color-text-secondary)]">
@@ -128,7 +73,10 @@ export default function EventsList() {
                   <div className="flex flex-wrap items-center gap-2 mb-3">
                     <span
                       className="inline-flex items-center gap-1.5 text-[0.6rem] font-bold tracking-[0.15em] uppercase px-3 py-1 rounded-full border bg-transparent"
-                      style={{ color: typeColors[event.type], borderColor: typeColors[event.type] + '40' }}
+                      style={{
+                        color: typeColors[event.type],
+                        borderColor: typeColors[event.type] + "40",
+                      }}
                     >
                       {event.type}
                     </span>
@@ -147,15 +95,39 @@ export default function EventsList() {
                   {/* Metadata Row */}
                   <div className="flex flex-wrap gap-x-6 gap-y-2.5 font-accent text-xs text-[var(--color-text-secondary)]">
                     <span className="flex items-center gap-2">
-                      <svg className="w-4 h-4 opacity-70" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <svg
+                        className="w-4 h-4 opacity-70"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                        />
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                        />
                       </svg>
                       {event.location}
                     </span>
                     <span className="flex items-center gap-2">
-                      <svg className="w-4 h-4 opacity-70" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      <svg
+                        className="w-4 h-4 opacity-70"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
                       </svg>
                       {weekday}, {event.time}
                     </span>
@@ -171,7 +143,8 @@ export default function EventsList() {
                         Spots Filled
                       </span>
                       <span className="font-accent text-xs font-bold text-[var(--color-text-primary)]">
-                        {event.spots - event.spotsLeft} / {event.spots} ({Math.round(fillPercent)}%)
+                        {event.spots - event.spotsLeft} / {event.spots} (
+                        {Math.round(fillPercent)}%)
                       </span>
                     </div>
                     <div className="h-2 rounded-full overflow-hidden bg-black/40 border border-white/5 p-[1px]">
@@ -179,8 +152,12 @@ export default function EventsList() {
                         className="h-full rounded-full transition-all duration-700 ease-out shadow-[0_0_8px_currentColor]"
                         style={{
                           width: `${fillPercent}%`,
-                          backgroundColor: isAlmostFull ? '#ef4444' : 'var(--color-highlight)',
-                          color: isAlmostFull ? '#ef4444' : 'var(--color-highlight)',
+                          backgroundColor: isAlmostFull
+                            ? "#ef4444"
+                            : "var(--color-highlight)",
+                          color: isAlmostFull
+                            ? "#ef4444"
+                            : "var(--color-highlight)",
                         }}
                       />
                     </div>
@@ -205,10 +182,10 @@ export default function EventsList() {
                   </div>
                 </div>
               </div>
-            )
+            );
           })}
         </div>
       </div>
     </section>
-  )
+  );
 }

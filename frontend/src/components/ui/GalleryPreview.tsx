@@ -8,10 +8,12 @@ gsap.registerPlugin(ScrollTrigger);
 
 interface GalleryPreviewProps {
   galleryPreviewImages: GalleryImage[];
+  className?: string;
 }
 
 export default function GalleryPreview({
   galleryPreviewImages,
+  className,
 }: GalleryPreviewProps) {
   const sectionRef = useRef<HTMLDivElement>(null);
   const [lightbox, setLightbox] = useState<{
@@ -103,7 +105,7 @@ export default function GalleryPreview({
       {/* ── SECTION ── */}
       <section
         ref={sectionRef}
-        className="py-12 lg:py-22 relative overflow-hidden bg-gradient-to-b from-[var(--color-surface)] to-[var(--color-section)]"
+        className={`py-12 lg:py-22 relative overflow-hidden ${className || "bg-gradient-to-b from-[var(--color-surface)] to-[var(--color-section)]"}`}
       >
         {/* Ambient glow blobs */}
         <div className="absolute -top-[10%] right-[5%] w-[35%] h-[40%] rounded-full bg-[var(--color-primary)]/5 blur-[120px] pointer-events-none z-0" />

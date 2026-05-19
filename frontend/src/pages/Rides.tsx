@@ -1,6 +1,8 @@
 import RidesHero from '../components/pages/rides/RidesHero'
 import RidesGrid from '../components/pages/rides/RidesGrid'
+import GalleryPreview from '@/components/ui/GalleryPreview';
 import { Ride } from '@/types/ride';
+import { GalleryImage } from '@/types/galleryImage';
 
 // this static data will become dynamic and come from server
 import RidesHeroBg from '/assets/images/rides/ridesHero.png'
@@ -81,12 +83,51 @@ const rides: Ride[] = [
     past: true,
   },
 ];
+const galleryPreviewImages: GalleryImage[] = [
+  {
+    id: "gallery1",
+    src: "/assets/images/gallery/gallery1.jpg",
+    title: "Mountain Pass Celebration",
+    page: "rides",
+  },
+  {
+    id: "gallery2",
+    src: "/assets/images/gallery/gallery2.jpg",
+    title: "Coastal Convoy",
+    page: "rides",
+  },
+  {
+    id: "gallery3",
+    src: "/assets/images/gallery/gallery3.jpg",
+    title: "Rain Reflections",
+    page: "rides",
+  },
+  {
+    id: "gallery4",
+    src: "/assets/images/gallery/gallery4.jpg",
+    title: "Desert Run",
+    page: "rides",
+  },
+  {
+    id: "gallery5",
+    src: "/assets/images/gallery/gallery5.jpg",
+    title: "Himalayan Scale",
+    page: "rides",
+  },
+  {
+    id: "gallery6",
+    src: "/assets/images/gallery/gallery6.jpg",
+    title: "Golden Hour Viewpoint",
+    page: "rides",
+  },
+];
 
 export default function Rides() {
   return (
     <>
       <RidesHero RidesHeroBg={RidesHeroBg} />
-      <RidesGrid rides={rides}/>
+      <RidesGrid rides={rides} />
+      <GalleryPreview galleryPreviewImages={galleryPreviewImages} className="bg-gradient-to-b from-[var(--color-surface)] to-black" />
     </>
   )
 }

@@ -49,7 +49,7 @@ export default function AboutRidingCode({ ridingCode }: AboutRidingCodeProps) {
   return (
     <section
       ref={containerRef}
-      className="py-12 lg:py-22 bg-gradient-to-b from-[var(--color-surface)] to-black relative overflow-hidden"
+      className="py-12 lg:py-22 bg-gradient-to-b from-[var(--color-bg)] to-black relative overflow-hidden"
     >
       {/* Decorative ambient lighting */}
       <div className="absolute -top-[10%] right-[10%] w-[40%] h-[40%] rounded-full bg-[var(--color-primary)]/5 blur-[120px] pointer-events-none z-0"></div>
