@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
+import { Link } from "react-router-dom";
 
 interface CrewHeroProps {
   CrewHeroBg: string;
@@ -83,12 +84,12 @@ export default function CrewHero({ CrewHeroBg }: CrewHeroProps) {
             >
               Meet the Crew
             </a>
-            <a
-              href="#join"
+            <Link
+              to="/join"
               className="btn-secondary w-full sm:w-auto px-8 py-4 text-sm lg:text-base"
             >
               Join the Pack
-            </a>
+            </Link>
           </div>
         </div>
       </div>

@@ -369,9 +369,15 @@ export default function ContactForm({ contactInfo }: ContactFormProps) {
               href="/rides"
               className="text-[var(--color-primary)] hover:underline font-semibold"
             >
-              Rides page
+              Rides
+            </a>{" "}&{" "} 
+            <a
+              href="/events"
+              className="text-[var(--color-primary)] hover:underline font-semibold"
+            >
+              Events
             </a>{" "}
-            first.
+            pages first.
           </p>
         </div>
       </div>

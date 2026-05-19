@@ -47,6 +47,7 @@ const footerGroups = [
   {
     heading: "Explore",
     links: [
+      { to: "/", label: "Home"},
       { to: "/about", label: "About Us" },
       { to: "/crew", label: "Our Crew" },
     ],
@@ -57,7 +58,7 @@ const footerGroups = [
       { to: "/rides", label: "Rides" },
       { to: "/events", label: "Events" },
       { to: "/join", label: "Join Us" },
-      { to: "/contact", label: "Contact" },
+      { to: "/contact", label: "Contact Us" },
     ],
   },
 ];
@@ -121,7 +122,7 @@ export default function Footer({ socials }: FooterProps) {
             </Link>
 
             <p className="font-body text-sm leading-relaxed max-w-sm text-[var(--color-text-secondary)] mb-8">
-              Born to ride. Built to belong. A premium motorcycle community for
+              A premium motorcycle community for
               riders who take both the road and the craft seriously.
             </p>
 

@@ -74,6 +74,15 @@ export default function ContactHero({ ContactHeroBg }: ContactHeroProps) {
           <p className="hero-anim font-[var(--font-body)] font-medium max-w-2xl mx-auto text-sm md:text-base lg:text-xl text-[var(--color-text-primary)] opacity-90 leading-relaxed mb-10">
             Have questions, want to collaborate, or ready to ride? Drop us a line. We're always listening.
           </p>
+
+          <div className="hero-anim flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 w-full max-w-[16rem] sm:max-w-none mx-auto">
+            <a
+              href="#contact-content"
+              className="btn-primary w-full sm:w-auto px-8 py-4 text-sm lg:text-base"
+            >
+              Contact the Crew
+            </a>
+          </div>
         </div>
       </div>
 

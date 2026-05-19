@@ -1,5 +1,4 @@
 import { useEffect, useRef } from 'react'
-import { Link } from 'react-router-dom'
 import gsap from 'gsap'
 
 interface EventsHeroProps {
@@ -83,12 +82,6 @@ export default function EventsHero({ EventsHeroBg }: EventsHeroProps) {
             >
               Explore Calendar
             </a>
-            <Link
-              to="/join"
-              className="btn-secondary w-full sm:w-auto px-8 py-4 text-sm lg:text-base"
-            >
-              Join the Pack
-            </Link>
           </div>
         </div>
       </div>

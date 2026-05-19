@@ -48,6 +48,7 @@ export default function AboutRidingCode({ ridingCode }: AboutRidingCodeProps) {
 
   return (
     <section
+      id="riding-code"
       ref={containerRef}
       className="py-12 lg:py-22 bg-gradient-to-b from-[var(--color-bg)] to-black relative overflow-hidden"
     >
