@@ -1,15 +1,23 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Layout from "./components/layout/Layout";
-import Home from "./pages/Home";
-import About from "./pages/About";
-import Crew from "./pages/Crew";
-import Rides from "./pages/Rides";
-import Join from "./pages/Join";
-import Events from "./pages/Events";
-import Contact from "./pages/Contact";
-import { useEffect } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import { socketListeners } from "./socket/socketListeners";
 import socket from "./socket/socketSetup";
+import { HomeSkeleton } from "./components/skeletons/HomeSkeleton";
+import { AboutSkeleton } from "./components/skeletons/AboutSkeleton";
+import { CrewSkeleton } from "./components/skeletons/CrewSkeleton";
+import { RidesSkeleton } from "./components/skeletons/RidesSkeleton";
+import { JoinSkeleton } from "./components/skeletons/JoinSkeleton";
+import { EventsSkeleton } from "./components/skeletons/EventsSkeleton";
+import { ContactSkeleton } from "./components/skeletons/ContactSkeleton";
+
+const Home = lazy(() => import("./pages/Home"));
+const About = lazy(() => import("./pages/About"));
+const Crew = lazy(() => import("./pages/Crew"));
+const Rides = lazy(() => import("./pages/Rides"));
+const Join = lazy(() => import("./pages/Join"));
+const Events = lazy(() => import("./pages/Events"));
+const Contact = lazy(() => import("./pages/Contact"));
 
 export default function App() {
   useEffect(() => {
@@ -20,13 +28,62 @@ export default function App() {
     <BrowserRouter>
       <Routes>
         <Route element={<Layout />}>
-          <Route path="/" element={<Home />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/crew" element={<Crew />} />
-          <Route path="/rides" element={<Rides />} />
-          <Route path="/join" element={<Join />} />
-          <Route path="/events" element={<Events />} />
-          <Route path="/contact" element={<Contact />} />
+          <Route
+            path="/"
+            element={
+              <Suspense fallback={<HomeSkeleton />}>
+                <Home />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/about"
+            element={
+              <Suspense fallback={<AboutSkeleton />}>
+                <About />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/crew"
+            element={
+              <Suspense fallback={<CrewSkeleton />}>
+                <Crew />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/rides"
+            element={
+              <Suspense fallback={<RidesSkeleton />}>
+                <Rides />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/events"
+            element={
+              <Suspense fallback={<EventsSkeleton />}>
+                <Events />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/contact"
+            element={
+              <Suspense fallback={<ContactSkeleton />}>
+                <Contact />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/join"
+            element={
+              <Suspense fallback={<JoinSkeleton />}>
+                <Join />
+              </Suspense>
+            }
+          />
         </Route>
       </Routes>
     </BrowserRouter>
