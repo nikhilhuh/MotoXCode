@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
-import { Link } from 'react-router-dom'
 import type { Ride } from '../../types/ride'
+import JoinFormModal from './JoinFormModal'
 
 interface RideCardProps {
   ride: Ride
@@ -15,6 +15,7 @@ const routeTypeClass: Record<Ride['routeType'], string> = {
 
 export default function RideCard({ ride }: RideCardProps) {
   const [isOpen, setIsOpen] = useState(false)
+  const [isJoinOpen, setIsJoinOpen] = useState(false)
 
   useEffect(() => {
     if (isOpen) {
@@ -148,13 +149,16 @@ export default function RideCard({ ride }: RideCardProps) {
 
               {/* CTA overlay */}
               {!ride.past ? (
-                <Link
-                  to={`/contact?subject=Joining ${encodeURIComponent(ride.title)}`}
-                  className="btn-primary flex-shrink-0 px-4 py-2 text-[0.65rem]"
-                  onClick={(e) => e.stopPropagation()}
+                <button
+                  type="button"
+                  className="btn-primary flex-shrink-0 px-4 py-2 text-[0.65rem] cursor-pointer"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    setIsJoinOpen(true)
+                  }}
                 >
                   Join This Ride
-                </Link>
+                </button>
               ) : (
                 <span className="flex-shrink-0 inline-flex items-center px-3 py-1.5 rounded-full bg-black/60 backdrop-blur-sm border border-white/20 text-white/60 font-[var(--font-accent)] text-[0.6rem] font-semibold tracking-widest uppercase">
                   Completed
@@ -213,6 +217,19 @@ export default function RideCard({ ride }: RideCardProps) {
       </div>,
       document.body
     )}
+
+    <JoinFormModal
+      isOpen={isJoinOpen}
+      onClose={() => setIsJoinOpen(false)}
+      target={{
+        id: ride.id,
+        title: ride.title,
+        date: formattedDate,
+        time: ride.meetupTime,
+        location: ride.meetupLocation || `${ride.location.from} to ${ride.location.to}`,
+        type: 'ride',
+      }}
+    />
     </>
   )
 }

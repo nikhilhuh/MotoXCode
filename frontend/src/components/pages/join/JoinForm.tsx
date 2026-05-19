@@ -13,6 +13,17 @@ const experienceLevels = [
   "10+ years",
 ];
 
+interface FormErrors {
+  name?: string;
+  email?: string;
+  phone?: string;
+  location?: string;
+  bike?: string;
+  experience?: string;
+  why?: string;
+  agree?: string;
+}
+
 export default function JoinForm() {
   const formRef = useRef<HTMLDivElement>(null);
   const [submitted, setSubmitted] = useState(false);
@@ -27,6 +38,7 @@ export default function JoinForm() {
     ridden: "",
     agree: false,
   });
+  const [errors, setErrors] = useState<FormErrors>({});
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -55,15 +67,68 @@ export default function JoinForm() {
     >
   ) {
     const target = e.target;
+    // Extract baseName: "membership-name" -> "name"
+    const baseName = target.name.split('-').pop() as keyof Membership;
     const value =
       target instanceof HTMLInputElement && target.type === "checkbox"
         ? (target as HTMLInputElement).checked
         : target.value;
-    setFormData((prev) => ({ ...prev, [target.name]: value }));
+    setFormData((prev) => ({ ...prev, [baseName]: value }));
+
+    // Reset all errors in the form when user makes any change
+    setErrors({});
+  }
+
+  function validateForm(): boolean {
+    const newErrors: FormErrors = {};
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const phoneRegex = /^[0-9+\-\s()]{8,15}$/;
+
+    if (!formData.name.trim()) {
+      newErrors.name = "Full Name is required";
+    } else if (formData.name.trim().length < 2) {
+      newErrors.name = "Name must be at least 2 characters";
+    }
+
+    if (!formData.email.trim()) {
+      newErrors.email = "Email is required";
+    } else if (!emailRegex.test(formData.email)) {
+      newErrors.email = "Please enter a valid email address";
+    }
+
+    if (formData.phone.trim() && !phoneRegex.test(formData.phone)) {
+      newErrors.phone = "Please enter a valid phone number";
+    }
+
+    if (!formData.location.trim()) {
+      newErrors.location = "City / Location is required";
+    }
+
+    if (!formData.bike.trim()) {
+      newErrors.bike = "Motorcycle model is required";
+    }
+
+    if (!formData.experience) {
+      newErrors.experience = "Please select your riding experience";
+    }
+
+    if (!formData.why.trim()) {
+      newErrors.why = "Please tell us why you want to join";
+    } else if (formData.why.trim().length < 10) {
+      newErrors.why = "Please write a bit more (at least 10 characters)";
+    }
+
+    if (!formData.agree) {
+      newErrors.agree = "You must agree to the riding code to apply";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   }
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (!validateForm()) return;
     setSubmitted(true);
   }
 
@@ -106,7 +171,7 @@ export default function JoinForm() {
               </p>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} id="membership-form" className="space-y-6 relative z-10">
+            <form onSubmit={handleSubmit} id="membership-form" className="space-y-6 relative z-10" noValidate>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 <div>
                   <label
@@ -117,15 +182,17 @@ export default function JoinForm() {
                   </label>
                   <input
                     id="membership-name"
-                    name="name"
+                    name="membership-name"
                     type="text"
-                    required
                     autoComplete="name"
-                    className="w-full bg-[var(--color-surface)]/50 border border-[var(--color-border)] rounded-lg py-3.5 px-5 text-[var(--color-text-primary)] font-[var(--font-body)] text-[0.9375rem] transition-all duration-300 outline-none placeholder:text-[var(--color-text-secondary)] placeholder:opacity-50 focus:border-[var(--color-primary)] focus:bg-[var(--color-surface)] focus:shadow-[0_0_15px_rgba(248,250,252,0.05)]"
+                    className={`w-full bg-[var(--color-surface)]/50 border ${errors.name ? 'border-red-500' : 'border-[var(--color-border)]'} rounded-lg py-3.5 px-5 text-[var(--color-text-primary)] font-[var(--font-body)] text-[0.9375rem] transition-all duration-300 outline-none placeholder:text-[var(--color-text-secondary)] placeholder:opacity-50 focus:border-[var(--color-primary)] focus:bg-[var(--color-surface)] focus:shadow-[0_0_15px_rgba(248,250,252,0.05)]`}
                     placeholder="Your name"
                     value={formData.name}
                     onChange={handleChange}
                   />
+                  {errors.name && (
+                    <span className="text-[10px] text-red-400 block font-medium mt-1.5">{errors.name}</span>
+                  )}
                 </div>
                 <div>
                   <label
@@ -136,15 +203,17 @@ export default function JoinForm() {
                   </label>
                   <input
                     id="membership-email"
-                    name="email"
+                    name="membership-email"
                     type="email"
-                    required
                     autoComplete="email"
-                    className="w-full bg-[var(--color-surface)]/50 border border-[var(--color-border)] rounded-lg py-3.5 px-5 text-[var(--color-text-primary)] font-[var(--font-body)] text-[0.9375rem] transition-all duration-300 outline-none placeholder:text-[var(--color-text-secondary)] placeholder:opacity-50 focus:border-[var(--color-primary)] focus:bg-[var(--color-surface)] focus:shadow-[0_0_15px_rgba(248,250,252,0.05)]"
+                    className={`w-full bg-[var(--color-surface)]/50 border ${errors.email ? 'border-red-500' : 'border-[var(--color-border)]'} rounded-lg py-3.5 px-5 text-[var(--color-text-primary)] font-[var(--font-body)] text-[0.9375rem] transition-all duration-300 outline-none placeholder:text-[var(--color-text-secondary)] placeholder:opacity-50 focus:border-[var(--color-primary)] focus:bg-[var(--color-surface)] focus:shadow-[0_0_15px_rgba(248,250,252,0.05)]`}
                     placeholder="you@email.com"
                     value={formData.email}
                     onChange={handleChange}
                   />
+                  {errors.email && (
+                    <span className="text-[10px] text-red-400 block font-medium mt-1.5">{errors.email}</span>
+                  )}
                 </div>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -157,14 +226,17 @@ export default function JoinForm() {
                   </label>
                   <input
                     id="membership-phone"
-                    name="phone"
+                    name="membership-phone"
                     type="tel"
                     autoComplete="tel"
-                    className="w-full bg-[var(--color-surface)]/50 border border-[var(--color-border)] rounded-lg py-3.5 px-5 text-[var(--color-text-primary)] font-[var(--font-body)] text-[0.9375rem] transition-all duration-300 outline-none placeholder:text-[var(--color-text-secondary)] placeholder:opacity-50 focus:border-[var(--color-primary)] focus:bg-[var(--color-surface)] focus:shadow-[0_0_15px_rgba(248,250,252,0.05)]"
+                    className={`w-full bg-[var(--color-surface)]/50 border ${errors.phone ? 'border-red-500' : 'border-[var(--color-border)]'} rounded-lg py-3.5 px-5 text-[var(--color-text-primary)] font-[var(--font-body)] text-[0.9375rem] transition-all duration-300 outline-none placeholder:text-[var(--color-text-secondary)] placeholder:opacity-50 focus:border-[var(--color-primary)] focus:bg-[var(--color-surface)] focus:shadow-[0_0_15px_rgba(248,250,252,0.05)]`}
                     placeholder="+91 XXXXX XXXXX"
                     value={formData.phone}
                     onChange={handleChange}
                   />
+                  {errors.phone && (
+                    <span className="text-[10px] text-red-400 block font-medium mt-1.5">{errors.phone}</span>
+                  )}
                 </div>
                 <div>
                   <label
@@ -175,15 +247,17 @@ export default function JoinForm() {
                   </label>
                   <input
                     id="membership-location"
-                    name="location"
+                    name="membership-location"
                     type="text"
-                    required
                     autoComplete="address-level2"
-                    className="w-full bg-[var(--color-surface)]/50 border border-[var(--color-border)] rounded-lg py-3.5 px-5 text-[var(--color-text-primary)] font-[var(--font-body)] text-[0.9375rem] transition-all duration-300 outline-none placeholder:text-[var(--color-text-secondary)] placeholder:opacity-50 focus:border-[var(--color-primary)] focus:bg-[var(--color-surface)] focus:shadow-[0_0_15px_rgba(248,250,252,0.05)]"
+                    className={`w-full bg-[var(--color-surface)]/50 border ${errors.location ? 'border-red-500' : 'border-[var(--color-border)]'} rounded-lg py-3.5 px-5 text-[var(--color-text-primary)] font-[var(--font-body)] text-[0.9375rem] transition-all duration-300 outline-none placeholder:text-[var(--color-text-secondary)] placeholder:opacity-50 focus:border-[var(--color-primary)] focus:bg-[var(--color-surface)] focus:shadow-[0_0_15px_rgba(248,250,252,0.05)]`}
                     placeholder="Your city"
                     value={formData.location}
                     onChange={handleChange}
                   />
+                  {errors.location && (
+                    <span className="text-[10px] text-red-400 block font-medium mt-1.5">{errors.location}</span>
+                  )}
                 </div>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -196,15 +270,17 @@ export default function JoinForm() {
                   </label>
                   <input
                     id="membership-bike"
-                    name="bike"
+                    name="membership-bike"
                     type="text"
-                    required
                     autoComplete="off"
-                    className="w-full bg-[var(--color-surface)]/50 border border-[var(--color-border)] rounded-lg py-3.5 px-5 text-[var(--color-text-primary)] font-[var(--font-body)] text-[0.9375rem] transition-all duration-300 outline-none placeholder:text-[var(--color-text-secondary)] placeholder:opacity-50 focus:border-[var(--color-primary)] focus:bg-[var(--color-surface)] focus:shadow-[0_0_15px_rgba(248,250,252,0.05)]"
+                    className={`w-full bg-[var(--color-surface)]/50 border ${errors.bike ? 'border-red-500' : 'border-[var(--color-border)]'} rounded-lg py-3.5 px-5 text-[var(--color-text-primary)] font-[var(--font-body)] text-[0.9375rem] transition-all duration-300 outline-none placeholder:text-[var(--color-text-secondary)] placeholder:opacity-50 focus:border-[var(--color-primary)] focus:bg-[var(--color-surface)] focus:shadow-[0_0_15px_rgba(248,250,252,0.05)]`}
                     placeholder="Make, model, year"
                     value={formData.bike}
                     onChange={handleChange}
                   />
+                  {errors.bike && (
+                    <span className="text-[10px] text-red-400 block font-medium mt-1.5">{errors.bike}</span>
+                  )}
                 </div>
                 <div>
                   <label
@@ -216,10 +292,9 @@ export default function JoinForm() {
                   <div className="relative">
                     <select
                       id="membership-experience"
-                      name="experience"
-                      required
+                      name="membership-experience"
                       autoComplete="off"
-                      className="w-full bg-[var(--color-surface)]/50 border border-[var(--color-border)] rounded-lg py-3.5 px-5 text-[var(--color-text-primary)] font-[var(--font-body)] text-[0.9375rem] transition-all duration-300 outline-none focus:border-[var(--color-primary)] focus:bg-[var(--color-surface)] focus:shadow-[0_0_15px_rgba(248,250,252,0.05)] appearance-none cursor-pointer"
+                      className={`w-full bg-[var(--color-surface)]/50 border ${errors.experience ? 'border-red-500' : 'border-[var(--color-border)]'} rounded-lg py-3.5 px-5 text-[var(--color-text-primary)] font-[var(--font-body)] text-[0.9375rem] transition-all duration-300 outline-none focus:border-[var(--color-primary)] focus:bg-[var(--color-surface)] focus:shadow-[0_0_15px_rgba(248,250,252,0.05)] appearance-none cursor-pointer`}
                       value={formData.experience}
                       onChange={handleChange}
                     >
@@ -250,6 +325,9 @@ export default function JoinForm() {
                       </svg>
                     </div>
                   </div>
+                  {errors.experience && (
+                    <span className="text-[10px] text-red-400 block font-medium mt-1.5">{errors.experience}</span>
+                  )}
                 </div>
               </div>
               <div>
@@ -261,7 +339,7 @@ export default function JoinForm() {
                 </label>
                 <textarea
                   id="membership-ridden"
-                  name="ridden"
+                  name="membership-ridden"
                   autoComplete="off"
                   className="w-full bg-[var(--color-surface)]/50 border border-[var(--color-border)] rounded-lg py-3.5 px-5 text-[var(--color-text-primary)] font-[var(--font-body)] text-[0.9375rem] transition-all duration-300 outline-none placeholder:text-[var(--color-text-secondary)] placeholder:opacity-50 focus:border-[var(--color-primary)] focus:bg-[var(--color-surface)] focus:shadow-[0_0_15px_rgba(248,250,252,0.05)] resize-none"
                   rows={3}
@@ -279,32 +357,38 @@ export default function JoinForm() {
                 </label>
                 <textarea
                   id="membership-why"
-                  name="why"
-                  required
+                  name="membership-why"
                   autoComplete="off"
-                  className="w-full bg-[var(--color-surface)]/50 border border-[var(--color-border)] rounded-lg py-3.5 px-5 text-[var(--color-text-primary)] font-[var(--font-body)] text-[0.9375rem] transition-all duration-300 outline-none placeholder:text-[var(--color-text-secondary)] placeholder:opacity-50 focus:border-[var(--color-primary)] focus:bg-[var(--color-surface)] focus:shadow-[0_0_15px_rgba(248,250,252,0.05)] resize-none"
+                  className={`w-full bg-[var(--color-surface)]/50 border ${errors.why ? 'border-red-500' : 'border-[var(--color-border)]'} rounded-lg py-3.5 px-5 text-[var(--color-text-primary)] font-[var(--font-body)] text-[0.9375rem] transition-all duration-300 outline-none placeholder:text-[var(--color-text-secondary)] placeholder:opacity-50 focus:border-[var(--color-primary)] focus:bg-[var(--color-surface)] focus:shadow-[0_0_15px_rgba(248,250,252,0.05)] resize-none`}
                   rows={4}
                   placeholder="Tell us why you want to ride with us..."
                   value={formData.why}
                   onChange={handleChange}
                 />
+                {errors.why && (
+                  <span className="text-[10px] text-red-400 block font-medium mt-1.5">{errors.why}</span>
+                )}
               </div>
               {/* Agreement */}
-              <label className="flex items-start gap-3 cursor-pointer group">
-                <input
-                  id="membership-agree"
-                  name="agree"
-                  type="checkbox"
-                  required
-                  className="mt-1 flex-shrink-0 accent-[var(--color-primary)] w-4 h-4 rounded border-[var(--color-border)] bg-[var(--color-surface)]"
-                  checked={formData.agree}
-                  onChange={handleChange}
-                />
-                <span className="font-[var(--font-body)] text-xs lg:text-sm text-[var(--color-text-secondary)] select-none">
-                  I agree to uphold the MotoXCode riding code and understand that
-                  membership is subject to review.
-                </span>
-              </label>
+              <div className="space-y-1">
+                <label className="flex items-start gap-3 cursor-pointer group">
+                  <input
+                    id="membership-agree"
+                    name="membership-agree"
+                    type="checkbox"
+                    className="mt-1 flex-shrink-0 accent-[var(--color-primary)] w-4 h-4 rounded border-[var(--color-border)] bg-[var(--color-surface)]"
+                    checked={formData.agree}
+                    onChange={handleChange}
+                  />
+                  <span className="font-[var(--font-body)] text-xs lg:text-sm text-[var(--color-text-secondary)] select-none">
+                    I agree to uphold the MotoXCode riding code and understand that
+                    membership is subject to review.
+                  </span>
+                </label>
+                {errors.agree && (
+                  <span className="text-[10px] text-red-400 block font-medium mt-1.5">{errors.agree}</span>
+                )}
+              </div>
 
               <button
                 type="submit"

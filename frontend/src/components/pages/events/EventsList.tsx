@@ -1,4 +1,6 @@
 import { Event, EventType } from "@/types/event";
+import { useState } from "react";
+import JoinFormModal from "@/components/ui/JoinFormModal";
 
 const typeColors: Record<EventType, string> = {
   Ride: "var(--color-highlight)",
@@ -11,6 +13,22 @@ interface EventsListProps {
   events: Event[];
 }
 export default function EventsList({ events }: EventsListProps) {
+  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
+
+  const targetDetails = selectedEvent
+    ? {
+        id: selectedEvent.id,
+        title: selectedEvent.title,
+        date: new Date(selectedEvent.date).toLocaleDateString("en-IN", {
+          day: "numeric",
+          month: "short",
+          year: "numeric",
+        }),
+        time: selectedEvent.time,
+        location: selectedEvent.location,
+        type: "event" as const,
+      }
+    : null;
   function formatDate(dateStr: string) {
     const d = new Date(dateStr);
     return {
@@ -173,12 +191,13 @@ export default function EventsList({ events }: EventsListProps) {
 
                   {/* RSVP Action */}
                   <div className="w-full md:w-auto lg:w-full">
-                    <a
-                      href="/join"
-                      className="btn-primary w-full block text-center px-6 py-3.5 rounded-xl font-bold uppercase tracking-wider text-xs shadow-md transition-all duration-300 hover:shadow-[0_4px_20px_rgba(248,250,252,0.2)] hover:scale-[1.02]"
+                    <button
+                      type="button"
+                      onClick={() => setSelectedEvent(event)}
+                      className="btn-primary w-full block text-center px-6 py-3.5 rounded-xl font-bold uppercase tracking-wider text-xs shadow-md transition-all duration-300 hover:shadow-[0_4px_20px_rgba(248,250,252,0.2)] hover:scale-[1.02] cursor-pointer"
                     >
                       RSVP Now
-                    </a>
+                    </button>
                   </div>
                 </div>
               </div>
@@ -186,6 +205,14 @@ export default function EventsList({ events }: EventsListProps) {
           })}
         </div>
       </div>
+
+      {targetDetails && (
+        <JoinFormModal
+          isOpen={!!selectedEvent}
+          onClose={() => setSelectedEvent(null)}
+          target={targetDetails}
+        />
+      )}
     </section>
   );
 }

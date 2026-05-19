@@ -71,6 +71,13 @@ function renderContactIcon(type?: string, label?: string) {
   );
 }
 
+interface FormErrors {
+  name?: string;
+  email?: string;
+  subject?: string;
+  message?: string;
+}
+
 export default function ContactForm({ contactInfo }: ContactFormProps) {
   const contentRef = useRef<HTMLDivElement>(null);
   const [submitted, setSubmitted] = useState(false);
@@ -80,6 +87,7 @@ export default function ContactForm({ contactInfo }: ContactFormProps) {
     subject: "",
     message: "",
   });
+  const [errors, setErrors] = useState<FormErrors>({});
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -106,11 +114,42 @@ export default function ContactForm({ contactInfo }: ContactFormProps) {
   function handleChange(
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) {
-    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    const target = e.target;
+    const baseName = target.name.split('-').pop() as keyof ContactFormData;
+    setFormData((prev) => ({ ...prev, [baseName]: target.value }));
+    // Reset all errors in the form when user makes any change
+    setErrors({});
+  }
+
+  function validateForm(): boolean {
+    const newErrors: FormErrors = {};
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!formData.name.trim()) {
+      newErrors.name = "Name is required";
+    } else if (formData.name.trim().length < 2) {
+      newErrors.name = "Name must be at least 2 characters";
+    }
+
+    if (!formData.email.trim()) {
+      newErrors.email = "Email is required";
+    } else if (!emailRegex.test(formData.email)) {
+      newErrors.email = "Please enter a valid email address";
+    }
+
+    if (!formData.message.trim()) {
+      newErrors.message = "Message is required";
+    } else if (formData.message.trim().length < 10) {
+      newErrors.message = "Message must be at least 10 characters";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   }
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (!validateForm()) return;
     setSubmitted(true);
   }
 
@@ -170,7 +209,7 @@ export default function ContactForm({ contactInfo }: ContactFormProps) {
 
           {/* Form Card */}
           <div className="lg:col-span-3 anim-item bg-transparent lg:bg-[var(--color-bg)]/40 lg:border lg:border-[var(--color-border)]/50 lg:backdrop-blur-2xl lg:p-6 lg:rounded-2xl lg:shadow-[0_20px_50px_-10px_rgba(0,0,0,0.8)] relative overflow-hidden flex flex-col justify-between">
-            <div className="hidden lg:blockabsolute -bottom-10 -left-10 w-32 h-32 bg-[var(--color-accent)]/5 rounded-full blur-2xl pointer-events-none z-0"></div>
+            <div className="hidden lg:block absolute -bottom-10 -left-10 w-32 h-32 bg-[var(--color-accent)]/5 rounded-full blur-2xl pointer-events-none z-0"></div>
 
             {submitted ? (
               <div className="text-center py-16 relative z-10 w-full h-full flex flex-col items-center justify-center">
@@ -210,6 +249,7 @@ export default function ContactForm({ contactInfo }: ContactFormProps) {
                     id="contact-form"
                     onSubmit={handleSubmit}
                     className="space-y-6"
+                    noValidate
                   >
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                       <div>
@@ -221,15 +261,17 @@ export default function ContactForm({ contactInfo }: ContactFormProps) {
                         </label>
                         <input
                           id="contact-name"
-                          name="name"
+                          name="contact-name"
                           type="text"
-                          required
                           autoComplete="name"
-                          className="w-full bg-[var(--color-surface)]/50 border border-[var(--color-border)] rounded-lg py-3.5 px-5 text-[var(--color-text-primary)] font-[var(--font-body)] text-[0.9375rem] transition-all duration-300 outline-none placeholder:text-[var(--color-text-secondary)] placeholder:opacity-50 focus:border-[var(--color-primary)] focus:bg-[var(--color-surface)] focus:shadow-[0_0_15px_rgba(248,250,252,0.05)]"
+                          className={`w-full bg-[var(--color-surface)]/50 border ${errors.name ? 'border-red-500' : 'border-[var(--color-border)]'} rounded-lg py-3.5 px-5 text-[var(--color-text-primary)] font-[var(--font-body)] text-[0.9375rem] transition-all duration-300 outline-none placeholder:text-[var(--color-text-secondary)] placeholder:opacity-50 focus:border-[var(--color-primary)] focus:bg-[var(--color-surface)] focus:shadow-[0_0_15px_rgba(248,250,252,0.05)]`}
                           placeholder="Your name"
                           value={formData.name}
                           onChange={handleChange}
                         />
+                        {errors.name && (
+                          <span className="text-[10px] text-red-400 block font-medium mt-1.5">{errors.name}</span>
+                        )}
                       </div>
                       <div>
                         <label
@@ -240,15 +282,17 @@ export default function ContactForm({ contactInfo }: ContactFormProps) {
                         </label>
                         <input
                           id="contact-email"
-                          name="email"
+                          name="contact-email"
                           type="email"
-                          required
                           autoComplete="email"
-                          className="w-full bg-[var(--color-surface)]/50 border border-[var(--color-border)] rounded-lg py-3.5 px-5 text-[var(--color-text-primary)] font-[var(--font-body)] text-[0.9375rem] transition-all duration-300 outline-none placeholder:text-[var(--color-text-secondary)] placeholder:opacity-50 focus:border-[var(--color-primary)] focus:bg-[var(--color-surface)] focus:shadow-[0_0_15px_rgba(248,250,252,0.05)]"
+                          className={`w-full bg-[var(--color-surface)]/50 border ${errors.email ? 'border-red-500' : 'border-[var(--color-border)]'} rounded-lg py-3.5 px-5 text-[var(--color-text-primary)] font-[var(--font-body)] text-[0.9375rem] transition-all duration-300 outline-none placeholder:text-[var(--color-text-secondary)] placeholder:opacity-50 focus:border-[var(--color-primary)] focus:bg-[var(--color-surface)] focus:shadow-[0_0_15px_rgba(248,250,252,0.05)]`}
                           placeholder="you@email.com"
                           value={formData.email}
                           onChange={handleChange}
                         />
+                        {errors.email && (
+                          <span className="text-[10px] text-red-400 block font-medium mt-1.5">{errors.email}</span>
+                        )}
                       </div>
                     </div>
                     <div>
@@ -260,7 +304,7 @@ export default function ContactForm({ contactInfo }: ContactFormProps) {
                       </label>
                       <input
                         id="contact-subject"
-                        name="subject"
+                        name="contact-subject"
                         type="text"
                         autoComplete="off"
                         className="w-full bg-[var(--color-surface)]/50 border border-[var(--color-border)] rounded-lg py-3.5 px-5 text-[var(--color-text-primary)] font-[var(--font-body)] text-[0.9375rem] transition-all duration-300 outline-none placeholder:text-[var(--color-text-secondary)] placeholder:opacity-50 focus:border-[var(--color-primary)] focus:bg-[var(--color-surface)] focus:shadow-[0_0_15px_rgba(248,250,252,0.05)]"
@@ -278,15 +322,17 @@ export default function ContactForm({ contactInfo }: ContactFormProps) {
                       </label>
                       <textarea
                         id="contact-message"
-                        name="message"
-                        required
+                        name="contact-message"
                         rows={5}
                         autoComplete="off"
-                        className="w-full bg-[var(--color-surface)]/50 border border-[var(--color-border)] rounded-lg py-3.5 px-5 text-[var(--color-text-primary)] font-[var(--font-body)] text-[0.9375rem] transition-all duration-300 outline-none placeholder:text-[var(--color-text-secondary)] placeholder:opacity-50 focus:border-[var(--color-primary)] focus:bg-[var(--color-surface)] focus:shadow-[0_0_15px_rgba(248,250,252,0.05)] resize-none"
+                        className={`w-full bg-[var(--color-surface)]/50 border ${errors.message ? 'border-red-500' : 'border-[var(--color-border)]'} rounded-lg py-3.5 px-5 text-[var(--color-text-primary)] font-[var(--font-body)] text-[0.9375rem] transition-all duration-300 outline-none placeholder:text-[var(--color-text-secondary)] placeholder:opacity-50 focus:border-[var(--color-primary)] focus:bg-[var(--color-surface)] focus:shadow-[0_0_15px_rgba(248,250,252,0.05)] resize-none`}
                         placeholder="Tell us everything..."
                         value={formData.message}
                         onChange={handleChange}
                       />
+                      {errors.message && (
+                        <span className="text-[10px] text-red-400 block font-medium mt-1.5">{errors.message}</span>
+                      )}
                     </div>
                     <button
                       type="submit"
