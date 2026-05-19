@@ -80,13 +80,22 @@ export default function GalleryPreview({
               </svg>
             </button>
 
-            {/* Image — stop propagation so clicking image itself doesn't close */}
-            <img
-              src={lightbox.src}
-              alt={lightbox.title}
-              className="max-w-full max-h-[85vh] object-contain rounded-xl shadow-2xl"
+            {/* Image & Title Container — stop propagation so clicking content itself doesn't close */}
+            <div
+              className="relative flex flex-col items-center gap-4 max-w-full max-h-[90vh]"
               onClick={(e) => e.stopPropagation()}
-            />
+            >
+              {/* Title at top of the image */}
+              <h3 className="font-heading text-2xl md:text-4xl text-[var(--color-primary)] tracking-[0.1em] text-center select-none uppercase drop-shadow-[0_4px_12px_rgba(0,0,0,0.6)]">
+                {lightbox.title}
+              </h3>
+              
+              <img
+                src={lightbox.src}
+                alt={lightbox.title}
+                className="max-w-full max-h-[72vh] md:max-h-[78vh] object-contain rounded-xl shadow-2xl border border-white/10"
+              />
+            </div>
           </div>,
           document.body,
         )}

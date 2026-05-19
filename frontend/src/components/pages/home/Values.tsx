@@ -94,7 +94,7 @@ export default function Values({ valuesData }: ValuesProps) {
                 </div>
 
                 <p className="relative z-10 font-[var(--font-body)] text-[clamp(1rem,2vw,1.25rem)] leading-relaxed text-[var(--color-text-primary)]/80 pl-4 border-l-2 border-[var(--color-border)]/50 group-hover:border-[var(--color-accent)]/80 transition-colors duration-500">
-                  {v.body}
+                  {v.description}
                 </p>
               </div>
 

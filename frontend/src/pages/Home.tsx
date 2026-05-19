@@ -48,21 +48,21 @@ const valuesData: Value[] = [
   {
     id: "value1",
     title: "The Code of the Road",
-    body: "Every rider carries a responsibility — to themselves, to their machine, and to every other soul on the asphalt. We don't just ride fast. We ride right.",
+    description: "Every rider carries a responsibility — to themselves, to their machine, and to every other soul on the asphalt. We don't just ride fast. We ride right.",
     tag: "Safety First",
     image: "/assets/images/home/value1.jpg",
   },
   {
     id: "value2",
     title: "Brotherhood Over Horsepower",
-    body: "It doesn't matter what you ride. What matters is how you show up — for a fellow rider stranded on a highway, for a friend who needs a shoulder, for the community that built this.",
+    description: "It doesn't matter what you ride. What matters is how you show up — for a fellow rider stranded on a highway, for a friend who needs a shoulder, for the community that built this.",
     tag: "Community",
     image: "/assets/images/home/value2.jpg",
   },
   {
     id: "value3",
     title: "The Long Road as Teacher",
-    body: "Every long ride strips away the noise. What remains is clarity. We ride not to escape life — but to meet it head-on, at speed, in the open air.",
+    description: "Every long ride strips away the noise. What remains is clarity. We ride not to escape life — but to meet it head-on, at speed, in the open air.",
     tag: "Philosophy",
     image: "/assets/images/home/value3.jpg",
   },
@@ -162,31 +162,37 @@ const galleryPreviewImages: GalleryImage[] = [
     id: "gallery1",
     src: "/assets/images/gallery/gallery1.jpg",
     title: "Mountain Pass Celebration",
+    page: "home",
   },
   {
     id: "gallery2",
     src: "/assets/images/gallery/gallery2.jpg",
     title: "Coastal Convoy",
+    page: "home",
   },
   {
     id: "gallery3",
     src: "/assets/images/gallery/gallery3.jpg",
     title: "Rain Reflections",
+    page: "home",
   },
   {
     id: "gallery4",
     src: "/assets/images/gallery/gallery4.jpg",
     title: "Desert Run",
+    page: "home",
   },
   {
     id: "gallery5",
     src: "/assets/images/gallery/gallery5.jpg",
     title: "Himalayan Scale",
+    page: "home",
   },
   {
     id: "gallery6",
     src: "/assets/images/gallery/gallery6.jpg",
     title: "Golden Hour Viewpoint",
+    page: "home",
   },
 ];
 

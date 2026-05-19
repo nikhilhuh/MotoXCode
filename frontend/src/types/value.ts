@@ -1,7 +1,7 @@
 export interface Value {
   id: string;
   title: string;
-  body: string;
+  description: string;
   tag: string;
   image: string;
 }
