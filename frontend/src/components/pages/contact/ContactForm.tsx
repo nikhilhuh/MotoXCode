@@ -11,6 +11,7 @@ import {
 } from "react-icons/fa6";
 import { ContactInfoItem } from "@/types/contactInfo";
 import { ContactFormData } from "@/types/contactForm";
+import { intakeService } from "@/services";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -147,10 +148,17 @@ export default function ContactForm({ contactInfo }: ContactFormProps) {
     return Object.keys(newErrors).length === 0;
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!validateForm()) return;
-    setSubmitted(true);
+    
+    try {
+      await intakeService.submitContactForm(formData);
+      setSubmitted(true);
+    } catch (err) {
+      console.error("Failed to submit form:", err);
+      alert("Failed to send message. Please try again later.");
+    }
   }
 
   return (

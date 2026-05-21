@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Membership } from "@/types/membership";
+import { intakeService } from "@/services";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -126,10 +127,17 @@ export default function JoinForm() {
     return Object.keys(newErrors).length === 0;
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!validateForm()) return;
-    setSubmitted(true);
+    
+    try {
+      await intakeService.submitJoinForm(formData);
+      setSubmitted(true);
+    } catch (err) {
+      console.error("Failed to submit form:", err);
+      alert("Failed to submit application. Please try again later.");
+    }
   }
 
   return (

@@ -1,87 +1,38 @@
+import { useEffect, useState } from "react";
 import CrewHero from '../components/pages/crew/CrewHero'
 import CrewGrid from '../components/pages/crew/CrewGrid'
 import CrewCTA from '../components/pages/crew/CrewCTA'
-import { Member } from '@/types/member';
+import { crewService } from '@/services';
+import { CrewSkeleton } from "../components/skeletons/CrewSkeleton";
 
-// this static data will become dynamic and come from server
-import CrewHeroBg from "/assets/images/crew/crewHero.png";
-const crew: Member[] = [
-  {
-    id: 'member-001',
-    name: 'Arjun Mehta',
-    role: 'Founder & Ride Leader',
-    bike: 'Royal Enfield Himalayan 450',
-    image: '/assets/images/crew/crew1.jpg',
-    bio: 'Started MotoXCode in 2019 with a single ride to Ladakh and a WhatsApp group of 12. Now a movement of hundreds. Arjun believes every machine has a soul — you just have to listen.',
-    years: 7,
-    location: 'Mumbai, Maharashtra',
-    instagram: '@arjun.rides',
-    whatsapp: '+91 98200 11234',
-  },
-  {
-    id: 'member-002',
-    name: 'Priya Nair',
-    role: 'Route Architect',
-    bike: 'KTM 390 Adventure',
-    image: '/assets/images/crew/crew2.jpg',
-    bio: "Priya maps every route like a military operation — elevation profiles, fuel stops, bail-out points, and the best chai stops. She's ridden 40,000+ km across India.",
-    years: 5,
-    location: 'Pune, Maharashtra',
-    instagram: '@priya.routes',
-  },
-  {
-    id: 'member-003',
-    name: 'Rajan Sharma',
-    role: 'Mechanic & Crew Chief',
-    bike: 'Bajaj Dominar 400',
-    image: '/assets/images/crew/crew3.jpg',
-    bio: 'If your bike has a problem, Rajan has already fixed it in his head before you finish explaining. 15 years in the saddle, 20 years with a wrench.',
-    years: 8,
-    location: 'Delhi, NCR',
-    instagram: '@rajan.wrenches',
-    whatsapp: '+91 99101 56789',
-  },
-  {
-    id: 'member-004',
-    name: 'Kavya Reddy',
-    role: 'Content & Visual Lead',
-    bike: 'Honda CB500X',
-    image: '/assets/images/crew/crew4.jpg',
-    bio: "Kavya captures the emotion that a spec sheet can't — the way light hits a visor at golden hour, the blur of a fast corner, the silence of a mountain pass.",
-    years: 3,
-    location: 'Hyderabad, Telangana',
-    instagram: '@kavya.lens',
-  },
-  {
-    id: 'member-005',
-    name: 'Dev Krishnan',
-    role: 'Safety Officer',
-    bike: 'BMW G 310 GS',
-    image: '/assets/images/crew/crew5.jpg',
-    bio: "Dev has a first responder certification and has seen what happens when riders skip the safety briefing. He doesn't lecture — he leads by example.",
-    years: 6,
-    location: 'Bengaluru, Karnataka',
-    instagram: '@dev.safe',
-    whatsapp: '+91 97400 22345',
-  },
-  {
-    id: 'member-006',
-    name: 'Zara Khan',
-    role: 'Events Coordinator',
-    bike: 'Triumph Street Twin',
-    image: '/assets/images/crew/crew6.jpg',
-    bio: "Behind every seamless MotoXCode event is Zara's meticulous planning. Hotel blocks, group entries, rider registrations — she makes the chaos invisible.",
-    years: 4,
-    location: 'Jaipur, Rajasthan',
-    instagram: '@zara.events',
-  },
-];
+type CrewData = Awaited<ReturnType<typeof crewService.fetchCrewData>>;
 
 export default function Crew() {
+  const [crewData, setCrewData] = useState<CrewData | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    async function hydrate() {
+      try {
+        const data = await crewService.fetchCrewData();
+        setCrewData(data);
+      } catch (error) {
+        console.error("Failed to load crew data", error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    hydrate();
+  }, []);
+
+  if (isLoading || !crewData) {
+    return <CrewSkeleton />;
+  }
+
   return (
     <>
-      <CrewHero CrewHeroBg={CrewHeroBg} />
-      <CrewGrid crew={crew}/>
+      <CrewHero CrewHeroBg={crewData.hero.image} />
+      <CrewGrid crew={crewData.members}/>
       <CrewCTA />
     </>
   )

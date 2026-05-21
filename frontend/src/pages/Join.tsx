@@ -1,56 +1,40 @@
+import { useEffect, useState } from "react";
 import JoinHero from "../components/pages/join/JoinHero";
 import JoinForm from "../components/pages/join/JoinForm";
-import { GalleryImage } from "@/types/galleryImage";
 import GalleryPreview from "@/components/ui/GalleryPreview";
+import { intakeService } from "@/services";
+import { JoinSkeleton } from "../components/skeletons/JoinSkeleton";
 
-// this static data will become dynamic and come from server
-import JoinHeroBg from "/assets/images/join/joinHero.png";
-const galleryPreviewImages: GalleryImage[] = [
-  {
-    id: "gallery1",
-    src: "/assets/images/gallery/gallery1.jpg",
-    title: "Mountain Pass Celebration",
-    page: "join",
-  },
-  {
-    id: "gallery2",
-    src: "/assets/images/gallery/gallery2.jpg",
-    title: "Coastal Convoy",
-    page: "join",
-  },
-  {
-    id: "gallery3",
-    src: "/assets/images/gallery/gallery3.jpg",
-    title: "Rain Reflections",
-    page: "join",
-  },
-  {
-    id: "gallery4",
-    src: "/assets/images/gallery/gallery4.jpg",
-    title: "Desert Run",
-    page: "join",
-  },
-  {
-    id: "gallery5",
-    src: "/assets/images/gallery/gallery5.jpg",
-    title: "Himalayan Scale",
-    page: "join",
-  },
-  {
-    id: "gallery6",
-    src: "/assets/images/gallery/gallery6.jpg",
-    title: "Golden Hour Viewpoint",
-    page: "join",
-  },
-];
+type JoinPageData = Awaited<ReturnType<typeof intakeService.fetchJoinPageData>>;
 
 export default function Join() {
+  const [joinData, setJoinData] = useState<JoinPageData | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    async function hydrate() {
+      try {
+        const data = await intakeService.fetchJoinPageData();
+        setJoinData(data);
+      } catch (error) {
+        console.error("Failed to load join data", error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    hydrate();
+  }, []);
+
+  if (isLoading || !joinData) {
+    return <JoinSkeleton />;
+  }
+
   return (
     <>
-      <JoinHero JoinHeroBg={JoinHeroBg} />
+      <JoinHero JoinHeroBg={joinData.hero.image} />
       <JoinForm />
       <GalleryPreview
-        galleryPreviewImages={galleryPreviewImages}
+        galleryPreviewImages={joinData.galleryPreview}
         className="bg-gradient-to-b from-[var(--color-surface)] to-black"
       />
     </>
