@@ -186,7 +186,7 @@ export default function ContactForm({ contactInfo }: ContactFormProps) {
                   {contactInfo &&
                     contactInfo.map((item) => (
                       <div
-                        key={item.label}
+                        key={item.id}
                         className="flex items-center gap-4 group"
                       >
                         <div className="w-12 h-12 bg-[var(--color-surface)] border border-[var(--color-border)] text-[var(--color-accent)] rounded-xl flex items-center justify-center flex-shrink-0 transition-colors duration-300 group-hover:text-[var(--color-primary)] group-hover:border-[var(--color-primary)]/30 z-10 shadow-[0_4px_12px_rgba(0,0,0,0.2)]">
