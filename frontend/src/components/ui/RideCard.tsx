@@ -222,7 +222,7 @@ export default function RideCard({ ride }: RideCardProps) {
       isOpen={isJoinOpen}
       onClose={() => setIsJoinOpen(false)}
       target={{
-        id: ride.id,
+        _id: ride._id,
         title: ride.title,
         date: formattedDate,
         time: ride.meetupTime,

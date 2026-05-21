@@ -1,5 +1,5 @@
 export interface Stat {
-  id: string;
+  _id: string;
   target: number;
   suffix: string;
   label: string;

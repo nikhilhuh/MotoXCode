@@ -72,7 +72,7 @@ export default function Values({ valuesData }: ValuesProps) {
         <div className="flex flex-col gap-10 lg:gap-20">
           {valuesData.map((v, idx) => (
             <div
-              key={v.id}
+              key={v._id}
               className={`value-item flex flex-col lg:flex-row items-center gap-8 lg:gap-16 group ${
                 idx % 2 !== 0 ? "lg:flex-row-reverse" : ""
               }`}

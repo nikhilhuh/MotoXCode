@@ -1,7 +1,7 @@
 export type RideFilter = 'all' | 'upcoming' | 'past';
 
 export interface Ride {
-  id: string;
+  _id: string;
   title: string;
   location: {
     from: string;

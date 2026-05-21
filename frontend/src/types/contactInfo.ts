@@ -1,5 +1,5 @@
 export interface ContactInfoItem {
-  id: string;
+  _id: string;
   label: string;
   value: string;
   type?: string;

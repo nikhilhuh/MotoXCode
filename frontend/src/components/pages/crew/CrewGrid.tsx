@@ -44,7 +44,7 @@ export default function CrewGrid({ crew }: CrewGridProps) {
       <div className="max-w-7xl mx-auto px-6 lg:px-12 w-full relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10">
           {crew.map((member) => (
-            <div key={member.id} className="crew-card">
+            <div key={member._id} className="crew-card">
               <MemberCard member={member} />
             </div>
           ))}

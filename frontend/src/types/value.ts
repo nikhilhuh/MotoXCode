@@ -1,5 +1,5 @@
 export interface Value {
-  id: string;
+  _id: string;
   title: string;
   description: string;
   tag: string;

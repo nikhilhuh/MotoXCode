@@ -76,7 +76,7 @@ export default function RidesGrid({ rides }: RidesGridProps) {
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8"
         >
           {filtered.map((ride) => (
-            <div key={ride.id} className="ride-card-anim">
+            <div key={ride._id} className="ride-card-anim">
               <RideCard ride={ride} />
             </div>
           ))}

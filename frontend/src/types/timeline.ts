@@ -1,5 +1,5 @@
 export interface Timeline {
-  id: string;
+  _id: string;
   year: string;
   location: string;
   event: string;

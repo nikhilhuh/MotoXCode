@@ -17,7 +17,7 @@ export default function Stats({ statsData }: StatsProps) {
       <div className="px-6 lg:px-12 w-full relative z-10">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
           {statsData.map((stat, i) => (
-            <StatCard key={stat.id} {...stat} index={i} />
+            <StatCard key={stat._id} {...stat} index={i} />
           ))}
         </div>
       </div>

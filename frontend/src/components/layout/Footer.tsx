@@ -131,7 +131,7 @@ export default function Footer({ socials }: FooterProps) {
               {socials &&
                 socials.map((s) => (
                   <a
-                    key={s.label}
+                    key={s._id}
                     href={s.link}
                     aria-label={s.label}
                     target="_blank"

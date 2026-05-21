@@ -166,7 +166,7 @@ export default function AboutJourney({ timeline }: AboutJourneyProps) {
             const { x, y, side } = getStepProps(index, timeline.length);
             return (
               <div
-                key={item.id}
+                key={item._id}
                 className="journey-step absolute w-full"
                 style={{ top: `${y}%`, left: 0, height: 0 }}
               >

@@ -1,5 +1,5 @@
 export interface Philosophy {
-  id: string;
+  _id: string;
   quote: string;
   author: string;
   image: string;

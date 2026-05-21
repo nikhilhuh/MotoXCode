@@ -1,7 +1,7 @@
 export type EventType = "Ride" | "Meetup" | "Workshop" | "Social";
 
 export interface Event {
-  id: string;
+  _id: string;
   date: string;
   title: string;
   location: string;

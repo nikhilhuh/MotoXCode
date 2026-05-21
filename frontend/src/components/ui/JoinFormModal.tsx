@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 
 export interface TargetDetails {
-  id: string;
+  _id: string;
   title: string;
   date: string;
   time?: string;
@@ -54,7 +54,7 @@ export default function JoinFormModal({ isOpen, onClose, target }: JoinFormModal
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
-  const uniqueIdPrefix = `join-${target.type}-${target.id}`;
+  const uniqueIdPrefix = `join-${target.type}-${target._id}`;
 
   // Lock body scroll when modal is open
   useEffect(() => {

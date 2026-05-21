@@ -23,8 +23,8 @@ import type { PageHero } from "./cms.service";
 // ─── Socials ──────────────────────────────────────────────────────────────────
 
 const socials: Social[] = [
-  { label: "Instagram", link: "#" },
-  { label: "YouTube", link: "#" },
+  { _id: "social1", label: "Instagram", link: "#" },
+  { _id: "social2", label: "YouTube", link: "#" },
 ];
 
 // ─── Home ─────────────────────────────────────────────────────────────────────
@@ -36,21 +36,21 @@ const homeHero: PageHero = {
 
 const homeStats: Stat[] = [
   {
-    id: "stat1",
+    _id: "stat1",
     target: 500,
     suffix: "+",
     label: "Active Members",
     image: "/assets/images/home/members.png",
   },
   {
-    id: "stat2",
+    _id: "stat2",
     target: 80,
     suffix: "+",
     label: "Rides Completed",
     image: "/assets/images/home/rides.png",
   },
   {
-    id: "stat3",
+    _id: "stat3",
     target: 1.2,
     suffix: "L+",
     label: "Collective KMs",
@@ -58,7 +58,7 @@ const homeStats: Stat[] = [
     image: "/assets/images/home/collective.png",
   },
   {
-    id: "stat4",
+    _id: "stat4",
     target: 10,
     suffix: "+",
     label: "States Covered",
@@ -68,7 +68,7 @@ const homeStats: Stat[] = [
 
 const homeValues: Value[] = [
   {
-    id: "value1",
+    _id: "value1",
     title: "The Code of the Road",
     description:
       "Every rider carries a responsibility — to themselves, to their machine, and to every other soul on the asphalt. We don't just ride fast. We ride right.",
@@ -76,7 +76,7 @@ const homeValues: Value[] = [
     image: "/assets/images/home/value1.jpg",
   },
   {
-    id: "value2",
+    _id: "value2",
     title: "Brotherhood Over Horsepower",
     description:
       "It doesn't matter what you ride. What matters is how you show up — for a fellow rider stranded on a highway, for a friend who needs a shoulder, for the community that built this.",
@@ -84,7 +84,7 @@ const homeValues: Value[] = [
     image: "/assets/images/home/value2.jpg",
   },
   {
-    id: "value3",
+    _id: "value3",
     title: "The Long Road as Teacher",
     description:
       "Every long ride strips away the noise. What remains is clarity. We ride not to escape life — but to meet it head-on, at speed, in the open air.",
@@ -95,7 +95,7 @@ const homeValues: Value[] = [
 
 const homeUpcomingRides: Ride[] = [
   {
-    id: "ride1",
+    _id: "ride1",
     title: "Ghats of Fire",
     location: { from: "Pune", to: "Western Ghats" },
     date: "2026-05-10",
@@ -111,7 +111,7 @@ const homeUpcomingRides: Ride[] = [
     past: false,
   },
   {
-    id: "ride2",
+    _id: "ride2",
     title: "Desert Thunder",
     location: { from: "Jaipur", to: "Jaisalmer" },
     date: "2026-05-24",
@@ -127,7 +127,7 @@ const homeUpcomingRides: Ride[] = [
     past: false,
   },
   {
-    id: "ride3",
+    _id: "ride3",
     title: "Himalayan Vigil",
     location: { from: "Manali", to: "Spiti Valley" },
     date: "2026-06-14",
@@ -146,7 +146,7 @@ const homeUpcomingRides: Ride[] = [
 
 const homeMvpCrew: Member[] = [
   {
-    id: "member1",
+    _id: "member1",
     name: "Arjun Mehta",
     role: "Founder & Ride Leader",
     bike: "Royal Enfield Himalayan 450",
@@ -159,7 +159,7 @@ const homeMvpCrew: Member[] = [
     mvp: true,
   },
   {
-    id: "member2",
+    _id: "member2",
     name: "Priya Nair",
     role: "Route Architect",
     bike: "KTM 390 Adventure",
@@ -171,7 +171,7 @@ const homeMvpCrew: Member[] = [
     mvp: true,
   },
   {
-    id: "member3",
+    _id: "member3",
     name: "Rajan Sharma",
     role: "Mechanic & Crew Chief",
     bike: "Bajaj Dominar 400",
@@ -186,12 +186,12 @@ const homeMvpCrew: Member[] = [
 ];
 
 const homeGallery: GalleryImage[] = [
-  { id: "gallery1", src: "/assets/images/gallery/gallery1.jpg", title: "Mountain Pass Celebration", page: "home" },
-  { id: "gallery2", src: "/assets/images/gallery/gallery2.jpg", title: "Coastal Convoy", page: "home" },
-  { id: "gallery3", src: "/assets/images/gallery/gallery3.jpg", title: "Rain Reflections", page: "home" },
-  { id: "gallery4", src: "/assets/images/gallery/gallery4.jpg", title: "Desert Run", page: "home" },
-  { id: "gallery5", src: "/assets/images/gallery/gallery5.jpg", title: "Himalayan Scale", page: "home" },
-  { id: "gallery6", src: "/assets/images/gallery/gallery6.jpg", title: "Golden Hour Viewpoint", page: "home" },
+  { _id: "gallery1", src: "/assets/images/gallery/gallery1.jpg", title: "Mountain Pass Celebration", page: "home" },
+  { _id: "gallery2", src: "/assets/images/gallery/gallery2.jpg", title: "Coastal Convoy", page: "home" },
+  { _id: "gallery3", src: "/assets/images/gallery/gallery3.jpg", title: "Rain Reflections", page: "home" },
+  { _id: "gallery4", src: "/assets/images/gallery/gallery4.jpg", title: "Desert Run", page: "home" },
+  { _id: "gallery5", src: "/assets/images/gallery/gallery5.jpg", title: "Himalayan Scale", page: "home" },
+  { _id: "gallery6", src: "/assets/images/gallery/gallery6.jpg", title: "Golden Hour Viewpoint", page: "home" },
 ];
 
 // ─── About ────────────────────────────────────────────────────────────────────
@@ -203,7 +203,7 @@ const aboutHero: PageHero = {
 
 const aboutPhilosophy: Philosophy[] = [
   {
-    id: "philosophy1",
+    _id: "philosophy1",
     quote: "The road is not a destination. It's a conversation.",
     author: "Arjun Mehta, Founder",
     image: "/assets/images/about/philosophy.jpg",
@@ -211,20 +211,20 @@ const aboutPhilosophy: Philosophy[] = [
 ];
 
 const aboutTimeline: Timeline[] = [
-  { id: "timeline1", year: "2019", location: "LADAKH", event: "First ride. Ladakh. 12 riders. One borrowed tent. No regrets." },
-  { id: "timeline2", year: "2020", location: "DIGITAL HQ", event: "Locked down but not out — we built the community online, planned the routes, sharpened the code." },
-  { id: "timeline3", year: "2021", location: "WESTERN GHATS", event: "First official MotoXCode group ride. 34 riders. Western Ghats. Zero incidents." },
-  { id: "timeline4", year: "2022", location: "PAN INDIA", event: "Hit 200 members. Launched our first safety certification program." },
-  { id: "timeline5", year: "2023", location: "SPITI VALLEY", event: "Spiti expedition. 22 riders. 7 days. The hardest thing most of us had ever done." },
-  { id: "timeline6", year: "2024", location: "THE HORIZON", event: "Crossed 500 active members. 80+ rides. 12 states." },
+  { _id: "timeline1", year: "2019", location: "LADAKH", event: "First ride. Ladakh. 12 riders. One borrowed tent. No regrets." },
+  { _id: "timeline2", year: "2020", location: "DIGITAL HQ", event: "Locked down but not out — we built the community online, planned the routes, sharpened the code." },
+  { _id: "timeline3", year: "2021", location: "WESTERN GHATS", event: "First official MotoXCode group ride. 34 riders. Western Ghats. Zero incidents." },
+  { _id: "timeline4", year: "2022", location: "PAN INDIA", event: "Hit 200 members. Launched our first safety certification program." },
+  { _id: "timeline5", year: "2023", location: "SPITI VALLEY", event: "Spiti expedition. 22 riders. 7 days. The hardest thing most of us had ever done." },
+  { _id: "timeline6", year: "2024", location: "THE HORIZON", event: "Crossed 500 active members. 80+ rides. 12 states." },
 ];
 
 const aboutRidingCode: RidingCode[] = [
-  { id: "riding1", rule: "Gear Up Always", detail: "Every ride, every time. ATGATT is not a suggestion, it's our identity." },
-  { id: "riding2", rule: "Ride Your Own Ride", detail: "No peer pressure on pace. No judgement on ability. Everyone starts together, everyone finishes together." },
-  { id: "riding3", rule: "Leave No Rider Behind", detail: "If someone needs help on the road, the whole pack stops. Period." },
-  { id: "riding4", rule: "Respect the Road", detail: "Communities, villages, and wildlife are our hosts. We move through with absolute care." },
-  { id: "riding5", rule: "Earn Your Stripes", detail: "Trust in this community is built through shared miles, not talk. Actions define the rider." },
+  { _id: "riding1", rule: "Gear Up Always", detail: "Every ride, every time. ATGATT is not a suggestion, it's our identity." },
+  { _id: "riding2", rule: "Ride Your Own Ride", detail: "No peer pressure on pace. No judgement on ability. Everyone starts together, everyone finishes together." },
+  { _id: "riding3", rule: "Leave No Rider Behind", detail: "If someone needs help on the road, the whole pack stops. Period." },
+  { _id: "riding4", rule: "Respect the Road", detail: "Communities, villages, and wildlife are our hosts. We move through with absolute care." },
+  { _id: "riding5", rule: "Earn Your Stripes", detail: "Trust in this community is built through shared miles, not talk. Actions define the rider." },
 ];
 
 // ─── Crew ─────────────────────────────────────────────────────────────────────
@@ -236,7 +236,7 @@ const crewHero: PageHero = {
 
 const crewMembers: Member[] = [
   {
-    id: "member-001",
+    _id: "member-001",
     name: "Arjun Mehta",
     role: "Founder & Ride Leader",
     bike: "Royal Enfield Himalayan 450",
@@ -248,7 +248,7 @@ const crewMembers: Member[] = [
     whatsapp: "+91 98200 11234",
   },
   {
-    id: "member-002",
+    _id: "member-002",
     name: "Priya Nair",
     role: "Route Architect",
     bike: "KTM 390 Adventure",
@@ -259,7 +259,7 @@ const crewMembers: Member[] = [
     instagram: "@priya.routes",
   },
   {
-    id: "member-003",
+    _id: "member-003",
     name: "Rajan Sharma",
     role: "Mechanic & Crew Chief",
     bike: "Bajaj Dominar 400",
@@ -271,7 +271,7 @@ const crewMembers: Member[] = [
     whatsapp: "+91 99101 56789",
   },
   {
-    id: "member-004",
+    _id: "member-004",
     name: "Kavya Reddy",
     role: "Content & Visual Lead",
     bike: "Honda CB500X",
@@ -282,7 +282,7 @@ const crewMembers: Member[] = [
     instagram: "@kavya.lens",
   },
   {
-    id: "member-005",
+    _id: "member-005",
     name: "Dev Krishnan",
     role: "Safety Officer",
     bike: "BMW G 310 GS",
@@ -294,7 +294,7 @@ const crewMembers: Member[] = [
     whatsapp: "+91 97400 22345",
   },
   {
-    id: "member-006",
+    _id: "member-006",
     name: "Zara Khan",
     role: "Events Coordinator",
     bike: "Triumph Street Twin",
@@ -315,7 +315,7 @@ const ridesHero: PageHero = {
 
 const allRides: Ride[] = [
   {
-    id: "ride1",
+    _id: "ride1",
     title: "Ghats of Fire",
     location: { from: "Pune", to: "Western Ghats" },
     date: "2026-05-10",
@@ -330,7 +330,7 @@ const allRides: Ride[] = [
     past: false,
   },
   {
-    id: "ride2",
+    _id: "ride2",
     title: "Desert Thunder",
     location: { from: "Jaipur", to: "Jaisalmer" },
     date: "2026-05-24",
@@ -345,7 +345,7 @@ const allRides: Ride[] = [
     past: false,
   },
   {
-    id: "ride3",
+    _id: "ride3",
     title: "Himalayan Vigil",
     location: { from: "Manali", to: "Spiti Valley" },
     date: "2026-06-14",
@@ -360,7 +360,7 @@ const allRides: Ride[] = [
     past: false,
   },
   {
-    id: "ride4",
+    _id: "ride4",
     title: "Coastal Circuit",
     location: { from: "Goa", to: "Mangalore" },
     date: "2026-04-01",
@@ -375,7 +375,7 @@ const allRides: Ride[] = [
     past: true,
   },
   {
-    id: "ride5",
+    _id: "ride5",
     title: "Valley of Shadows",
     location: { from: "Bangalore", to: "Coorg" },
     date: "2026-03-15",
@@ -392,12 +392,12 @@ const allRides: Ride[] = [
 ];
 
 const ridesGallery: GalleryImage[] = [
-  { id: "gallery1", src: "/assets/images/gallery/gallery1.jpg", title: "Mountain Pass Celebration", page: "rides" },
-  { id: "gallery2", src: "/assets/images/gallery/gallery2.jpg", title: "Coastal Convoy", page: "rides" },
-  { id: "gallery3", src: "/assets/images/gallery/gallery3.jpg", title: "Rain Reflections", page: "rides" },
-  { id: "gallery4", src: "/assets/images/gallery/gallery4.jpg", title: "Desert Run", page: "rides" },
-  { id: "gallery5", src: "/assets/images/gallery/gallery5.jpg", title: "Himalayan Scale", page: "rides" },
-  { id: "gallery6", src: "/assets/images/gallery/gallery6.jpg", title: "Golden Hour Viewpoint", page: "rides" },
+  { _id: "gallery1", src: "/assets/images/gallery/gallery1.jpg", title: "Mountain Pass Celebration", page: "rides" },
+  { _id: "gallery2", src: "/assets/images/gallery/gallery2.jpg", title: "Coastal Convoy", page: "rides" },
+  { _id: "gallery3", src: "/assets/images/gallery/gallery3.jpg", title: "Rain Reflections", page: "rides" },
+  { _id: "gallery4", src: "/assets/images/gallery/gallery4.jpg", title: "Desert Run", page: "rides" },
+  { _id: "gallery5", src: "/assets/images/gallery/gallery5.jpg", title: "Himalayan Scale", page: "rides" },
+  { _id: "gallery6", src: "/assets/images/gallery/gallery6.jpg", title: "Golden Hour Viewpoint", page: "rides" },
 ];
 
 // ─── Events ───────────────────────────────────────────────────────────────────
@@ -408,20 +408,20 @@ const eventsHero: PageHero = {
 };
 
 const allEvents: Event[] = [
-  { id: "evt-001", date: "2026-05-10", title: "Ghats of Fire — Group Ride", location: "Western Ghats, Maharashtra", type: "Ride", time: "05:30 AM departure", spots: 20, spotsLeft: 7 },
-  { id: "evt-002", date: "2026-05-17", title: "Gear Check & Safety Workshop", location: "Pune, Maharashtra", type: "Workshop", time: "10:00 AM – 1:00 PM", spots: 30, spotsLeft: 15 },
-  { id: "evt-003", date: "2026-05-24", title: "Desert Thunder — Rajasthan Ride", location: "Jaisalmer, Rajasthan", type: "Ride", time: "06:00 AM departure", spots: 25, spotsLeft: 12 },
-  { id: "evt-004", date: "2026-06-01", title: "Community Meetup & New Member Welcome", location: "Mumbai, Maharashtra", type: "Meetup", time: "07:00 PM", spots: 60, spotsLeft: 34 },
-  { id: "evt-005", date: "2026-06-14", title: "Himalayan Vigil Expedition", location: "Spiti Valley, Himachal Pradesh", type: "Ride", time: "05:00 AM departure (Day 1)", spots: 15, spotsLeft: 3 },
+  { _id: "evt-001", date: "2026-05-10", title: "Ghats of Fire — Group Ride", location: "Western Ghats, Maharashtra", type: "Ride", time: "05:30 AM departure", spots: 20, spotsLeft: 7 },
+  { _id: "evt-002", date: "2026-05-17", title: "Gear Check & Safety Workshop", location: "Pune, Maharashtra", type: "Workshop", time: "10:00 AM – 1:00 PM", spots: 30, spotsLeft: 15 },
+  { _id: "evt-003", date: "2026-05-24", title: "Desert Thunder — Rajasthan Ride", location: "Jaisalmer, Rajasthan", type: "Ride", time: "06:00 AM departure", spots: 25, spotsLeft: 12 },
+  { _id: "evt-004", date: "2026-06-01", title: "Community Meetup & New Member Welcome", location: "Mumbai, Maharashtra", type: "Meetup", time: "07:00 PM", spots: 60, spotsLeft: 34 },
+  { _id: "evt-005", date: "2026-06-14", title: "Himalayan Vigil Expedition", location: "Spiti Valley, Himachal Pradesh", type: "Ride", time: "05:00 AM departure (Day 1)", spots: 15, spotsLeft: 3 },
 ];
 
 const eventsGallery: GalleryImage[] = [
-  { id: "gallery1", src: "/assets/images/gallery/gallery1.jpg", title: "Mountain Pass Celebration", page: "events" },
-  { id: "gallery2", src: "/assets/images/gallery/gallery2.jpg", title: "Coastal Convoy", page: "events" },
-  { id: "gallery3", src: "/assets/images/gallery/gallery3.jpg", title: "Rain Reflections", page: "events" },
-  { id: "gallery4", src: "/assets/images/gallery/gallery4.jpg", title: "Desert Run", page: "events" },
-  { id: "gallery5", src: "/assets/images/gallery/gallery5.jpg", title: "Himalayan Scale", page: "events" },
-  { id: "gallery6", src: "/assets/images/gallery/gallery6.jpg", title: "Golden Hour Viewpoint", page: "events" },
+  { _id: "gallery1", src: "/assets/images/gallery/gallery1.jpg", title: "Mountain Pass Celebration", page: "events" },
+  { _id: "gallery2", src: "/assets/images/gallery/gallery2.jpg", title: "Coastal Convoy", page: "events" },
+  { _id: "gallery3", src: "/assets/images/gallery/gallery3.jpg", title: "Rain Reflections", page: "events" },
+  { _id: "gallery4", src: "/assets/images/gallery/gallery4.jpg", title: "Desert Run", page: "events" },
+  { _id: "gallery5", src: "/assets/images/gallery/gallery5.jpg", title: "Himalayan Scale", page: "events" },
+  { _id: "gallery6", src: "/assets/images/gallery/gallery6.jpg", title: "Golden Hour Viewpoint", page: "events" },
 ];
 
 // ─── Contact ──────────────────────────────────────────────────────────────────
@@ -432,12 +432,12 @@ const contactHero: PageHero = {
 };
 
 const contactInfo: ContactInfoItem[] = [
-  { id: "contact1", label: "Base", value: "Mumbai, Maharashtra, India", type: "base" },
-  { id: "contact2", label: "Email", value: "hello@motoxcode.in", type: "email" },
-  { id: "contact3", label: "Instagram", value: "@motoxcode.in", type: "instagram" },
-  { id: "contact4", label: "WhatsApp", value: "+91 9999999999", type: "whatsapp" },
-  { id: "contact5", label: "Phone", value: "+91 9999999999", type: "phone" },
-  { id: "contact6", label: "Website", value: "www.motoxcode.in", type: "website" },
+  { _id: "contact1", label: "Base", value: "Mumbai, Maharashtra, India", type: "base" },
+  { _id: "contact2", label: "Email", value: "hello@motoxcode.in", type: "email" },
+  { _id: "contact3", label: "Instagram", value: "@motoxcode.in", type: "instagram" },
+  { _id: "contact4", label: "WhatsApp", value: "+91 9999999999", type: "whatsapp" },
+  { _id: "contact5", label: "Phone", value: "+91 9999999999", type: "phone" },
+  { _id: "contact6", label: "Website", value: "www.motoxcode.in", type: "website" },
 ];
 
 // ─── Join ─────────────────────────────────────────────────────────────────────
@@ -448,12 +448,12 @@ const joinHero: PageHero = {
 };
 
 const joinGallery: GalleryImage[] = [
-  { id: "gallery1", src: "/assets/images/gallery/gallery1.jpg", title: "Mountain Pass Celebration", page: "join" },
-  { id: "gallery2", src: "/assets/images/gallery/gallery2.jpg", title: "Coastal Convoy", page: "join" },
-  { id: "gallery3", src: "/assets/images/gallery/gallery3.jpg", title: "Rain Reflections", page: "join" },
-  { id: "gallery4", src: "/assets/images/gallery/gallery4.jpg", title: "Desert Run", page: "join" },
-  { id: "gallery5", src: "/assets/images/gallery/gallery5.jpg", title: "Himalayan Scale", page: "join" },
-  { id: "gallery6", src: "/assets/images/gallery/gallery6.jpg", title: "Golden Hour Viewpoint", page: "join" },
+  { _id: "gallery1", src: "/assets/images/gallery/gallery1.jpg", title: "Mountain Pass Celebration", page: "join" },
+  { _id: "gallery2", src: "/assets/images/gallery/gallery2.jpg", title: "Coastal Convoy", page: "join" },
+  { _id: "gallery3", src: "/assets/images/gallery/gallery3.jpg", title: "Rain Reflections", page: "join" },
+  { _id: "gallery4", src: "/assets/images/gallery/gallery4.jpg", title: "Desert Run", page: "join" },
+  { _id: "gallery5", src: "/assets/images/gallery/gallery5.jpg", title: "Himalayan Scale", page: "join" },
+  { _id: "gallery6", src: "/assets/images/gallery/gallery6.jpg", title: "Golden Hour Viewpoint", page: "join" },
 ];
 
 // ─── Exported Compilation Object ──────────────────────────────────────────────

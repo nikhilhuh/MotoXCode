@@ -17,7 +17,7 @@ export default function EventsList({ events }: EventsListProps) {
 
   const targetDetails = selectedEvent
     ? {
-        id: selectedEvent.id,
+        _id: selectedEvent._id,
         title: selectedEvent.title,
         date: new Date(selectedEvent.date).toLocaleDateString("en-IN", {
           day: "numeric",
@@ -63,7 +63,7 @@ export default function EventsList({ events }: EventsListProps) {
 
             return (
               <div
-                key={event.id}
+                key={event._id}
                 className="event-item group flex flex-col lg:flex-row items-stretch lg:items-center gap-6 p-6 md:p-8 transition-all duration-300 rounded-3xl bg-[var(--color-surface)]/20 backdrop-blur-xl border border-[var(--color-border)]/30 hover:border-[var(--color-primary)]/30 hover:bg-[var(--color-surface)]/35 relative overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.2)] hover:shadow-[0_12px_40px_rgba(0,0,0,0.4)] hover:-translate-y-1 z-10"
               >
                 {/* Visual side glow accent on hover */}

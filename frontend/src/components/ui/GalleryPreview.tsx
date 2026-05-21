@@ -124,7 +124,7 @@ export default function GalleryPreview({
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {galleryPreviewImages.map((img) => (
               <div
-                key={img.id}
+                key={img._id}
                 className="gallery-item group relative overflow-hidden rounded-2xl shadow-[0_10px_30px_rgba(0,0,0,0.4)] cursor-pointer aspect-[4/3]"
                 onClick={() => setLightbox({ src: img.src, title: img.title })}
               >

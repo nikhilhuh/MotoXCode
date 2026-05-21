@@ -8,6 +8,7 @@ export interface StaggeredMenuItem {
   to: string;
 }
 export interface StaggeredMenuSocialItem {
+  _id: string;
   label: string;
   link: string;
 }
@@ -727,8 +728,8 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
                   className="sm-socials-list list-none m-0 p-0 flex flex-row items-center gap-4 flex-wrap"
                   role="list"
                 >
-                  {socialItems.map((s, i) => (
-                    <li key={s.label + i} className="sm-socials-item">
+                  {socialItems.map((s) => (
+                    <li key={s._id} className="sm-socials-item">
                       <a
                         href={s.link}
                         onClick={toggleMenu}

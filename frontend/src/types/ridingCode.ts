@@ -1,5 +1,5 @@
 export interface RidingCode {
-  id: string;
+  _id: string;
   rule: string;
   detail: string;
 }

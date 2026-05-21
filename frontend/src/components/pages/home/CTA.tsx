@@ -75,7 +75,7 @@ export default function CTA({ statsData }: CTAProps) {
         {/* Social proof / stat row */}
         <div className="cta-item mt-16 flex flex-wrap items-center justify-center gap-8 text-center">
           {statsData.map((stat) => (
-            <div key={stat.id} className="flex flex-col items-center gap-1">
+            <div key={stat._id} className="flex flex-col items-center gap-1">
               <span className="font-heading font-black text-3xl text-[var(--color-primary)] leading-none">{stat.target}{stat.suffix}</span>
               <span className="font-accent text-[0.65rem] tracking-[0.18em] text-[var(--color-text-secondary)] uppercase">{stat.label}</span>
             </div>
