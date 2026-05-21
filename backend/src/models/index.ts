@@ -37,7 +37,3 @@ export { GalleryModel, IGalleryDocument, GalleryPageType } from "./Gallery";
 
 export { MembershipModel, IMembershipDocument, ApplicationStatus } from "./Membership";
 export { ContactModel, IContactDocument } from "./Contact";
-
-// ─── Legacy (remove when demo route is replaced) ──────────────────────────────
-
-export { DemoModel, IDemoDocument } from "./demo.model";
