@@ -1,4 +1,4 @@
-import { DemoModel, IDemoDocument } from "../models/demo.model";
+import { DemoModel, IDemoDocument } from "../models";
 
 /**
  * DemoService — pure business logic layer for the Demo resource.

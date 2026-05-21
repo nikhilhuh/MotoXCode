@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { demoService } from "../services/demo.service";
-import { IDemoDocument } from "../models/demo.model";
+import { IDemoDocument } from "../models";
 
 // ─── Response Shapes ──────────────────────────────────────────────────────────
 

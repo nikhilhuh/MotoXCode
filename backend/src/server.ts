@@ -4,6 +4,7 @@ import http from "http";
 import { app } from "./app";
 import { env } from "./config/env.config";
 import { connectDB, disconnectDB } from "./config/db";
+import { verifySupabaseConnection } from "./config/supabase";
 
 // ─── Server Instance ──────────────────────────────────────────────────────────
 
@@ -62,7 +63,10 @@ async function main(): Promise<void> {
   // 1. Connect to MongoDB — exits process on failure
   await connectDB();
 
-  // 2. Start listening for HTTP connections
+  // 2. Verify Supabase credentials are valid
+  await verifySupabaseConnection();
+
+  // 3. Start listening for HTTP connections
   server.listen(env.PORT, () => {
     console.log(`🚀 Server running on ${env.BACKEND_URL}`);
     console.log(`🌍 Accepting requests from: ${env.FRONTEND_URL}`);
