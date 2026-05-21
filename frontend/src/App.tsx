@@ -1,8 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Layout from "./components/layout/Layout";
-import { lazy, Suspense, useEffect } from "react";
-import { socketListeners } from "./socket/socketListeners";
-import socket from "./socket/socketSetup";
+import { lazy, Suspense } from "react";
 import { HomeSkeleton } from "./components/skeletons/HomeSkeleton";
 import { AboutSkeleton } from "./components/skeletons/AboutSkeleton";
 import { CrewSkeleton } from "./components/skeletons/CrewSkeleton";
@@ -20,9 +18,6 @@ const Events = lazy(() => import("./pages/Events"));
 const Contact = lazy(() => import("./pages/Contact"));
 
 export default function App() {
-  useEffect(() => {
-    socketListeners(socket);
-  }, []);
 
   return (
     <BrowserRouter>
