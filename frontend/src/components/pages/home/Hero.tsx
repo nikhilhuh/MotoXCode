@@ -27,7 +27,7 @@ export default function Hero({ HeroBg }: HeroProp) {
       className="relative w-full min-h-[100dvh] flex flex-col items-center justify-center overflow-hidden"
     >
       <div
-        className="absolute inset-0 w-full h-full bg-cover bg-center"
+        className="absolute inset-0 size-full bg-cover bg-center"
         style={{ backgroundImage: `url(${HeroBg})` }}
       />
       <div
@@ -69,7 +69,7 @@ export default function Hero({ HeroBg }: HeroProp) {
 
           <p className="hero-anim font-[var(--font-body)] font-medium max-w-2xl mx-auto text-sm md:text-base lg:text-xl text-[var(--color-text-primary)] opacity-90 leading-relaxed mb-10">
             Born from late-night rides, endless highways, and a passion for
-            adventure — MotoXCode is more than a riding group.
+            adventure: MotoXCode is more than a riding group.
           </p>
 
           <div className="hero-anim flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 w-full max-w-[16rem] sm:max-w-none mx-auto">

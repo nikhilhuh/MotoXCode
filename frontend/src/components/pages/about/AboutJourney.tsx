@@ -125,7 +125,7 @@ export default function AboutJourney({ timeline }: AboutJourneyProps) {
         >
           {/* Map Path */}
           <svg
-            className="absolute inset-0 w-full h-full pointer-events-none"
+            className="absolute inset-0 size-full pointer-events-none"
             viewBox="0 0 100 100"
             preserveAspectRatio="none"
             fill="none"
@@ -175,8 +175,8 @@ export default function AboutJourney({ timeline }: AboutJourneyProps) {
                   className="journey-pin absolute z-20 flex items-center justify-center"
                   style={{ left: `${x}%`, transform: "translate(-50%, -50%)" }}
                 >
-                  <div className="w-12 h-12 bg-slate-950 rounded-full flex items-center justify-center border border-white/20 shadow-2xl">
-                    <FaMapPin className="w-5 h-5 text-white" />
+                  <div className="size-12 bg-slate-950 rounded-full flex items-center justify-center border border-white/20 shadow-2xl">
+                    <FaMapPin className="size-5 text-white" />
                     <div className="absolute -inset-1.5 rounded-full border border-white/10 animate-pulse pointer-events-none" />
                   </div>
                 </div>
@@ -230,8 +230,8 @@ export default function AboutJourney({ timeline }: AboutJourneyProps) {
               >
                 {/* Pin */}
                 <div className="journey-pin shrink-0 z-20 pt-1">
-                  <div className="w-10 h-10 bg-slate-950 rounded-full flex items-center justify-center border border-white/20 shadow-xl">
-                    <FaMapPin className="w-4 h-4 text-white" />
+                  <div className="size-10 bg-slate-950 rounded-full flex items-center justify-center border border-white/20 shadow-xl">
+                    <FaMapPin className="size-4 text-white" />
                   </div>
                 </div>
                 {/* Card */}

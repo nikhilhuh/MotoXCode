@@ -47,7 +47,7 @@ export const StatCard: React.FC<StatCardProps> = ({ target, suffix, label, image
     >
       <div className="w-full overflow-hidden relative border-b border-[var(--color-border)]/50">
         <div className="absolute inset-0 bg-gradient-to-t from-[var(--color-bg)] to-transparent z-10 opacity-60 mix-blend-multiply transition-opacity duration-500 group-hover:opacity-40"></div>
-        <img src={image} alt={label} className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700 ease-out aspect-1" />
+        <img src={image} alt={label} className="size-full object-cover transform group-hover:scale-110 transition-transform duration-700 ease-out aspect-1" />
       </div>
 
       <div className="flex flex-col items-center sm:items-start p-6 lg:p-8 relative z-20">

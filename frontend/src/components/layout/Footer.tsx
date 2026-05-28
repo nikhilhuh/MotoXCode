@@ -94,7 +94,7 @@ export default function Footer({ socials }: FooterProps) {
   return (
     <footer
       ref={footerRef}
-      className="relative border-t border-[var(--color-border)]/20 bg-black overflow-hidden"
+      className="relative border-t border-[var(--color-border)]/20 bg-gray-950 overflow-hidden"
     >
       {/* Ambient glow */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[60%] h-[1px] bg-gradient-to-r from-transparent via-[var(--color-border)]/60 to-transparent" />
@@ -107,7 +107,7 @@ export default function Footer({ socials }: FooterProps) {
           {/* Brand — spans 2 cols on lg */}
           <div className="lg:col-span-2 footer-anim">
             <Link to="/" className="flex items-center gap-2.5 mb-6 group w-fit">
-              <div className="w-9 h-9 bg-[var(--color-primary)] rounded-full flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:shadow-[0_0_20px_rgba(248,250,252,0.3)]">
+              <div className="size-9 bg-[var(--color-primary)] rounded-full flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:shadow-[0_0_20px_rgba(248,250,252,0.3)]">
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                   <path
                     d="M2 12L8 4L14 12H2Z"
@@ -136,7 +136,7 @@ export default function Footer({ socials }: FooterProps) {
                     aria-label={s.label}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-9 h-9 flex items-center justify-center rounded-full border border-[var(--color-border)]/50 text-[var(--color-text-secondary)] hover:text-[var(--color-primary)] hover:border-[var(--color-primary)]/50 hover:bg-[var(--color-primary)]/5 transition-all duration-300"
+                    className="size-9 flex items-center justify-center rounded-full border border-[var(--color-border)]/50 text-[var(--color-text-secondary)] hover:text-[var(--color-primary)] hover:border-[var(--color-primary)]/50 hover:bg-[var(--color-primary)]/5 transition-all duration-300"
                   >
                     {getSocialIcon(s.label)}
                   </a>
@@ -173,24 +173,24 @@ export default function Footer({ socials }: FooterProps) {
         {/* Bottom bar */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 footer-anim mb-12">
           <p className="font-accent text-xs text-[var(--color-text-secondary)]/60">
-            © {new Date().getFullYear()} MotoXCode. All rights reserved.
+            © <span suppressHydrationWarning>{new Date().getFullYear()}</span> MotoXCode. All rights reserved.
           </p>
           <div className="flex gap-6">
             {["Privacy Policy", "Terms of Service"].map((item) => (
-              <a
+              <button
                 key={item}
-                href="#"
+                type="button"
                 className="font-accent text-xs text-[var(--color-text-secondary)]/50 hover:text-[var(--color-text-secondary)] transition-colors duration-200"
               >
                 {item}
-              </a>
+              </button>
             ))}
           </div>
         </div>
 
         {/* Giant Billboard Slogan */}
         <div className="w-full overflow-hidden select-none pointer-events-none footer-anim mt-8 md:mt-12 lg:mt-16 border-t border-[var(--color-border)]/30 pt-6 md:pt-10">
-          <h2 className="font-[var(--font-heading)] font-black text-[clamp(4rem,10vw,11rem)] leading-[0.8] text-center uppercase tracking-[-0.05em] text-transparent bg-clip-text bg-gradient-to-b from-accent/40 via-accent/20 to-accent/10">
+          <h2 className="font-[var(--font-heading)] font-black text-[clamp(4rem,10vw,11rem)] leading-[0.8] text-center uppercase tracking-[-0.05em] text-[var(--color-accent)] opacity-20">
             Born to Ride
             <br />
             Built to Belong

@@ -22,7 +22,7 @@ export const HomeSkeleton: React.FC = () => {
                 className="relative flex flex-col overflow-hidden rounded-[2rem] bg-[var(--color-surface)]/20 backdrop-blur-xl border border-[var(--color-border)]/50 shadow-[0_8px_32px_rgba(0,0,0,0.2)]"
               >
                 <div className="w-full overflow-hidden relative border-b border-[var(--color-border)]/50 aspect-square">
-                  <div className="w-full h-full shimmer-box opacity-15" />
+                  <div className="size-full shimmer-box opacity-15" />
                 </div>
                 <div className="flex flex-col items-center sm:items-start p-6 lg:p-8 relative z-20">
                   <div className="w-24 h-10 rounded-md shimmer-box mb-2 opacity-35" />
@@ -54,7 +54,7 @@ export const HomeSkeleton: React.FC = () => {
                 <div className="flex-1 w-full max-w-2xl flex flex-col items-start relative">
                   <div className="w-32 h-8 rounded-full shimmer-box mb-8 opacity-25" />
                   <div className="w-full relative mb-6">
-                    <div className="absolute -top-10 lg:-top-20 -left-2 lg:-left-4 w-24 h-24 shimmer-box opacity-10" />
+                    <div className="absolute -top-10 lg:-top-20 -left-2 lg:-left-4 size-24 shimmer-box opacity-10" />
                     <div className="w-96 max-w-full h-12 rounded-lg shimmer-box opacity-35" />
                   </div>
                   <div className="w-full pl-4 border-l-2 border-[var(--color-border)]/50">
@@ -67,7 +67,7 @@ export const HomeSkeleton: React.FC = () => {
                 {/* Image Placeholder */}
                 <div className="w-full lg:flex-1">
                   <div className="relative rounded-[1.5rem] lg:rounded-[2rem] overflow-hidden aspect-[21/9] sm:aspect-[16/9] lg:aspect-[16/10] bg-[var(--color-surface)]/20 border border-[var(--color-border)]/40 shadow-[0_20px_50px_rgba(0,0,0,0.3)]">
-                    <div className="absolute inset-0 w-full h-full shimmer-box opacity-15" />
+                    <div className="absolute inset-0 size-full shimmer-box opacity-15" />
                   </div>
                 </div>
               </div>

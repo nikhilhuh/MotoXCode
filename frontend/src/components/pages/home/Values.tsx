@@ -80,7 +80,7 @@ export default function Values({ valuesData }: ValuesProps) {
               {/* Text Content */}
               <div className="flex-1 max-w-2xl flex flex-col items-start text-left relative">
                 <span className="relative z-10 inline-flex items-center gap-2 text-[clamp(0.65rem,1.5vw,0.85rem)] font-bold tracking-[0.2em] uppercase px-5 py-2 rounded-full text-[var(--color-primary)] bg-[var(--color-surface)]/40 border border-[var(--color-border)]/50 backdrop-blur-md mb-8 group-hover:border-[var(--color-primary)]/30 transition-all duration-500">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-primary)] opacity-70"></span>
+                  <span className="size-1.5 rounded-full bg-[var(--color-primary)] opacity-70"></span>
                   {v.tag}
                 </span>
 
@@ -104,7 +104,7 @@ export default function Values({ valuesData }: ValuesProps) {
                   <img
                     src={v.image}
                     alt={v.title}
-                    className="absolute inset-0 w-full h-full object-cover scale-100 group-hover:scale-105 transition-transform duration-1000 ease-out aspect-1"
+                    className="absolute inset-0 size-full object-cover scale-100 group-hover:scale-105 transition-transform duration-1000 ease-out aspect-1"
                   />
                   {/* Premium overlay gradient */}
                   <div className="absolute inset-0 bg-gradient-to-t from-[var(--color-bg)]/90 via-[var(--color-bg)]/20 to-transparent opacity-80 group-hover:opacity-50 transition-opacity duration-700 pointer-events-none" />

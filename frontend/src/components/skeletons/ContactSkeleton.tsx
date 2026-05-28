@@ -27,7 +27,7 @@ export const ContactSkeleton: React.FC = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-x-8 gap-y-6">
                   {[...Array(6)].map((_, i) => (
                     <div key={i} className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-xl border border-[var(--color-border)]/30 shimmer-box opacity-30 flex-shrink-0" />
+                      <div className="size-12 rounded-xl border border-[var(--color-border)]/30 shimmer-box opacity-30 flex-shrink-0" />
                       <div className="flex flex-col gap-1">
                         <div className="w-16 h-3 rounded shimmer-box opacity-25" />
                         <div className="w-36 h-4 rounded shimmer-box opacity-35" />

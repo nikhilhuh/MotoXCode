@@ -62,7 +62,7 @@ export default function JoinForm() {
     return () => ctx.revert();
   }, []);
 
-  function handleChange(
+  function handleInputChange(
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
     >
@@ -154,11 +154,11 @@ export default function JoinForm() {
           className="max-w-3xl mx-auto anim-item bg-transparent lg:bg-[var(--color-bg)]/40 lg:border lg:border-[var(--color-border)]/50 lg:backdrop-blur-2xl lg:p-6 lg:rounded-2xl lg:shadow-[0_20px_50px_-10px_rgba(0,0,0,0.8)] relative overflow-hidden flex flex-col justify-between"
           ref={formRef}
         >
-          <div className="hidden lg:block absolute -top-10 -right-10 w-32 h-32 bg-[var(--color-primary)]/5 rounded-full blur-2xl pointer-events-none z-0"></div>
+          <div className="hidden lg:block absolute -top-10 -right-10 size-32 bg-[var(--color-primary)]/5 rounded-full blur-2xl pointer-events-none z-0"></div>
 
           {submitted ? (
-            <div className="text-center py-20 rounded-xl bg-[var(--color-surface)]/20 border border-[var(--color-border)]/30 backdrop-blur-md relative z-10 w-full h-full flex flex-col items-center justify-center">
-              <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6 bg-[var(--color-primary)]/10 text-[var(--color-primary)] border border-[var(--color-primary)]/20 shadow-[0_0_20px_rgba(248,250,252,0.15)]">
+            <div className="text-center py-20 rounded-xl bg-[var(--color-surface)]/20 border border-[var(--color-border)]/30 backdrop-blur-md relative z-10 size-full flex flex-col items-center justify-center">
+              <div className="size-16 rounded-full flex items-center justify-center mx-auto mb-6 bg-[var(--color-primary)]/10 text-[var(--color-primary)] border border-[var(--color-primary)]/20 shadow-[0_0_20px_rgba(248,250,252,0.15)]">
                 <svg
                   width="28"
                   height="28"
@@ -193,10 +193,11 @@ export default function JoinForm() {
                     name="membership-name"
                     type="text"
                     autoComplete="name"
+                    aria-label="Full Name"
                     className={`w-full bg-[var(--color-surface)]/50 border ${errors.name ? 'border-red-500' : 'border-[var(--color-border)]'} rounded-lg py-3.5 px-5 text-[var(--color-text-primary)] font-[var(--font-body)] text-[0.9375rem] transition-all duration-300 outline-none placeholder:text-[var(--color-text-secondary)] placeholder:opacity-50 focus:border-[var(--color-primary)] focus:bg-[var(--color-surface)] focus:shadow-[0_0_15px_rgba(248,250,252,0.05)]`}
                     placeholder="Your name"
                     value={formData.name}
-                    onChange={handleChange}
+                    onChange={handleInputChange}
                   />
                   {errors.name && (
                     <span className="text-[10px] text-red-400 block font-medium mt-1.5">{errors.name}</span>
@@ -214,10 +215,11 @@ export default function JoinForm() {
                     name="membership-email"
                     type="email"
                     autoComplete="email"
+                    aria-label="Email"
                     className={`w-full bg-[var(--color-surface)]/50 border ${errors.email ? 'border-red-500' : 'border-[var(--color-border)]'} rounded-lg py-3.5 px-5 text-[var(--color-text-primary)] font-[var(--font-body)] text-[0.9375rem] transition-all duration-300 outline-none placeholder:text-[var(--color-text-secondary)] placeholder:opacity-50 focus:border-[var(--color-primary)] focus:bg-[var(--color-surface)] focus:shadow-[0_0_15px_rgba(248,250,252,0.05)]`}
                     placeholder="you@email.com"
                     value={formData.email}
-                    onChange={handleChange}
+                    onChange={handleInputChange}
                   />
                   {errors.email && (
                     <span className="text-[10px] text-red-400 block font-medium mt-1.5">{errors.email}</span>
@@ -237,10 +239,11 @@ export default function JoinForm() {
                     name="membership-phone"
                     type="tel"
                     autoComplete="tel"
+                    aria-label="Phone"
                     className={`w-full bg-[var(--color-surface)]/50 border ${errors.phone ? 'border-red-500' : 'border-[var(--color-border)]'} rounded-lg py-3.5 px-5 text-[var(--color-text-primary)] font-[var(--font-body)] text-[0.9375rem] transition-all duration-300 outline-none placeholder:text-[var(--color-text-secondary)] placeholder:opacity-50 focus:border-[var(--color-primary)] focus:bg-[var(--color-surface)] focus:shadow-[0_0_15px_rgba(248,250,252,0.05)]`}
                     placeholder="+91 XXXXX XXXXX"
                     value={formData.phone}
-                    onChange={handleChange}
+                    onChange={handleInputChange}
                   />
                   {errors.phone && (
                     <span className="text-[10px] text-red-400 block font-medium mt-1.5">{errors.phone}</span>
@@ -258,10 +261,11 @@ export default function JoinForm() {
                     name="membership-location"
                     type="text"
                     autoComplete="address-level2"
+                    aria-label="City or Location"
                     className={`w-full bg-[var(--color-surface)]/50 border ${errors.location ? 'border-red-500' : 'border-[var(--color-border)]'} rounded-lg py-3.5 px-5 text-[var(--color-text-primary)] font-[var(--font-body)] text-[0.9375rem] transition-all duration-300 outline-none placeholder:text-[var(--color-text-secondary)] placeholder:opacity-50 focus:border-[var(--color-primary)] focus:bg-[var(--color-surface)] focus:shadow-[0_0_15px_rgba(248,250,252,0.05)]`}
                     placeholder="Your city"
                     value={formData.location}
-                    onChange={handleChange}
+                    onChange={handleInputChange}
                   />
                   {errors.location && (
                     <span className="text-[10px] text-red-400 block font-medium mt-1.5">{errors.location}</span>
@@ -281,10 +285,11 @@ export default function JoinForm() {
                     name="membership-bike"
                     type="text"
                     autoComplete="off"
+                    aria-label="Your Bike"
                     className={`w-full bg-[var(--color-surface)]/50 border ${errors.bike ? 'border-red-500' : 'border-[var(--color-border)]'} rounded-lg py-3.5 px-5 text-[var(--color-text-primary)] font-[var(--font-body)] text-[0.9375rem] transition-all duration-300 outline-none placeholder:text-[var(--color-text-secondary)] placeholder:opacity-50 focus:border-[var(--color-primary)] focus:bg-[var(--color-surface)] focus:shadow-[0_0_15px_rgba(248,250,252,0.05)]`}
                     placeholder="Make, model, year"
                     value={formData.bike}
-                    onChange={handleChange}
+                    onChange={handleInputChange}
                   />
                   {errors.bike && (
                     <span className="text-[10px] text-red-400 block font-medium mt-1.5">{errors.bike}</span>
@@ -302,9 +307,10 @@ export default function JoinForm() {
                       id="membership-experience"
                       name="membership-experience"
                       autoComplete="off"
+                      aria-label="Riding Experience"
                       className={`w-full bg-[var(--color-surface)]/50 border ${errors.experience ? 'border-red-500' : 'border-[var(--color-border)]'} rounded-lg py-3.5 px-5 text-[var(--color-text-primary)] font-[var(--font-body)] text-[0.9375rem] transition-all duration-300 outline-none focus:border-[var(--color-primary)] focus:bg-[var(--color-surface)] focus:shadow-[0_0_15px_rgba(248,250,252,0.05)] appearance-none cursor-pointer`}
                       value={formData.experience}
-                      onChange={handleChange}
+                      onChange={handleInputChange}
                     >
                       <option value="" disabled className="bg-[var(--color-surface)]">
                         Select experience
@@ -349,11 +355,12 @@ export default function JoinForm() {
                   id="membership-ridden"
                   name="membership-ridden"
                   autoComplete="off"
+                  aria-label="Where have you ridden"
                   className="w-full bg-[var(--color-surface)]/50 border border-[var(--color-border)] rounded-lg py-3.5 px-5 text-[var(--color-text-primary)] font-[var(--font-body)] text-[0.9375rem] transition-all duration-300 outline-none placeholder:text-[var(--color-text-secondary)] placeholder:opacity-50 focus:border-[var(--color-primary)] focus:bg-[var(--color-surface)] focus:shadow-[0_0_15px_rgba(248,250,252,0.05)] resize-none"
                   rows={3}
                   placeholder="E.g. Leh-Ladakh, Coorg, Rajasthan circuit..."
                   value={formData.ridden}
-                  onChange={handleChange}
+                  onChange={handleInputChange}
                 />
               </div>
               <div>
@@ -367,11 +374,12 @@ export default function JoinForm() {
                   id="membership-why"
                   name="membership-why"
                   autoComplete="off"
+                  aria-label="Why MotoXCode"
                   className={`w-full bg-[var(--color-surface)]/50 border ${errors.why ? 'border-red-500' : 'border-[var(--color-border)]'} rounded-lg py-3.5 px-5 text-[var(--color-text-primary)] font-[var(--font-body)] text-[0.9375rem] transition-all duration-300 outline-none placeholder:text-[var(--color-text-secondary)] placeholder:opacity-50 focus:border-[var(--color-primary)] focus:bg-[var(--color-surface)] focus:shadow-[0_0_15px_rgba(248,250,252,0.05)] resize-none`}
                   rows={4}
                   placeholder="Tell us why you want to ride with us..."
                   value={formData.why}
-                  onChange={handleChange}
+                  onChange={handleInputChange}
                 />
                 {errors.why && (
                   <span className="text-[10px] text-red-400 block font-medium mt-1.5">{errors.why}</span>
@@ -384,9 +392,10 @@ export default function JoinForm() {
                     id="membership-agree"
                     name="membership-agree"
                     type="checkbox"
-                    className="mt-1 flex-shrink-0 accent-[var(--color-primary)] w-4 h-4 rounded border-[var(--color-border)] bg-[var(--color-surface)]"
+                    aria-label="Agree to terms"
+                    className="mt-1 flex-shrink-0 accent-[var(--color-primary)] size-4 rounded border-[var(--color-border)] bg-[var(--color-surface)]"
                     checked={formData.agree}
-                    onChange={handleChange}
+                    onChange={handleInputChange}
                   />
                   <span className="font-[var(--font-body)] text-xs lg:text-sm text-[var(--color-text-secondary)] select-none">
                     I agree to uphold the MotoXCode riding code and understand that

@@ -44,7 +44,7 @@ export default function CTA({ statsData }: CTAProps) {
       <div className="max-w-5xl mx-auto px-6 lg:px-12 w-full text-center relative z-10 flex flex-col items-center">
         {/* Eyebrow */}
         <span className="cta-item inline-flex items-center gap-2 text-[0.65rem] font-semibold tracking-[0.2em] uppercase px-5 py-2 rounded-full border border-[var(--color-border)]/60 text-[var(--color-accent)] bg-[var(--color-accent)]/10 mb-10">
-          <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-accent)] animate-pulse" />
+          <span className="size-1.5 rounded-full bg-[var(--color-accent)] animate-pulse" />
           Ready to Ride?
         </span>
 

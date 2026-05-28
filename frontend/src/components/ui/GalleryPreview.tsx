@@ -62,11 +62,16 @@ export default function GalleryPreview({
               background: "rgba(0,0,0,0.92)",
               backdropFilter: "blur(10px)",
             }}
+            role="presentation"
             onClick={() => setLightbox(null)}
+            onKeyDown={(e) => {
+              if (e.key === "Escape") setLightbox(null);
+            }}
           >
             {/* Close button */}
             <button
-              className="absolute top-5 right-5 w-10 h-10 flex items-center justify-center rounded-full bg-white/10 hover:bg-[var(--color-accent)]/30 text-white transition-colors cursor-pointer z-10"
+              type="button"
+              className="absolute top-5 right-5 size-10 flex items-center justify-center rounded-full bg-white/10 hover:bg-[var(--color-accent)]/30 text-white transition-colors cursor-pointer z-10"
               onClick={() => setLightbox(null)}
               aria-label="Close"
             >
@@ -123,15 +128,16 @@ export default function GalleryPreview({
         <div className="max-w-7xl mx-auto px-6 lg:px-12 w-full pb-12 relative z-10">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {galleryPreviewImages.map((img) => (
-              <div
+              <button
                 key={img._id}
-                className="gallery-item group relative overflow-hidden rounded-2xl shadow-[0_10px_30px_rgba(0,0,0,0.4)] cursor-pointer aspect-[4/3]"
+                type="button"
+                className="gallery-item group relative overflow-hidden rounded-2xl shadow-[0_10px_30px_rgba(0,0,0,0.4)] cursor-pointer aspect-[4/3] w-full block p-0 border-none appearance-none bg-transparent text-left"
                 onClick={() => setLightbox({ src: img.src, title: img.title })}
               >
                 <img
                   src={img.src}
                   alt={img.title}
-                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  className="absolute inset-0 size-full object-cover transition-transform duration-700 group-hover:scale-105"
                   loading="lazy"
                 />
                 {/* Hover overlay */}
@@ -139,7 +145,7 @@ export default function GalleryPreview({
                   <span className="font-heading font-bold text-xl text-white mb-3 translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
                     {img.title}
                   </span>
-                  <div className="w-10 h-10 rounded-full border border-white/30 flex items-center justify-center translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75 bg-white/5 backdrop-blur-sm">
+                  <div className="size-10 rounded-full border border-white/30 flex items-center justify-center translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75 bg-white/5 backdrop-blur-sm">
                     <svg
                       width="14"
                       height="14"
@@ -152,7 +158,7 @@ export default function GalleryPreview({
                     </svg>
                   </div>
                 </div>
-              </div>
+              </button>
             ))}
           </div>
         </div>

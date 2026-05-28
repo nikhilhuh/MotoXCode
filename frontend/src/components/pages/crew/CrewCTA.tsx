@@ -42,7 +42,7 @@ export default function CrewCTA() {
 
       <div className="max-w-4xl mx-auto px-6 lg:px-12 w-full text-center relative z-10 flex flex-col items-center">
         <span className="cta-anim inline-flex items-center gap-2 text-[0.65rem] font-semibold tracking-[0.2em] uppercase px-5 py-2 rounded-full border border-[var(--color-border)]/60 text-[var(--color-primary)] bg-[var(--color-primary)]/5 mb-10">
-          <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-primary)] animate-pulse" />
+          <span className="size-1.5 rounded-full bg-[var(--color-primary)] animate-pulse" />
           The Pack is Growing
         </span>
 

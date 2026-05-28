@@ -66,7 +66,7 @@ export const JoinSkeleton: React.FC = () => {
 
             {/* Agreement */}
             <div className="flex items-center gap-3">
-              <div className="w-4 h-4 rounded shimmer-box opacity-30 flex-shrink-0" />
+              <div className="size-4 rounded shimmer-box opacity-30 flex-shrink-0" />
               <div className="w-80 max-w-full h-4 rounded shimmer-box opacity-20" />
             </div>
 

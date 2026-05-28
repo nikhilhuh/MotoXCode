@@ -19,7 +19,7 @@ interface ContactFormProps {
   contactInfo: ContactInfoItem[];
 }
 
-function renderContactIcon(type?: string, label?: string) {
+const ContactIcon = ({ type, label }: { type?: string; label?: string }) => {
   const normType = (type || label || "").toLowerCase().trim();
 
   // 1. Matches for Base / Location
@@ -29,19 +29,19 @@ function renderContactIcon(type?: string, label?: string) {
     normType.includes("address") ||
     normType.includes("map")
   ) {
-    return <FaMapPin className="w-5 h-5 text-[var(--color-primary)]" />;
+    return <FaMapPin className="size-5 text-[var(--color-primary)]" />;
   }
   // 2. Matches for Email
   if (normType.includes("email") || normType.includes("mail")) {
-    return <FaEnvelope className="w-5 h-5 text-[var(--color-primary)]" />;
+    return <FaEnvelope className="size-5 text-[var(--color-primary)]" />;
   }
   // 3. Matches for Instagram
   if (normType.includes("instagram") || normType.includes("ig")) {
-    return <FaInstagram className="w-5 h-5 text-[var(--color-primary)]" />;
+    return <FaInstagram className="size-5 text-[var(--color-primary)]" />;
   }
   // 4. Matches for WhatsApp
   if (normType.includes("whatsapp") || normType.includes("wa")) {
-    return <FaWhatsapp className="w-5 h-5 text-[var(--color-primary)]" />;
+    return <FaWhatsapp className="size-5 text-[var(--color-primary)]" />;
   }
   // 5. Matches for Phone / Mobile / Call
   if (
@@ -51,7 +51,7 @@ function renderContactIcon(type?: string, label?: string) {
     normType.includes("call") ||
     normType.includes("contact")
   ) {
-    return <FaPhone className="w-5 h-5 text-[var(--color-primary)]" />;
+    return <FaPhone className="size-5 text-[var(--color-primary)]" />;
   }
   // 6. Matches for Website / Web / Link / Globe
   if (
@@ -60,7 +60,7 @@ function renderContactIcon(type?: string, label?: string) {
     normType.includes("globe") ||
     normType.includes("link")
   ) {
-    return <FaGlobe className="w-5 h-5 text-[var(--color-primary)]" />;
+    return <FaGlobe className="size-5 text-[var(--color-primary)]" />;
   }
 
   // 7. Fallback character badge (very premium and clean)
@@ -70,7 +70,7 @@ function renderContactIcon(type?: string, label?: string) {
       {initial}
     </span>
   );
-}
+};
 
 interface FormErrors {
   name?: string;
@@ -112,7 +112,7 @@ export default function ContactForm({ contactInfo }: ContactFormProps) {
     return () => ctx.revert();
   }, []);
 
-  function handleChange(
+  function handleInputChange(
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) {
     const target = e.target;
@@ -177,7 +177,7 @@ export default function ContactForm({ contactInfo }: ContactFormProps) {
         >
           {/* Info Card */}
           <div className="lg:col-span-2 anim-item bg-transparent lg:bg-[var(--color-bg)]/40 lg:border lg:border-[var(--color-border)]/50 lg:backdrop-blur-2xl lg:p-6 lg:rounded-2xl lg:shadow-[0_20px_50px_-10px_rgba(0,0,0,0.8)] relative overflow-hidden flex flex-col justify-between">
-            <div className="hidden lg:block absolute -top-10 -right-10 w-32 h-32 bg-[var(--color-primary)]/5 rounded-full blur-2xl pointer-events-none z-0"></div>
+            <div className="hidden lg:block absolute -top-10 -right-10 size-32 bg-[var(--color-primary)]/5 rounded-full blur-2xl pointer-events-none z-0"></div>
 
             <div className="relative z-10 flex flex-col h-full justify-between gap-6 border-b border-[var(--color-border)]/20 lg:border-0 pb-8">
               <div>
@@ -197,8 +197,8 @@ export default function ContactForm({ contactInfo }: ContactFormProps) {
                         key={item._id}
                         className="flex items-center gap-4 group"
                       >
-                        <div className="w-12 h-12 bg-[var(--color-surface)] border border-[var(--color-border)] text-[var(--color-accent)] rounded-xl flex items-center justify-center flex-shrink-0 transition-colors duration-300 group-hover:text-[var(--color-primary)] group-hover:border-[var(--color-primary)]/30 z-10 shadow-[0_4px_12px_rgba(0,0,0,0.2)]">
-                          {renderContactIcon(item.type, item.label)}
+                        <div className="size-12 bg-[var(--color-surface)] border border-[var(--color-border)] text-[var(--color-accent)] rounded-xl flex items-center justify-center flex-shrink-0 transition-colors duration-300 group-hover:text-[var(--color-primary)] group-hover:border-[var(--color-primary)]/30 z-10 shadow-[0_4px_12px_rgba(0,0,0,0.2)]">
+                          <ContactIcon type={item.type} label={item.label} />
                         </div>
                         <div>
                           <div className="font-[var(--font-sub)] text-[0.65rem] font-bold uppercase tracking-widest mb-0.5 text-[var(--color-text-secondary)]">
@@ -217,11 +217,11 @@ export default function ContactForm({ contactInfo }: ContactFormProps) {
 
           {/* Form Card */}
           <div className="lg:col-span-3 anim-item bg-transparent lg:bg-[var(--color-bg)]/40 lg:border lg:border-[var(--color-border)]/50 lg:backdrop-blur-2xl lg:p-6 lg:rounded-2xl lg:shadow-[0_20px_50px_-10px_rgba(0,0,0,0.8)] relative overflow-hidden flex flex-col justify-between">
-            <div className="hidden lg:block absolute -bottom-10 -left-10 w-32 h-32 bg-[var(--color-accent)]/5 rounded-full blur-2xl pointer-events-none z-0"></div>
+            <div className="hidden lg:block absolute -bottom-10 -left-10 size-32 bg-[var(--color-accent)]/5 rounded-full blur-2xl pointer-events-none z-0"></div>
 
             {submitted ? (
-              <div className="text-center py-16 relative z-10 w-full h-full flex flex-col items-center justify-center">
-                <div className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-5 bg-[var(--color-primary)]/10 text-[var(--color-primary)] border border-[var(--color-primary)]/20 shadow-[0_0_20px_rgba(248,250,252,0.15)] animate-pulse">
+              <div className="text-center py-16 relative z-10 size-full flex flex-col items-center justify-center">
+                <div className="size-14 rounded-full flex items-center justify-center mx-auto mb-5 bg-[var(--color-primary)]/10 text-[var(--color-primary)] border border-[var(--color-primary)]/20 shadow-[0_0_20px_rgba(248,250,252,0.15)] animate-pulse">
                   <svg
                     width="24"
                     height="24"
@@ -272,10 +272,11 @@ export default function ContactForm({ contactInfo }: ContactFormProps) {
                           name="contact-name"
                           type="text"
                           autoComplete="name"
+                          aria-label="Name"
                           className={`w-full bg-[var(--color-surface)]/50 border ${errors.name ? 'border-red-500' : 'border-[var(--color-border)]'} rounded-lg py-3.5 px-5 text-[var(--color-text-primary)] font-[var(--font-body)] text-[0.9375rem] transition-all duration-300 outline-none placeholder:text-[var(--color-text-secondary)] placeholder:opacity-50 focus:border-[var(--color-primary)] focus:bg-[var(--color-surface)] focus:shadow-[0_0_15px_rgba(248,250,252,0.05)]`}
                           placeholder="Your name"
                           value={formData.name}
-                          onChange={handleChange}
+                          onChange={handleInputChange}
                         />
                         {errors.name && (
                           <span className="text-[10px] text-red-400 block font-medium mt-1.5">{errors.name}</span>
@@ -293,10 +294,11 @@ export default function ContactForm({ contactInfo }: ContactFormProps) {
                           name="contact-email"
                           type="email"
                           autoComplete="email"
+                          aria-label="Email"
                           className={`w-full bg-[var(--color-surface)]/50 border ${errors.email ? 'border-red-500' : 'border-[var(--color-border)]'} rounded-lg py-3.5 px-5 text-[var(--color-text-primary)] font-[var(--font-body)] text-[0.9375rem] transition-all duration-300 outline-none placeholder:text-[var(--color-text-secondary)] placeholder:opacity-50 focus:border-[var(--color-primary)] focus:bg-[var(--color-surface)] focus:shadow-[0_0_15px_rgba(248,250,252,0.05)]`}
                           placeholder="you@email.com"
                           value={formData.email}
-                          onChange={handleChange}
+                          onChange={handleInputChange}
                         />
                         {errors.email && (
                           <span className="text-[10px] text-red-400 block font-medium mt-1.5">{errors.email}</span>
@@ -315,10 +317,11 @@ export default function ContactForm({ contactInfo }: ContactFormProps) {
                         name="contact-subject"
                         type="text"
                         autoComplete="off"
+                        aria-label="Subject"
                         className="w-full bg-[var(--color-surface)]/50 border border-[var(--color-border)] rounded-lg py-3.5 px-5 text-[var(--color-text-primary)] font-[var(--font-body)] text-[0.9375rem] transition-all duration-300 outline-none placeholder:text-[var(--color-text-secondary)] placeholder:opacity-50 focus:border-[var(--color-primary)] focus:bg-[var(--color-surface)] focus:shadow-[0_0_15px_rgba(248,250,252,0.05)]"
                         placeholder="What's this about?"
                         value={formData.subject}
-                        onChange={handleChange}
+                        onChange={handleInputChange}
                       />
                     </div>
                     <div>
@@ -333,10 +336,11 @@ export default function ContactForm({ contactInfo }: ContactFormProps) {
                         name="contact-message"
                         rows={5}
                         autoComplete="off"
+                        aria-label="Message"
                         className={`w-full bg-[var(--color-surface)]/50 border ${errors.message ? 'border-red-500' : 'border-[var(--color-border)]'} rounded-lg py-3.5 px-5 text-[var(--color-text-primary)] font-[var(--font-body)] text-[0.9375rem] transition-all duration-300 outline-none placeholder:text-[var(--color-text-secondary)] placeholder:opacity-50 focus:border-[var(--color-primary)] focus:bg-[var(--color-surface)] focus:shadow-[0_0_15px_rgba(248,250,252,0.05)] resize-none`}
                         placeholder="Tell us everything..."
                         value={formData.message}
-                        onChange={handleChange}
+                        onChange={handleInputChange}
                       />
                       {errors.message && (
                         <span className="text-[10px] text-red-400 block font-medium mt-1.5">{errors.message}</span>

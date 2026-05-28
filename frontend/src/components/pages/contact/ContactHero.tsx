@@ -33,7 +33,7 @@ export default function ContactHero({ ContactHeroBg }: ContactHeroProps) {
       className="relative w-full min-h-[100dvh] flex flex-col items-center justify-center overflow-hidden"
     >
       <div
-        className="absolute inset-0 w-full h-full bg-cover bg-center"
+        className="absolute inset-0 size-full bg-cover bg-center"
         style={{ backgroundImage: `url(${ContactHeroBg})` }}
       />
       <div

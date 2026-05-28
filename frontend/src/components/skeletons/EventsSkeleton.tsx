@@ -21,7 +21,7 @@ export const EventsSkeleton: React.FC = () => {
             >
               {/* Date Card & details */}
               <div className="flex items-center gap-5 w-full md:w-auto">
-                <div className="w-16 h-16 rounded-xl border border-[var(--color-border)]/30 shimmer-box opacity-35 flex-shrink-0" />
+                <div className="size-16 rounded-xl border border-[var(--color-border)]/30 shimmer-box opacity-35 flex-shrink-0" />
                 <div className="flex flex-col gap-2">
                   <div className="w-48 max-w-[60vw] h-6 rounded-md shimmer-box opacity-45" />
                   <div className="w-36 max-w-[45vw] h-4 rounded shimmer-box opacity-25" />

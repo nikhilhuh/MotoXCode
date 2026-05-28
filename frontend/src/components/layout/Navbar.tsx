@@ -60,19 +60,22 @@ interface NavbarProps {
   socials: Social[];
 }
 const Navbar: React.FC<NavbarProps> = ({ socials }) => {
-  const [scrolled, setScrolled] = useState<boolean>(false);
-  const [windowWidth, setWindowWidth] = useState<number>(window.innerWidth);
-  const [menuOpen, setMenuOpen] = useState<boolean>(false);
+  const [scrolled, setScrolled] = useState<boolean>(() => typeof window !== 'undefined' ? window.scrollY > 20 : false);
+  const [windowWidth, setWindowWidth] = useState<number>(typeof window !== 'undefined' ? window.innerWidth : 1024);
   const location = useLocation();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
-    const onResize = () => setWindowWidth(window.innerWidth);
+    const onResize = () => {
+      const newWidth = window.innerWidth;
+      setWindowWidth(newWidth);
+      if (newWidth >= 768) {
+        document.body.style.overflow = "";
+      }
+    };
 
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onResize);
-
-    onScroll();
 
     return () => {
       window.removeEventListener("scroll", onScroll);
@@ -81,19 +84,8 @@ const Navbar: React.FC<NavbarProps> = ({ socials }) => {
   }, []);
 
   useEffect(() => {
-    document.body.style.overflow = menuOpen ? "hidden" : "";
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [menuOpen]);
-
-  useEffect(() => {
-    if (windowWidth >= 768) setMenuOpen(false);
-  }, [windowWidth]);
-
-  useEffect(() => {
-    setMenuOpen(false);
-  }, [location.pathname]);
+    document.body.style.overflow = "";
+  }, [location]);
 
   /* Desktop navbar width logic */
   let maxWidth = windowWidth;
@@ -115,20 +107,10 @@ const Navbar: React.FC<NavbarProps> = ({ socials }) => {
           variants={navbarVariants}
           initial="hidden"
           animate="visible"
-          className={`fixed ${scrolled ? "top-5" : "top-0"} left-0 z-40`}
+          className={`fixed ${scrolled ? "top-5 py-4 px-8 rounded-[2.5rem] bg-[var(--color-navbar-bg)] backdrop-blur-[18px] shadow-[0_12px_32px_rgba(0,0,0,0.4)] border border-white/10" : "top-0 py-6 px-8 rounded-none bg-transparent backdrop-blur-none shadow-none border border-transparent"} left-0 z-40 w-full transition-[top,padding,border-radius,background-color,backdrop-filter,box-shadow,border-color] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]`}
           style={{
-            width: "100%",
             maxWidth,
             marginLeft,
-            padding: scrolled ? "1rem 2rem" : "1.5rem 2rem",
-            borderRadius: scrolled ? "2.5rem" : "0rem",
-            backgroundColor: scrolled
-              ? "var(--color-navbar-bg)"
-              : "transparent",
-            backdropFilter: scrolled ? "blur(18px)" : "none",
-            boxShadow: scrolled ? "0 12px 32px rgba(0,0,0,0.4)" : "none",
-            border: scrolled ? "1px solid rgba(255,255,255,0.1)" : "none",
-            transition: "all 0.5s cubic-bezier(0.22, 1, 0.36, 1)",
           }}
         >
           <div className="w-full xl:max-w-7xl mx-auto flex items-center justify-between">
@@ -143,7 +125,7 @@ const Navbar: React.FC<NavbarProps> = ({ socials }) => {
                 className="flex items-center gap-2 group"
                 aria-label="MotoXCode Home"
               >
-                <div className="w-8 h-8 bg-[var(--color-primary)] rounded-full flex items-center justify-center transition-all duration-300 group-hover:scale-110">
+                <div className="size-8 bg-[var(--color-primary)] rounded-full flex items-center justify-center transition-all duration-300 group-hover:scale-110">
                   <svg width="16" height="16" viewBox="0 0 16 16" fill="black">
                     <path
                       d="M2 12L8 4L14 12H2Z"
@@ -220,8 +202,12 @@ const Navbar: React.FC<NavbarProps> = ({ socials }) => {
           menuButtonColor="var(--color-text-primary)"
           openMenuButtonColor="var(--color-text-primary)"
           accentColor="var(--color-highlight)"
-          onMenuOpen={() => setMenuOpen(true)}
-          onMenuClose={() => setMenuOpen(false)}
+          onMenuOpen={() => {
+            document.body.style.overflow = "hidden";
+          }}
+          onMenuClose={() => {
+            document.body.style.overflow = "";
+          }}
         />
       )}
     </>

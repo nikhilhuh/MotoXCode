@@ -31,7 +31,7 @@ export default function RidesGrid({ rides }: RidesGridProps) {
   return (
     <section id="rides-grid" className="py-12 lg:py-22 relative overflow-hidden bg-gradient-to-b from-[var(--color-bg)] via-[var(--color-section)] to-[var(--color-surface)]">
       {/* Decorative premium ambient lighting */}
-      <div className="absolute -top-[10%] right-[10%] w-[40%] h-[40%] rounded-full bg-[var(--color-primary)]/5 blur-[120px] pointer-events-none z-0"></div>
+      <div className="absolute -top-[10%] right-[10%] size-[40%] rounded-full bg-[var(--color-primary)]/5 blur-[120px] pointer-events-none z-0"></div>
       <div className="absolute top-[30%] -left-[10%] w-[40%] h-[50%] rounded-full bg-[var(--color-accent)]/5 blur-[120px] pointer-events-none z-0"></div>
 
       <div className="max-w-7xl mx-auto px-6 lg:px-12 w-full relative z-10">
@@ -49,6 +49,7 @@ export default function RidesGrid({ rides }: RidesGridProps) {
             {(['all', 'upcoming', 'past'] as RideFilter[]).map((f) => (
               <button
                 key={f}
+                type="button"
                 id={`filter-${f}`}
                 onClick={() => setFilter(f)}
                 className={`relative font-accent font-bold text-xs uppercase tracking-[0.12em] px-6 py-2.5 rounded-full transition-colors duration-300 cursor-pointer ${

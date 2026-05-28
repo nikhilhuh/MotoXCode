@@ -28,11 +28,14 @@ export interface StaggeredMenuProps {
   onMenuClose?: () => void;
 }
 
+const EMPTY_ITEMS: StaggeredMenuItem[] = [];
+const EMPTY_SOCIALS: StaggeredMenuSocialItem[] = [];
+
 export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
   position = "right",
   colors = ["var(--color-bg)", "var(--color-surface)"],
-  items = [],
-  socialItems = [],
+  items = EMPTY_ITEMS,
+  socialItems = EMPTY_SOCIALS,
   displaySocials = true,
   displayItemNumbering = true,
   menuButtonColor = "var(--color-text)",
@@ -284,7 +287,7 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
 
     openTlRef.current = tl;
     return tl;
-  }, [position]);
+  }, []);
 
   const playOpen = useCallback(() => {
     if (busyRef.current) return;
@@ -503,6 +506,11 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
     }
   }, [playClose, animateIcon, animateColor, animateText, onMenuClose]);
 
+  const closeMenuRef = React.useRef(closeMenu);
+  React.useLayoutEffect(() => {
+    closeMenuRef.current = closeMenu;
+  }, [closeMenu]);
+
   React.useEffect(() => {
     if (!closeOnClickAway || !open) return;
 
@@ -513,7 +521,7 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
         toggleBtnRef.current &&
         !toggleBtnRef.current.contains(event.target as Node)
       ) {
-        closeMenu();
+        closeMenuRef.current();
       }
     };
 
@@ -521,7 +529,7 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [closeOnClickAway, open, closeMenu]);
+  }, [closeOnClickAway, open]);
 
   return (
     <div
@@ -530,7 +538,7 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
       }`}
     >
       <div
-        className="staggered-menu-wrapper relative w-full h-full z-40"
+        className="staggered-menu-wrapper relative size-full z-40"
         style={
           accentColor
             ? ({ ["--sm-accent" as any]: accentColor } as React.CSSProperties)
@@ -557,7 +565,7 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
             return arr.map((c, i) => (
               <div
                 key={i}
-                className="sm-prelayer absolute top-0 right-0 h-full w-full translate-x-0"
+                className="sm-prelayer absolute top-0 right-0 size-full translate-x-0"
                 style={{ background: c }}
               />
             ));
@@ -588,7 +596,7 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
               className="flex items-center gap-2 group"
               aria-label="MotoXCode Home"
             >
-              <div className="w-8 h-8 bg-[var(--color-primary)] rounded-full flex items-center justify-center transition-all duration-300 group-hover:scale-110">
+              <div className="size-8 bg-[var(--color-primary)] rounded-full flex items-center justify-center transition-all duration-300 group-hover:scale-110">
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="black">
                   <path
                     d="M2 12L8 4L14 12H2Z"
@@ -619,7 +627,7 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
               >
                 <span ref={textInnerRef} className="sm-toggle-textInner">
                   {textLines.map((l, i) => (
-                    <span className="sm-toggle-line" key={i}>
+                    <span className="sm-toggle-line" key={`${l}-${i}`}>
                       {l}
                     </span>
                   ))}
@@ -630,7 +638,7 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
               <span ref={tachoRef} className="sm-tacho" aria-hidden="true">
                 {/* SVG Dial Ticks */}
                 <svg
-                  className="absolute inset-0 w-full h-full text-white/30"
+                  className="absolute inset-0 size-full text-white/30"
                   viewBox="0 0 32 32"
                   fill="none"
                 >
@@ -665,9 +673,9 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
         <aside
           id="staggered-menu-panel"
           ref={panelRef}
-          className="staggered-menu-panel absolute top-0 right-0 h-[100dvh] max-h-[100dvh] bg-[var(--color-navbar-bg)]/80 flex flex-col p-[6em_2em_2em_2em] overflow-y-auto z-10 backdrop-blur-[12px]"
+          className="staggered-menu-panel absolute top-0 right-0 h-[100dvh] max-h-[100dvh] bg-[var(--color-navbar-bg)]/80 flex flex-col p-[6em_2em_2em_2em] overflow-y-auto z-10 backdrop-blur-[8px]"
           style={{
-            WebkitBackdropFilter: "blur(12px)",
+            WebkitBackdropFilter: "blur(8px)",
             pointerEvents: open ? "auto" : "none",
           }}
           aria-hidden={!open}
@@ -676,7 +684,6 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
           <div className="sm-panel-inner flex-1 flex flex-col gap-5">
             <ul
               className="sm-panel-list list-none m-0 p-0 flex flex-col gap-2"
-              role="list"
               data-numbering={displayItemNumbering || undefined}
             >
               {items && items.length ? (
@@ -726,7 +733,6 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
                 </h3>
                 <ul
                   className="sm-socials-list list-none m-0 p-0 flex flex-row items-center gap-4 flex-wrap"
-                  role="list"
                 >
                   {socialItems.map((s) => (
                     <li key={s._id} className="sm-socials-item">

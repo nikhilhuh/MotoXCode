@@ -19,7 +19,7 @@ export default function AboutPhilosophy({ philosophy }: AboutPhilosophyProps) {
             </h2>
             <div className="space-y-6 text-[var(--color-text-secondary)]">
               <p className="font-[var(--font-body)] text-lg lg:text-xl leading-relaxed">
-                Most riding groups are about the bike. MotoXCode is about the rider. There's a difference — and we felt it every time we tried to find our people.
+                Most riding groups are about the bike. MotoXCode is about the rider. There's a difference, and we felt it every time we tried to find our people.
               </p>
               <p className="font-[var(--font-body)] text-lg lg:text-xl leading-relaxed">
                 We wanted a community that took safety as seriously as speed. That valued the story of a ride over the spec sheet of the machine. That made space for the beginner and the veteran in the same convoy.
@@ -42,7 +42,7 @@ export default function AboutPhilosophy({ philosophy }: AboutPhilosophyProps) {
               <img
                 src={philosophy.image}
                 alt="MotoXCode Story"
-                className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 hover:scale-105"
+                className="absolute inset-0 size-full object-cover transition-transform duration-1000 hover:scale-105"
                 onError={(e) => { e.currentTarget.style.display = 'none' }}
               />
               <div className="absolute inset-0 flex flex-col items-start justify-end p-10 bg-gradient-to-t from-[var(--color-bg)] via-transparent to-transparent">
@@ -50,7 +50,7 @@ export default function AboutPhilosophy({ philosophy }: AboutPhilosophyProps) {
                   {philosophy.quote}
                 </blockquote>
                 <p className="font-[var(--font-sub)] text-sm tracking-widest uppercase font-semibold text-[var(--color-accent)]">
-                  —{philosophy.author}
+                  - {philosophy.author}
                 </p>
               </div>
             </div>

@@ -36,15 +36,16 @@ export default function RideCard({ ride }: RideCardProps) {
 
   return (
     <>
-      <div
+      <button
+        type="button"
         onClick={() => setIsOpen(true)}
-        className="cursor-pointer relative overflow-hidden rounded-2xl group w-full transition-all duration-500 hover:-translate-y-2 shadow-[0_10px_40px_rgba(0,0,0,0.4)] aspect-[4/5]"
+        className="cursor-pointer relative overflow-hidden rounded-2xl group w-full transition-all duration-500 hover:-translate-y-2 shadow-[0_10px_40px_rgba(0,0,0,0.4)] aspect-[4/5] block text-left p-0 border-none appearance-none bg-transparent"
       >
       {/* Background Image */}
       <img
         src={ride.image}
         alt={ride.title}
-        className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+        className="absolute inset-0 size-full object-cover transition-transform duration-700 group-hover:scale-105"
       />
       
       {/* Dark gradient overlay */}
@@ -97,14 +98,18 @@ export default function RideCard({ ride }: RideCardProps) {
           <span className="font-semibold text-white">{ride.distance}</span>
         </div>
       </div>
-    </div>
+    </button>
 
     {/* Modal using React Portal for true viewport centering */}
     {isOpen && typeof document !== 'undefined' && createPortal(
       <div 
+        role="presentation"
         className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-6" 
         style={{ background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(8px)' }} 
         onClick={() => setIsOpen(false)}
+        onKeyDown={(e) => {
+          if (e.key === 'Escape') setIsOpen(false);
+        }}
       >
         <div 
           className="relative bg-[var(--color-surface)] border border-[var(--color-border)]/50 rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden shadow-2xl flex flex-col" 
@@ -112,13 +117,15 @@ export default function RideCard({ ride }: RideCardProps) {
         >
           {/* === FIXED IMAGE HEADER with overlay === */}
           <div className="relative h-52 sm:h-64 flex-shrink-0">
-            <img src={ride.image} alt={ride.title} className="w-full h-full object-cover" />
+            <img src={ride.image} alt={ride.title} className="size-full object-cover" />
             {/* Dark gradient scrim */}
             <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/20" />
 
             {/* Close button — pinned to image */}
             <button 
-              className="absolute top-4 right-4 z-20 w-8 h-8 flex items-center justify-center rounded-full bg-black/60 backdrop-blur-sm text-white hover:bg-[var(--color-accent)] transition-colors cursor-pointer" 
+              type="button"
+              aria-label="Close ride details"
+              className="absolute top-4 right-4 z-20 size-8 flex items-center justify-center rounded-full bg-black/60 backdrop-blur-sm text-white hover:bg-[var(--color-accent)] transition-colors cursor-pointer" 
               onClick={() => setIsOpen(false)}
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

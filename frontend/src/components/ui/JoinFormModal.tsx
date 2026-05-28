@@ -164,9 +164,13 @@ export default function JoinFormModal({ isOpen, onClose, target }: JoinFormModal
 
   return createPortal(
     <div
+      role="presentation"
       className="fixed inset-0 z-[110] flex items-center justify-center p-4 sm:p-6 md:p-10"
-      style={{ background: 'rgba(2, 6, 23, 0.85)', backdropFilter: 'blur(12px)' }}
+      style={{ background: 'rgba(2, 6, 23, 0.85)', backdropFilter: 'blur(8px)' }}
       onClick={handleResetAndClose}
+      onKeyDown={(e) => {
+        if (e.key === 'Escape') handleResetAndClose();
+      }}
     >
       <div
         className="relative w-full max-w-xl bg-gradient-to-b from-[var(--color-surface)] to-[var(--color-section)] border border-[var(--color-border)]/50 rounded-2xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh] transition-all duration-300"
@@ -177,7 +181,9 @@ export default function JoinFormModal({ isOpen, onClose, target }: JoinFormModal
 
         {/* Close Button */}
         <button
-          className="absolute top-5 right-5 z-20 w-8 h-8 flex items-center justify-center rounded-full bg-black/40 border border-white/10 text-[var(--color-text-secondary)] hover:text-white hover:bg-[var(--color-highlight)] transition-all cursor-pointer"
+          type="button"
+          aria-label="Close form"
+          className="absolute top-5 right-5 z-20 size-8 flex items-center justify-center rounded-full bg-black/40 border border-white/10 text-[var(--color-text-secondary)] hover:text-white hover:bg-[var(--color-highlight)] transition-all cursor-pointer"
           onClick={handleResetAndClose}
         >
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -189,7 +195,7 @@ export default function JoinFormModal({ isOpen, onClose, target }: JoinFormModal
           /* SUCCESS STATE PANEL */
           <div className="flex-1 overflow-y-auto p-8 flex flex-col items-center justify-center text-center gap-6 my-auto min-h-[350px]">
             {/* Animated Checkmark Circle */}
-            <div className="relative w-16 h-16 rounded-full flex items-center justify-center mx-auto bg-[var(--color-primary)]/10 text-[var(--color-primary)] border border-[var(--color-primary)]/20 shadow-[0_0_20px_rgba(248,250,252,0.15)] animate-pulse">
+            <div className="relative size-16 rounded-full flex items-center justify-center mx-auto bg-[var(--color-primary)]/10 text-[var(--color-primary)] border border-[var(--color-primary)]/20 shadow-[0_0_20px_rgba(248,250,252,0.15)] animate-pulse">
               <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M20 6 9 17l-5-5" />
               </svg>
@@ -205,6 +211,7 @@ export default function JoinFormModal({ isOpen, onClose, target }: JoinFormModal
             </div>
 
             <button
+              type="button"
               onClick={handleResetAndClose}
               className="btn-primary px-8 py-3.5 text-xs w-full sm:w-auto"
             >
@@ -269,6 +276,7 @@ export default function JoinFormModal({ isOpen, onClose, target }: JoinFormModal
                     type="text"
                     id={`${uniqueIdPrefix}-fullName`}
                     name={`${uniqueIdPrefix}-fullName`}
+                    aria-label="Full Name"
                     value={formData.fullName}
                     onChange={handleInputChange}
                     autoComplete="name"
@@ -292,6 +300,7 @@ export default function JoinFormModal({ isOpen, onClose, target }: JoinFormModal
                     type="tel"
                     id={`${uniqueIdPrefix}-phone`}
                     name={`${uniqueIdPrefix}-phone`}
+                    aria-label="Phone Number"
                     value={formData.phone}
                     onChange={handleInputChange}
                     autoComplete="tel"
@@ -319,6 +328,7 @@ export default function JoinFormModal({ isOpen, onClose, target }: JoinFormModal
                       type="text"
                       id={`${uniqueIdPrefix}-bikeModel`}
                       name={`${uniqueIdPrefix}-bikeModel`}
+                      aria-label="Your Bike"
                       value={formData.bikeModel}
                       onChange={handleInputChange}
                       autoComplete="off"
@@ -342,6 +352,7 @@ export default function JoinFormModal({ isOpen, onClose, target }: JoinFormModal
                       <select
                         id={`${uniqueIdPrefix}-experienceLevel`}
                         name={`${uniqueIdPrefix}-experienceLevel`}
+                        aria-label="Riding Experience"
                         value={formData.experienceLevel}
                         onChange={handleInputChange}
                         autoComplete="off"
@@ -394,6 +405,7 @@ export default function JoinFormModal({ isOpen, onClose, target }: JoinFormModal
                         <select
                           id={`${uniqueIdPrefix}-ridingToEvent`}
                           name={`${uniqueIdPrefix}-ridingToEvent`}
+                          aria-label="Riding to Event"
                           value={formData.ridingToEvent}
                           onChange={handleInputChange}
                           autoComplete="off"
@@ -430,6 +442,7 @@ export default function JoinFormModal({ isOpen, onClose, target }: JoinFormModal
                           type="text"
                           id={`${uniqueIdPrefix}-bikeModel`}
                           name={`${uniqueIdPrefix}-bikeModel`}
+                          aria-label="Which Bike"
                           value={formData.bikeModel}
                           onChange={handleInputChange}
                           autoComplete="off"
@@ -456,6 +469,7 @@ export default function JoinFormModal({ isOpen, onClose, target }: JoinFormModal
                 <textarea
                   id={`${uniqueIdPrefix}-notes`}
                   name={`${uniqueIdPrefix}-notes`}
+                  aria-label="Additional Notes"
                   value={formData.notes}
                   onChange={handleInputChange}
                   rows={3}
@@ -481,11 +495,11 @@ export default function JoinFormModal({ isOpen, onClose, target }: JoinFormModal
                 >
                   {isSubmitting ? (
                     <span className="flex items-center gap-2 justify-center">
-                      <svg className="animate-spin h-4 w-4 text-black" viewBox="0 0 24 24" fill="none">
+                      <svg className="animate-spin size-4 text-black" viewBox="0 0 24 24" fill="none">
                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                       </svg>
-                      Verifying...
+                      Verifying…
                     </span>
                   ) : (
                     <span className="flex items-center gap-2 justify-center">

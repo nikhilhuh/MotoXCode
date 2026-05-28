@@ -37,7 +37,7 @@ export const AboutSkeleton: React.FC = () => {
             {[...Array(6)].map((_, i) => (
               <div key={i} className="relative">
                 {/* Node Dot */}
-                <div className="absolute -left-[41px] top-1.5 w-4 h-4 rounded-full bg-[var(--color-border)] border-4 border-black" />
+                <div className="absolute -left-[41px] top-1.5 size-4 rounded-full bg-[var(--color-border)] border-4 border-black" />
                 <div className="w-16 h-6 rounded shimmer-box mb-2 opacity-35" />
                 <div className="w-32 h-4 rounded shimmer-box mb-3 opacity-25" />
                 <div className="w-full h-12 rounded-lg shimmer-box opacity-15" />
@@ -61,7 +61,7 @@ export const AboutSkeleton: React.FC = () => {
                 key={i}
                 className="rounded-2xl border border-[var(--color-border)]/50 p-6 flex flex-col gap-3 bg-[var(--color-surface)]/20"
               >
-                <div className="w-10 h-10 rounded-lg shimmer-box opacity-35" />
+                <div className="size-10 rounded-lg shimmer-box opacity-35" />
                 <div className="w-36 h-6 rounded-md shimmer-box mb-1 opacity-45" />
                 <div className="w-full h-12 rounded shimmer-box opacity-15" />
               </div>

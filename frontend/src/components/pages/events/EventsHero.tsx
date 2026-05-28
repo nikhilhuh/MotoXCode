@@ -33,7 +33,7 @@ export default function EventsHero({ EventsHeroBg }: EventsHeroProps) {
       className="relative w-full min-h-[100dvh] flex flex-col items-center justify-center overflow-hidden"
     >
       <div
-        className="absolute inset-0 w-full h-full bg-cover bg-center"
+        className="absolute inset-0 size-full bg-cover bg-center"
         style={{ backgroundImage: `url(${EventsHeroBg})` }}
       />
       <div
@@ -72,7 +72,7 @@ export default function EventsHero({ EventsHeroBg }: EventsHeroProps) {
           </h1>
 
           <p className="hero-anim font-[var(--font-body)] font-medium max-w-2xl mx-auto text-sm md:text-base lg:text-xl text-[var(--color-text-primary)] opacity-90 leading-relaxed mb-10">
-            From epic group rides to community meetups to safety workshops — something is always happening in the MotoXCode world.
+            From epic group rides to community meetups to safety workshops: something is always happening in the MotoXCode world.
           </p>
 
           <div className="hero-anim flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 w-full max-w-[16rem] sm:max-w-none mx-auto">

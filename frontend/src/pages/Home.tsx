@@ -5,7 +5,7 @@ import Values from "../components/pages/home/Values";
 import UpcomingRides from "../components/pages/home/UpcomingRides";
 import MemberSpotlight from "../components/pages/home/MemberSpotlight";
 import GalleryPreview from "../components/ui/GalleryPreview";
-import CTA from "../components/pages/home/CTA";
+import Cta from "../components/pages/home/CTA";
 import { cmsService } from "@/services";
 import { HomeSkeleton } from "../components/skeletons/HomeSkeleton";
 
@@ -41,7 +41,7 @@ export default function Home() {
       <UpcomingRides upcomingRidesData={homeData.upcomingRides} />
       <MemberSpotlight mvpCrew={homeData.mvpCrew} />
       <GalleryPreview galleryPreviewImages={homeData.galleryPreview} />
-      <CTA statsData={homeData.stats} />
+      <Cta statsData={homeData.stats} />
     </>
   );
 }

@@ -34,7 +34,7 @@ export default function CrewHero({ CrewHeroBg }: CrewHeroProps) {
       className="relative w-full min-h-[100dvh] flex flex-col items-center justify-center overflow-hidden"
     >
       <div
-        className="absolute inset-0 w-full h-full bg-cover bg-center"
+        className="absolute inset-0 size-full bg-cover bg-center"
         style={{ backgroundImage: `url(${CrewHeroBg})` }}
       />
       <div
@@ -74,7 +74,7 @@ export default function CrewHero({ CrewHeroBg }: CrewHeroProps) {
 
           <p className="hero-anim font-[var(--font-body)] font-medium max-w-2xl mx-auto text-sm md:text-base lg:text-xl text-[var(--color-text-primary)] opacity-90 leading-relaxed mb-10">
             Behind every great ride is an even greater team. Meet the core crew 
-            of MotoXCode — the architects of your next adventure.
+            of MotoXCode: the architects of your next adventure.
           </p>
 
           <div className="hero-anim flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 w-full max-w-[16rem] sm:max-w-none mx-auto">

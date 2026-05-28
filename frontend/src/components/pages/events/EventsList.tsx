@@ -114,7 +114,7 @@ export default function EventsList({ events }: EventsListProps) {
                   <div className="flex flex-wrap gap-x-6 gap-y-2.5 font-accent text-xs text-[var(--color-text-secondary)]">
                     <span className="flex items-center gap-2">
                       <svg
-                        className="w-4 h-4 opacity-70"
+                        className="size-4 opacity-70"
                         viewBox="0 0 24 24"
                         fill="none"
                         stroke="currentColor"
@@ -135,7 +135,7 @@ export default function EventsList({ events }: EventsListProps) {
                     </span>
                     <span className="flex items-center gap-2">
                       <svg
-                        className="w-4 h-4 opacity-70"
+                        className="size-4 opacity-70"
                         viewBox="0 0 24 24"
                         fill="none"
                         stroke="currentColor"
@@ -181,9 +181,9 @@ export default function EventsList({ events }: EventsListProps) {
                     </div>
                     <p className="mt-1.5 font-accent text-[0.68rem] text-[var(--color-text-secondary)] flex items-center gap-1.5">
                       {isAlmostFull ? (
-                        <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span>
+                        <span className="size-1.5 rounded-full bg-red-500 animate-pulse"></span>
                       ) : (
-                        <span className="w-1.5 h-1.5 rounded-full bg-green-500"></span>
+                        <span className="size-1.5 rounded-full bg-green-500"></span>
                       )}
                       {event.spotsLeft} slots left. Grab yours now!
                     </p>
