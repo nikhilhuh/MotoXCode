@@ -71,16 +71,16 @@
 @layer components {
   /* ── Buttons ── */
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 bg-[var(--color-primary)] text-[var(--color-bg)] font-[var(--font-body)] font-bold tracking-[0.06em] uppercase rounded-full transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_12px_40px_rgba(248,250,252,0.3)];
+    @apply inline-flex items-center justify-center gap-2 bg-[var(--color-primary)] text-[var(--color-bg)] font-[var(--font-body)] font-bold tracking-[0.06em] uppercase rounded-full transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_12px_40px_rgba(248,250,252,0.3)] hover:cursor-pointer;
   }
 
   .btn-secondary {
-    @apply inline-flex items-center justify-center gap-2 border border-[var(--color-border)] text-[var(--color-primary)] font-[var(--font-body)] font-bold tracking-[0.08em] uppercase rounded-full transition-all duration-300 bg-[var(--color-bg)]/40 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] hover:bg-[var(--color-bg)]/70 hover:border-[var(--color-primary)] hover:-translate-y-1 hover:shadow-[0_16px_48px_rgba(0,0,0,0.6)];
+    @apply inline-flex items-center justify-center gap-2 border border-[var(--color-border)] text-[var(--color-primary)] font-[var(--font-body)] font-bold tracking-[0.08em] uppercase rounded-full transition-all duration-300 bg-[var(--color-bg)]/40 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] hover:bg-[var(--color-bg)]/70 hover:border-[var(--color-primary)] hover:-translate-y-1 hover:shadow-[0_16px_48px_rgba(0,0,0,0.6)] hover:cursor-pointer;
   }
 
   /* Rectangular border-only button (no rounded-full) */
   .btn-outline {
-    @apply inline-flex items-center justify-center gap-2 border border-[var(--color-border)] text-[var(--color-primary)] font-[var(--font-body)] font-bold tracking-[0.08em] uppercase rounded-sm transition-all duration-300 bg-[var(--color-bg)]/40 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] hover:bg-[var(--color-bg)]/70 hover:border-[var(--color-primary)]  hover:shadow-[0_16px_48px_rgba(0,0,0,0.6)];
+    @apply inline-flex items-center justify-center gap-2 border border-[var(--color-border)] text-[var(--color-primary)] font-[var(--font-body)] font-bold tracking-[0.08em] uppercase rounded-sm transition-all duration-300 bg-[var(--color-bg)]/40 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] hover:bg-[var(--color-bg)]/70 hover:border-[var(--color-primary)]  hover:shadow-[0_16px_48px_rgba(0,0,0,0.6)] hover:cursor-pointer;
   }
 
   /* ── Section Typography ── */

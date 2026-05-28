@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import JoinHero from "../components/pages/join/JoinHero";
 import JoinForm from "../components/pages/join/JoinForm";
+import SignInCTA from "../components/pages/join/SignInCTA";
 import GalleryPreview from "@/components/ui/GalleryPreview";
 import { intakeService } from "@/services";
 import { JoinSkeleton } from "../components/skeletons/JoinSkeleton";
@@ -35,8 +36,10 @@ export default function Join() {
       <JoinForm />
       <GalleryPreview
         galleryPreviewImages={joinData.galleryPreview}
-        className="bg-gradient-to-b from-[var(--color-surface)] to-black"
+        className="bg-gradient-to-b from-[var(--color-surface)] to-[var(--color-bg)] pb-12"
       />
+      
+      <SignInCTA />
     </>
   );
 }

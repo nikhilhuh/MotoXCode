@@ -94,7 +94,7 @@ export default function Footer({ socials }: FooterProps) {
   return (
     <footer
       ref={footerRef}
-      className="relative border-t border-[var(--color-border)]/20 bg-gray-950 overflow-hidden"
+      className="relative border-t border-[var(--color-border)]/20 bg-gradient-to-b from-black via-[var(--color-bg)] to-[var(--color-surface)]  overflow-hidden"
     >
       {/* Ambient glow */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[60%] h-[1px] bg-gradient-to-r from-transparent via-[var(--color-border)]/60 to-transparent" />

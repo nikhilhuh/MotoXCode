@@ -8,6 +8,7 @@ import { RidesSkeleton } from "./components/skeletons/RidesSkeleton";
 import { JoinSkeleton } from "./components/skeletons/JoinSkeleton";
 import { EventsSkeleton } from "./components/skeletons/EventsSkeleton";
 import { ContactSkeleton } from "./components/skeletons/ContactSkeleton";
+import { SignInSkeleton } from "./components/skeletons/SignInSkeleton";
 
 const Home = lazy(() => import("./pages/Home"));
 const About = lazy(() => import("./pages/About"));
@@ -16,6 +17,7 @@ const Rides = lazy(() => import("./pages/Rides"));
 const Join = lazy(() => import("./pages/Join"));
 const Events = lazy(() => import("./pages/Events"));
 const Contact = lazy(() => import("./pages/Contact"));
+const SignIn = lazy(() => import("./pages/SignIn"));
 
 export default function App() {
 
@@ -80,6 +82,14 @@ export default function App() {
             }
           />
         </Route>
+        <Route
+          path="/signin"
+          element={
+            <Suspense fallback={<SignInSkeleton />}>
+              <SignIn />
+            </Suspense>
+          }
+        />
       </Routes>
     </BrowserRouter>
   );
