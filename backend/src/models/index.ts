@@ -37,3 +37,8 @@ export { GalleryModel, IGalleryDocument, GalleryPageType } from "./Gallery";
 
 export { MembershipModel, IMembershipDocument, ApplicationStatus } from "./Membership";
 export { ContactModel, IContactDocument } from "./Contact";
+
+// ─── Auth Ecosystem ───────────────────────────────────────────────────────────
+
+export { Crew, ICrew } from "./Crew";
+export { VerificationToken, IVerificationToken } from "./VerificationToken";

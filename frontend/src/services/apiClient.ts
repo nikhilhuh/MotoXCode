@@ -1,4 +1,5 @@
 import axios from "axios";
+import { env } from "../config/env.config";
 
 /**
  * Centralized Axios client instance for all API communication.
@@ -9,7 +10,7 @@ import axios from "axios";
  * - withCredentials enables seamless cookie/session delivery for auth flows.
  */
 const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "http://localhost:4000/api",
+  baseURL: env.VITE_API_URL,
   headers: {
     "Content-Type": "application/json",
   },

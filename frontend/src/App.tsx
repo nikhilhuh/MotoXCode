@@ -18,6 +18,9 @@ const Join = lazy(() => import("./pages/Join"));
 const Events = lazy(() => import("./pages/Events"));
 const Contact = lazy(() => import("./pages/Contact"));
 const SignIn = lazy(() => import("./pages/SignIn"));
+const SignUp = lazy(() => import("./pages/SignUp"));
+const ResetPassword = lazy(() => import("./pages/ResetPassword"));
+const Settings = lazy(() => import("./pages/Settings"));
 
 export default function App() {
 
@@ -81,12 +84,36 @@ export default function App() {
               </Suspense>
             }
           />
+          <Route
+            path="/settings"
+            element={
+              <Suspense fallback={<div className="p-10">Loading...</div>}>
+                <Settings />
+              </Suspense>
+            }
+          />
         </Route>
         <Route
           path="/signin"
           element={
             <Suspense fallback={<SignInSkeleton />}>
               <SignIn />
+            </Suspense>
+          }
+        />
+        <Route
+          path="/signup"
+          element={
+            <Suspense fallback={<SignInSkeleton />}>
+              <SignUp />
+            </Suspense>
+          }
+        />
+        <Route
+          path="/reset-password"
+          element={
+            <Suspense fallback={<SignInSkeleton />}>
+              <ResetPassword />
             </Suspense>
           }
         />
