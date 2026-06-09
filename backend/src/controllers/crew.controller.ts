@@ -2,8 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import {
   PageHeroModel,
   IPageHero,
-  MemberModel,
-  IMemberDocument,
+  Member,
 } from "../models";
 
 // ─── Response Shapes ──────────────────────────────────────────────────────────
@@ -12,7 +11,7 @@ interface CrewDataResponse {
   success: true;
   data: {
     hero: IPageHero | null;
-    members: IMemberDocument[];
+    members: any[];
   };
 }
 
@@ -32,10 +31,20 @@ export class CrewController {
     next: NextFunction
   ): Promise<void> {
     try {
-      const [hero, members] = await Promise.all([
+      const [hero, rawMembers] = await Promise.all([
         PageHeroModel.findOne({ page: "crew" }).lean<IPageHero | null>(),
-        MemberModel.find().lean<IMemberDocument[]>(),
+        Member.find({}).select("username avatar name headline location years role").lean(),
       ]);
+
+      const members = rawMembers.map(m => ({
+        username: m.username,
+        avatar: m.avatar,
+        name: m.name,
+        headline: m.headline,
+        location: m.location,
+        years: m.years,
+        role: m.role,
+      }));
 
       const body: CrewDataResponse = {
         success: true,

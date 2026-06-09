@@ -1,81 +1,77 @@
-import mongoose, { Schema, Document, Model } from "mongoose";
+import { Schema, model, Document } from "mongoose";
 
-// ─── TypeScript Interface ─────────────────────────────────────────────────────
+// ─── Interface ──────────────────────────────────────────────────────────────
 
-export interface IMemberDocument extends Document {
-  name: string;
-  role: string;
-  bike: string;
-  image: string;
-  bio: string;
-  years: number;
-  location: string;
+export interface IMember extends Document {
+  username: string;
+  email: string;
+  password?: string;
+  role: "crew" | "admin" | "rider";
+  name?: string;
+  headline?: string;
+  bike?: string[];
+  avatar?: string;
+  coverImage?: string;
+  bio?: string;
+  years?: number;
+  location?: string;
   instagram?: string;
-  whatsapp?: string;
-  mvp: boolean;
+  youtube?: string;
+  facebook?: string;
+  profileCompleted?: boolean;
+  googleConnected: boolean;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
-// ─── Mongoose Schema ──────────────────────────────────────────────────────────
+// ─── Schema ─────────────────────────────────────────────────────────────────
 
-const memberSchema = new Schema<IMemberDocument>(
+const MemberSchema = new Schema<IMember>(
   {
-    name: {
+    username: {
       type: String,
-      required: [true, "name is required"],
+      required: [true, "Username is required"],
+      unique: true,
       trim: true,
+      lowercase: true,
+      min: [3, "Username must be at least 3 characters long"],
+      max: [30, "Username cannot exceed 30 characters long"],
+    },
+    email: {
+      type: String,
+      required: [true, "Email is required"],
+      unique: true,
+      trim: true,
+      lowercase: true,
+    },
+    password: {
+      type: String,
+      select: false, // Never returned in queries unless explicitly requested
     },
     role: {
       type: String,
-      required: [true, "role is required"],
-      trim: true,
+      enum: ["crew", "admin", "rider"],
+      default: "rider",
     },
-    bike: {
-      type: String,
-      required: [true, "bike is required"],
-      trim: true,
-    },
-    image: {
-      type: String,
-      required: [true, "image is required"],
-    },
-    bio: {
-      type: String,
-      required: [true, "bio is required"],
-      trim: true,
-    },
-    years: {
-      type: Number,
-      required: [true, "years is required"],
-      min: [0, "years cannot be negative"],
-    },
-    location: {
-      type: String,
-      required: [true, "location is required"],
-      trim: true,
-    },
-    instagram: {
-      type: String,
-      trim: true,
-    },
-    whatsapp: {
-      type: String,
-      trim: true,
-    },
-    mvp: {
-      type: Boolean,
-      default: false,
-    },
+    // ─── Optional Display Fields ─────────────────────────────────────────
+    name: { type: String, trim: true },
+    headline: { type: String, trim: true },
+    bike: { type: [String] },
+    avatar: { type: String },
+    coverImage: { type: String },
+    bio: { type: String, trim: true },
+    years: { type: Number },
+    location: { type: String, trim: true },
+    instagram: { type: String },
+    youtube: { type: String },
+    facebook: { type: String },
+    googleConnected: { type: Boolean, default: false },
+    profileCompleted: { type: Boolean, default: false },
   },
   {
-    collection: "members",
-    toJSON: { virtuals: true },
-    toObject: { virtuals: true },
-  }
+    timestamps: true,
+    versionKey: false,
+  },
 );
 
-// ─── Model ────────────────────────────────────────────────────────────────────
-
-export const MemberModel: Model<IMemberDocument> = mongoose.model<IMemberDocument>(
-  "Member",
-  memberSchema
-);
+export const Member = model<IMember>("Member", MemberSchema);

@@ -2,6 +2,7 @@ import React, { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import "./StaggeredMenu.css";
 import { Link, useLocation } from "react-router-dom";
+import { useUser } from "@/context/UserContext";
 
 export interface StaggeredMenuItem {
   label: string;
@@ -46,8 +47,9 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
   onMenuOpen,
   onMenuClose,
 }: StaggeredMenuProps) => {
-  const [open, setOpen] = useState(false);
-  const openRef = useRef(false);
+  const { userDetails, isInitialized } = useUser();
+  const [open, setOpen] = useState<boolean>(false);
+  const openRef = useRef<boolean>(false);
   const location = useLocation();
 
   const panelRef = useRef<HTMLDivElement | null>(null);
@@ -71,7 +73,7 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
   const colorTweenRef = useRef<gsap.core.Tween | null>(null);
 
   const toggleBtnRef = useRef<HTMLButtonElement | null>(null);
-  const busyRef = useRef(false);
+  const busyRef = useRef<boolean>(false);
 
   const itemEntranceTweenRef = useRef<gsap.core.Tween | null>(null);
 
@@ -506,7 +508,7 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
     }
   }, [playClose, animateIcon, animateColor, animateText, onMenuClose]);
 
-  const closeMenuRef = React.useRef(closeMenu);
+  const closeMenuRef = React.useRef<() => void>(closeMenu);
   React.useLayoutEffect(() => {
     closeMenuRef.current = closeMenu;
   }, [closeMenu]);
@@ -687,7 +689,17 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
               data-numbering={displayItemNumbering || undefined}
             >
               {items && items.length ? (
-                [...items, { label: "Join", to: "/join" }].map((it, idx) => (
+                (() => {
+                  const itemsToRender = [...items];
+                  if (isInitialized) {
+                    if (userDetails) {
+                      itemsToRender.push({ label: "Profile", to: `/profile/@${userDetails.username}` });
+                    } else {
+                      itemsToRender.push({ label: "Join", to: "/join" });
+                    }
+                  }
+                  return itemsToRender;
+                })().map((it, idx) => (
                   <li
                     className="sm-panel-itemWrap relative overflow-hidden leading-none"
                     key={it.label + idx}

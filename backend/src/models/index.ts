@@ -29,16 +29,19 @@ export { ContactInfoModel, IContactInfoDocument } from "./ContactInfo";
 // ─── Community Operations ─────────────────────────────────────────────────────
 
 export { RideModel, IRideDocument, RouteType } from "./Ride";
-export { MemberModel, IMemberDocument } from "./Member";
 export { EventModel, IEventDocument, EventType } from "./Event";
 export { GalleryModel, IGalleryDocument, GalleryPageType } from "./Gallery";
 
 // ─── User Intake Pipeline ─────────────────────────────────────────────────────
 
-export { MembershipModel, IMembershipDocument, ApplicationStatus } from "./Membership";
+export {
+  MembershipModel,
+  IMembershipDocument,
+  ApplicationStatus,
+} from "./Membership";
 export { ContactModel, IContactDocument } from "./Contact";
 
 // ─── Auth Ecosystem ───────────────────────────────────────────────────────────
 
-export { Crew, ICrew } from "./Crew";
+export { Member, IMember } from "./Member";
 export { VerificationToken, IVerificationToken } from "./VerificationToken";

@@ -9,6 +9,7 @@ import { JoinSkeleton } from "./components/skeletons/JoinSkeleton";
 import { EventsSkeleton } from "./components/skeletons/EventsSkeleton";
 import { ContactSkeleton } from "./components/skeletons/ContactSkeleton";
 import { SignInSkeleton } from "./components/skeletons/SignInSkeleton";
+import { ProfileSkeleton } from "./components/skeletons/ProfileSkeleton";
 
 const Home = lazy(() => import("./pages/Home"));
 const About = lazy(() => import("./pages/About"));
@@ -20,7 +21,7 @@ const Contact = lazy(() => import("./pages/Contact"));
 const SignIn = lazy(() => import("./pages/SignIn"));
 const SignUp = lazy(() => import("./pages/SignUp"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword"));
-const Settings = lazy(() => import("./pages/Settings"));
+const Profile = lazy(() => import("./pages/Profile"));
 
 export default function App() {
 
@@ -84,11 +85,12 @@ export default function App() {
               </Suspense>
             }
           />
+
           <Route
-            path="/settings"
+            path="/profile/:username"
             element={
-              <Suspense fallback={<div className="p-10">Loading...</div>}>
-                <Settings />
+              <Suspense fallback={<ProfileSkeleton />}>
+                <Profile />
               </Suspense>
             }
           />

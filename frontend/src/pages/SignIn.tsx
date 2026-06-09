@@ -5,12 +5,15 @@ import UsernameForm from "@/components/pages/signin/UsernameForm";
 import OTPLogin from "@/components/pages/signin/OTPLogin";
 import GoogleLoginButton from "@/components/auth/GoogleLoginButton";
 import ForgotPasswordForm from "@/components/pages/signin/ForgotPasswordForm";
+import AlreadySignedIn from "@/components/auth/AlreadySignedIn";
+import { useUser } from "@/context/UserContext";
 
 const SignIn: React.FC = () => {
   const [loginMethod, setLoginMethod] = useState<"password" | "otp" | "forgot">(
     "password"
   );
   const [step, setStep] = useState<number>(1);
+  const { userDetails } = useUser();
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -58,60 +61,69 @@ const SignIn: React.FC = () => {
           <div className="flex flex-col flex-1 items-center justify-center relative z-10">
             <div className="flex flex-col justify-center gap-6 lg:text-lg w-[90vw] md:w-[70vw] lg:w-[40vw] xl:w-[30vw]">
               
-              {/* Dynamic Form Render */}
-              <div className="flex items-center w-full">
-                {loginMethod === "forgot" ? (
-                  <ForgotPasswordForm onCancel={() => setLoginMethod("password")} />
-                ) : loginMethod === "password" ? (
-                  <UsernameForm onForgotPassword={() => setLoginMethod("forgot")} />
-                ) : (
-                  <OTPLogin step={step} setStep={setStep} />
-                )}
-              </div>
-
-              {loginMethod !== "forgot" && (
+              
+              {userDetails ? (
+                <AlreadySignedIn />
+              ) : (
                 <>
-                  {/* OR divider */}
-                  <div className="h-[1px] w-full bg-white/10 mt-6 mb-6 relative flex justify-center items-center">
-                    <div className="absolute hidden lg:block bg-[var(--color-bg)] text-[var(--color-text-secondary)] px-4 font-[var(--font-mono)] text-xs tracking-widest uppercase">
-                      or
-                    </div>
+                  {/* Dynamic Form Render */}
+                  <div className="flex items-center w-full">
+                    {loginMethod === "forgot" ? (
+                      <ForgotPasswordForm onCancel={() => setLoginMethod("password")} />
+                    ) : loginMethod === "password" ? (
+                      <UsernameForm onForgotPassword={() => setLoginMethod("forgot")} />
+                    ) : (
+                      <OTPLogin step={step} setStep={setStep} />
+                    )}
                   </div>
 
-                  {/* Secondary Actions */}
-                  <GoogleLoginButton key={`mxc-auth-signin-state-${false}`} isSignUp={false} />
+                  {loginMethod !== "forgot" && (
+                    <>
+                      {/* OR divider */}
+                      <div className="h-[1px] w-full bg-white/10 mt-6 mb-6 relative flex justify-center items-center">
+                        <div className="absolute hidden lg:block bg-[var(--color-bg)] text-[var(--color-text-secondary)] px-4 font-[var(--font-mono)] text-xs tracking-widest uppercase">
+                          or
+                        </div>
+                      </div>
 
-                  {loginMethod === "password" ? (
-                    <button
-                      onClick={() => setLoginMethod("otp")}
-                      className="btn-outline px-8 py-3 text-xs md:text-sm"
-                    >
-                      Login with OTP
-                    </button>
-                  ) : (
-                    <button
-                      onClick={() => setLoginMethod("password")}
-                      className="btn-outline px-8 py-3 text-xs md:text-sm"
-                    >
-                      Login with Password
-                    </button>
+                      {/* Secondary Actions */}
+                      <GoogleLoginButton key={`mxc-auth-signin-state-${false}`} isSignUp={false} />
+
+                      {loginMethod === "password" ? (
+                        <button
+                          onClick={() => setLoginMethod("otp")}
+                          className="btn-outline px-8 py-3 text-xs md:text-sm"
+                        >
+                          Login with OTP
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => setLoginMethod("password")}
+                          className="btn-outline px-8 py-3 text-xs md:text-sm"
+                        >
+                          Login with Password
+                        </button>
+                      )}
+                    </>
                   )}
                 </>
               )}
             </div>
 
             {/* Footer */}
-            <div className="text-center mt-12 pb-6 relative z-10">
-              <p className="text-xs md:text-sm text-[var(--color-text-secondary)] font-[var(--font-body)]">
-                Don't have an account?{" "}
-                <Link
-                  to="/signup"
-                  className="text-[var(--color-accent)] hover:underline font-medium transition-colors hover:text-[var(--color-primary)]"
-                >
-                  Sign Up
-                </Link>
-              </p>
-            </div>
+            {!userDetails && (
+              <div className="text-center mt-12 pb-6 relative z-10">
+                <p className="text-xs md:text-sm text-[var(--color-text-secondary)] font-[var(--font-body)]">
+                  Don't have an account?{" "}
+                  <Link
+                    to="/signup"
+                    className="text-[var(--color-accent)] hover:underline font-medium transition-colors hover:text-[var(--color-primary)]"
+                  >
+                    Sign Up
+                  </Link>
+                </p>
+              </div>
+            )}
           </div>
         </div>
       </main>

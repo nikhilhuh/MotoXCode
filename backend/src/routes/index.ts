@@ -6,6 +6,7 @@ import { crewRouter } from "./crew.routes";
 import { intakeRouter } from "./intake.routes";
 import { authRouter } from "./auth.routes";
 import { passwordResetRouter } from "./passwordReset.routes";
+import { profileRouter } from "./profile.routes";
 
 /**
  * Central API router barrel.
@@ -33,6 +34,7 @@ apiRouter.use("/", rideRouter);
 apiRouter.use("/", eventRouter);
 apiRouter.use("/", crewRouter);
 apiRouter.use("/", intakeRouter);
+apiRouter.use("/profiles", profileRouter);
 
 // ─── Auth Routes ──────────────────────────────────────────────────────────────
 

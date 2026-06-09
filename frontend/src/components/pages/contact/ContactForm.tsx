@@ -81,7 +81,7 @@ interface FormErrors {
 
 export default function ContactForm({ contactInfo }: ContactFormProps) {
   const contentRef = useRef<HTMLDivElement>(null);
-  const [submitted, setSubmitted] = useState(false);
+  const [submitted, setSubmitted] = useState<boolean>(false);
   const [formData, setFormData] = useState<ContactFormData>({
     name: "",
     email: "",

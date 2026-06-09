@@ -3,6 +3,8 @@ import { Link, NavLink, useLocation } from "react-router-dom";
 import { motion, Variants } from "framer-motion";
 import StaggeredMenu from "./StaggeredMenu";
 import { Social } from "@/types/social";
+import { useUser } from "@/context/UserContext";
+import AvatarPlaceholderImg from "/assets/images/placeholders/avatar.png"
 
 const EASE_PREMIUM: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
@@ -60,6 +62,7 @@ interface NavbarProps {
   socials: Social[];
 }
 const Navbar: React.FC<NavbarProps> = ({ socials }) => {
+  const { userDetails, isInitialized } = useUser();
   const [scrolled, setScrolled] = useState<boolean>(() => typeof window !== 'undefined' ? window.scrollY > 20 : false);
   const [windowWidth, setWindowWidth] = useState<number>(typeof window !== 'undefined' ? window.innerWidth : 1024);
   const location = useLocation();
@@ -179,14 +182,30 @@ const Navbar: React.FC<NavbarProps> = ({ socials }) => {
               variants={navItemVariants}
               initial="hidden"
               animate="visible"
-              className="flex md:gap-4 xl:gap-5"
+              className="flex md:gap-4 xl:gap-5 min-h-[40px] justify-end items-center"
             >
-              <Link
-                to="/join"
-                className="btn-primary hidden sm:inline-flex px-5 py-2.5 text-xs"
-              >
-                Join the Crew
-              </Link>
+              {!isInitialized ? null : userDetails ? (
+                <Link
+                  to={`/profile/@${userDetails.username}`}
+                  className="hidden sm:flex items-center gap-3 group bg-white/5 hover:bg-white/10 p-1 pr-3 rounded-full border border-white/10 transition-all duration-300"
+                >
+                  <img 
+                    src={userDetails.avatar || AvatarPlaceholderImg} 
+                    alt={userDetails.username} 
+                    className="rounded-full h-8 w-8 border border-white/10 object-cover"
+                  />
+                  <span className="font-[var(--font-body)] text-sm font-medium text-[var(--color-text-primary)]">
+                    {userDetails.username}
+                  </span>
+                </Link>
+              ) : (
+                <Link
+                  to="/join"
+                  className="btn-primary hidden sm:inline-flex px-5 py-2.5 text-xs"
+                >
+                  Join the Crew
+                </Link>
+              )}
             </motion.div>
           </div>
         </motion.header>

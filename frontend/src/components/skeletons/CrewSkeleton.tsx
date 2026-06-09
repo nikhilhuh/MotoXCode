@@ -35,6 +35,34 @@ export const CrewSkeleton: React.FC = () => {
         </div>
       </section>
 
+      {/* Rider Grid Skeleton */}
+      <section className="py-12 lg:py-24 bg-[var(--color-bg)] relative overflow-hidden">
+        <div className="max-w-5xl mx-auto px-6 lg:px-12 w-full relative z-10">
+          <div className="w-64 h-12 rounded-lg shimmer-box mb-12 opacity-40 mx-auto" />
+          
+          <div className="flex flex-col gap-4">
+            {[...Array(4)].map((_, i) => (
+              <div
+                key={i}
+                className="flex items-center justify-between p-5 md:p-6 rounded-2xl bg-white/[0.02] border border-white/5"
+              >
+                <div className="flex items-center gap-5 md:gap-6 w-full">
+                  <div className="w-16 h-16 md:w-20 md:h-20 rounded-full shimmer-box opacity-20 shrink-0" />
+                  <div className="flex flex-col w-full gap-2">
+                    <div className="w-48 h-6 md:h-8 rounded shimmer-box opacity-35" />
+                    <div className="w-32 h-4 rounded shimmer-box opacity-20" />
+                  </div>
+                </div>
+                <div className="hidden md:flex gap-8 w-1/3 justify-end">
+                  <div className="w-16 h-10 rounded shimmer-box opacity-20" />
+                  <div className="w-24 h-10 rounded shimmer-box opacity-20" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Crew CTA */}
       <section className="py-12 lg:py-22 relative overflow-hidden bg-gradient-to-b from-[var(--color-bg)] via-[var(--color-section)] to-black border-t border-[var(--color-border)]/20">
         <div className="max-w-3xl mx-auto px-6 flex flex-col items-center relative z-10">

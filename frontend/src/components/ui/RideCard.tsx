@@ -14,8 +14,8 @@ const routeTypeClass: Record<Ride['routeType'], string> = {
 }
 
 export default function RideCard({ ride }: RideCardProps) {
-  const [isOpen, setIsOpen] = useState(false)
-  const [isJoinOpen, setIsJoinOpen] = useState(false)
+  const [isOpen, setIsOpen] = useState<boolean>(false)
+  const [isJoinOpen, setIsJoinOpen] = useState<boolean>(false)
 
   useEffect(() => {
     if (isOpen) {

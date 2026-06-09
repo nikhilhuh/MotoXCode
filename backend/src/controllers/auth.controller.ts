@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { z } from "zod";
 import jwt from "jsonwebtoken";
 import { AppError } from "../middlewares/error.middleware";
-import { Crew } from "../models/Crew";
+import { Member } from "../models";
 import { VerificationToken } from "../models/VerificationToken";
 import {
   hashPassword,
@@ -20,7 +20,13 @@ import { AuthenticatedRequest } from "../middlewares/auth.middleware";
 const RegisterSchema = z.object({
   username: z.string().min(3).max(30).trim().toLowerCase(),
   email: z.string().email().trim().toLowerCase(),
-  password: z.string().min(8, "Password must be at least 8 characters"),
+  password: z
+    .string()
+    .min(8, "Password must be at least 8 characters")
+    .refine(
+      (val) => PASSWORD_REGEX.test(val),
+      "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character",
+    ),
 });
 
 const LoginPasswordSchema = z.object({
@@ -34,7 +40,10 @@ const OTPRequestSchema = z.object({
 
 const OTPVerifySchema = z.object({
   email: z.string().email().trim().toLowerCase(),
-  otp: z.string().length(6, "OTP must be exactly 6 digits").regex(/^\d{6}$/, "OTP must be numeric"),
+  otp: z
+    .string()
+    .length(6, "OTP must be exactly 6 digits")
+    .regex(/^\d{6}$/, "OTP must be numeric"),
 });
 
 const GoogleAuthSchema = z.object({
@@ -54,7 +63,10 @@ const RegisterSendOTPSchema = z.object({
 
 const RegisterVerifyOTPSchema = z.object({
   email: z.string().email().trim().toLowerCase(),
-  otp: z.string().length(6, "OTP must be exactly 6 digits").regex(/^\d{6}$/, "OTP must be numeric"),
+  otp: z
+    .string()
+    .length(6, "OTP must be exactly 6 digits")
+    .regex(/^\d{6}$/, "OTP must be numeric"),
 });
 
 const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
@@ -66,7 +78,10 @@ const RegisterCompleteSchema = z.object({
     .string()
     .min(3, "Username must be at least 3 characters")
     .max(30, "Username cannot exceed 30 characters")
-    .regex(/^[a-z0-9_]+$/, "Username may only contain lowercase letters, numbers, and underscores")
+    .regex(
+      /^[a-z0-9_]+$/,
+      "Username may only contain lowercase letters, numbers, and underscores",
+    )
     .trim()
     .toLowerCase(),
   password: z
@@ -74,7 +89,7 @@ const RegisterCompleteSchema = z.object({
     .min(8, "Password must be at least 8 characters")
     .refine(
       (val) => PASSWORD_REGEX.test(val),
-      "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character"
+      "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character",
     ),
 });
 
@@ -105,37 +120,34 @@ function verifyRegistrationToken(token: string, expectedEmail: string): void {
   try {
     decoded = jwt.verify(token, env.JWT_SECRET);
   } catch {
-    throw new AppError("Verification token is invalid or has expired. Please restart registration.", 401);
+    throw new AppError(
+      "Verification token is invalid or has expired. Please restart registration.",
+      401,
+    );
   }
 
   const claim = decoded as Partial<RegistrationVerifyClaim>;
   if (claim.purpose !== "registration" || claim.email !== expectedEmail) {
-    throw new AppError("Verification token does not match this email. Please restart registration.", 401);
+    throw new AppError(
+      "Verification token does not match this email. Please restart registration.",
+      401,
+    );
   }
 }
 
 // ─── Shared Safe User Serializer ─────────────────────────────────────────────
 
 /**
- * Returns only the fields safe to expose to the client.
- * Never leaks password or internal Mongoose fields.
+ * Serializes a Member document into a public-safe DTO.
+ * Extracts minimal fields necessary for frontend session tracking.
  */
-function serializeUser(crew: InstanceType<typeof Crew>) {
+function serializeUser(member: InstanceType<typeof Member>) {
   return {
-    _id: crew._id,
-    username: crew.username,
-    email: crew.email,
-    role: crew.role,
-    isVerified: crew.isVerified,
-    name: crew.name,
-    bike: crew.bike,
-    image: crew.image,
-    bio: crew.bio,
-    years: crew.years,
-    location: crew.location,
-    instagram: crew.instagram,
-    whatsapp: crew.whatsapp,
-    mvp: crew.mvp,
+    _id: member._id,
+    username: member.username,
+    email: member.email,
+    role: member.role,
+    avatar: member.avatar,
   };
 }
 
@@ -143,40 +155,47 @@ function serializeUser(crew: InstanceType<typeof Crew>) {
 
 /**
  * POST /api/auth/register
- * Create a new Crew account with hashed password.
+ * Create a new Member account with hashed password.
  */
 export async function register(
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<void> {
   try {
     const parsed = RegisterSchema.safeParse(req.body);
     if (!parsed.success) {
-      throw new AppError(parsed.error.errors[0]?.message ?? "Invalid input", 400);
+      throw new AppError(
+        parsed.error.errors[0]?.message ?? "Invalid input",
+        400,
+      );
     }
 
     const { username, email, password } = parsed.data;
 
-    const existing = await Crew.findOne({ $or: [{ username }, { email }] });
+    const existing = await Member.findOne({ $or: [{ username }, { email }] });
     if (existing) {
       throw new AppError(
         existing.username === username
           ? "Username is already taken"
           : "An account with that email already exists",
-        409
+        409,
       );
     }
 
     const hashed = await hashPassword(password);
-    const crew = await Crew.create({ username, email, password: hashed });
-    const token = signToken({ sub: String(crew._id), username: crew.username, role: crew.role });
+    const member = await Member.create({ username, email, password: hashed });
+    const token = signToken({
+      sub: String(member._id),
+      username: member.username,
+      role: member.role,
+    });
 
     res.status(201).json({
       success: true,
       message: "Account created successfully",
       token,
-      user: serializeUser(crew),
+      user: serializeUser(member),
     });
   } catch (err) {
     next(err);
@@ -190,38 +209,47 @@ export async function register(
 export async function loginPassword(
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<void> {
   try {
     const parsed = LoginPasswordSchema.safeParse(req.body);
     if (!parsed.success) {
-      throw new AppError(parsed.error.errors[0]?.message ?? "Invalid input", 400);
+      throw new AppError(
+        parsed.error.errors[0]?.message ?? "Invalid input",
+        400,
+      );
     }
 
     const { identifier, password } = parsed.data;
     const isEmail = identifier.includes("@");
 
     // Explicitly re-select password (excluded by default on schema)
-    const crew = await Crew.findOne(
-      isEmail ? { email: identifier.toLowerCase() } : { username: identifier.toLowerCase() }
+    const member = await Member.findOne(
+      isEmail
+        ? { email: identifier.toLowerCase() }
+        : { username: identifier.toLowerCase() },
     ).select("+password");
 
-    if (!crew || !crew.password) {
+    if (!member || !member.password) {
       throw new AppError("Invalid credentials", 401);
     }
 
-    const isMatch = await comparePassword(password, crew.password);
+    const isMatch = await comparePassword(password, member.password);
     if (!isMatch) {
       throw new AppError("Invalid credentials", 401);
     }
 
-    const token = signToken({ sub: String(crew._id), username: crew.username, role: crew.role });
+    const token = signToken({
+      sub: String(member._id),
+      username: member.username,
+      role: member.role,
+    });
 
     res.status(200).json({
       success: true,
       message: "Signed in successfully",
       token,
-      user: serializeUser(crew),
+      user: serializeUser(member),
     });
   } catch (err) {
     next(err);
@@ -235,21 +263,27 @@ export async function loginPassword(
 export async function otpRequest(
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<void> {
   try {
     const parsed = OTPRequestSchema.safeParse(req.body);
     if (!parsed.success) {
-      throw new AppError(parsed.error.errors[0]?.message ?? "Invalid input", 400);
+      throw new AppError(
+        parsed.error.errors[0]?.message ?? "Invalid input",
+        400,
+      );
     }
 
     const { email } = parsed.data;
 
     // Verify the account exists
-    const crew = await Crew.findOne({ email });
-    if (!crew) {
+    const member = await Member.findOne({ email });
+    if (!member) {
       // Intentionally vague — do not reveal account existence
-      res.status(200).json({ success: true, message: "If that email is registered, an OTP has been sent." });
+      res.status(200).json({
+        success: true,
+        message: "If that email is registered, an OTP has been sent.",
+      });
       return;
     }
 
@@ -261,13 +295,15 @@ export async function otpRequest(
     await VerificationToken.findOneAndUpdate(
       { email },
       { otp: hashedOtp, expiresAt },
-      { upsert: true, new: true }
+      { upsert: true, new: true },
     );
 
     // Fire-and-forget email (non-blocking)
     sendOTPEmail(email, otp);
 
-    res.status(200).json({ success: true, message: "OTP sent to your email address." });
+    res
+      .status(200)
+      .json({ success: true, message: "OTP sent to your email address." });
   } catch (err) {
     next(err);
   }
@@ -280,19 +316,25 @@ export async function otpRequest(
 export async function otpVerify(
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<void> {
   try {
     const parsed = OTPVerifySchema.safeParse(req.body);
     if (!parsed.success) {
-      throw new AppError(parsed.error.errors[0]?.message ?? "Invalid input", 400);
+      throw new AppError(
+        parsed.error.errors[0]?.message ?? "Invalid input",
+        400,
+      );
     }
 
     const { email, otp } = parsed.data;
 
     const tokenRecord = await VerificationToken.findOne({ email });
     if (!tokenRecord) {
-      throw new AppError("OTP has expired or was never requested. Please request a new one.", 400);
+      throw new AppError(
+        "OTP has expired or was never requested. Please request a new one.",
+        400,
+      );
     }
 
     if (tokenRecord.expiresAt < new Date()) {
@@ -302,29 +344,36 @@ export async function otpVerify(
 
     const isMatch = await comparePassword(otp, tokenRecord.otp);
     if (!isMatch) {
-      throw new AppError("Invalid OTP. Please check your email and try again.", 401);
+      throw new AppError(
+        "Invalid OTP. Please check your email and try again.",
+        401,
+      );
     }
 
     // Cleanup the used token immediately
     await tokenRecord.deleteOne();
 
-    const crew = await Crew.findOneAndUpdate(
+    const member = await Member.findOneAndUpdate(
       { email },
-      { isVerified: true },
-      { new: true }
+      { $set: { updatedAt: new Date() } },
+      { new: true },
     );
 
-    if (!crew) {
+    if (!member) {
       throw new AppError("Account not found.", 404);
     }
 
-    const token = signToken({ sub: String(crew._id), username: crew.username, role: crew.role });
+    const token = signToken({
+      sub: String(member._id),
+      username: member.username,
+      role: member.role,
+    });
 
     res.status(200).json({
       success: true,
       message: "Email verified. Signed in successfully.",
       token,
-      user: serializeUser(crew),
+      user: serializeUser(member),
     });
   } catch (err) {
     next(err);
@@ -338,20 +387,23 @@ export async function otpVerify(
 export async function googleAuth(
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<void> {
   try {
     const parsed = GoogleAuthSchema.safeParse(req.body);
     if (!parsed.success) {
-      throw new AppError(parsed.error.errors[0]?.message ?? "Invalid input", 400);
+      throw new AppError(
+        parsed.error.errors[0]?.message ?? "Invalid input",
+        400,
+      );
     }
 
     const { id_token, isSignUp } = parsed.data;
     const googlePayload = await verifyGoogleToken(id_token);
 
     // Run Pre-Flight Database Evaluation Passes
-    const existingUser = await Crew.findOne({
-      $or: [{ email: googlePayload.email }, { googleId: googlePayload.sub }],
+    const existingUser = await Member.findOne({
+      email: googlePayload.email,
     });
 
     if (isSignUp === false) {
@@ -359,19 +411,13 @@ export async function googleAuth(
       if (!existingUser) {
         throw new AppError(
           "No account found matching this Google profile. Please navigate to the sign-up screen to create a new profile.",
-          400
+          400,
         );
       }
 
-      // If 'existingUser' is found, verify if their 'googleId' property matches. If null, update it dynamically.
-      if (!existingUser.googleId) {
-        existingUser.googleId = googlePayload.sub;
-        await existingUser.save();
-      }
-
-      // Elevate existing unverified account if signing in via Google
-      if (!existingUser.isVerified) {
-        existingUser.isVerified = true;
+      // If 'existingUser' is found, verify if their 'googleConnected' property matches. If null, update it dynamically.
+      if (!existingUser.googleConnected) {
+        existingUser.googleConnected = true;
         await existingUser.save();
       }
 
@@ -393,38 +439,55 @@ export async function googleAuth(
       if (existingUser) {
         throw new AppError(
           "This email is already registered. Please proceed to the sign-in screen instead.",
-          400
+          400,
         );
       }
 
       // If 'existingUser' returns completely null, safely instantiate and provision a brand new data record
-      const baseUsername = googlePayload.email.split("@")[0]!.replace(/[^a-z0-9_]/gi, "_").toLowerCase();
-      let username = baseUsername;
-      const exists = await Crew.findOne({ username });
-      if (exists) {
-        username = `${baseUsername}_${Date.now().toString(36)}`;
+      let baseStr = googlePayload.name || googlePayload.email.split("@")[0]!;
+      let baseUsername = baseStr.replace(/[^a-z0-9]/gi, "").toLowerCase();
+
+      // Enforce min length of 3 just in case
+      if (baseUsername.length < 3) {
+        baseUsername = baseUsername.padEnd(3, "0");
       }
 
-      const crew = await Crew.create({
+      let username = baseUsername.slice(0, 30);
+      let isUnique = false;
+
+      while (!isUnique) {
+        const exists = await Member.findOne({ username }).select("_id").lean();
+        if (!exists) {
+          isUnique = true;
+        } else {
+          // Append a random numeric suffix between 10 and 999
+          const suffix = Math.floor(Math.random() * 990) + 10;
+          const suffixStr = String(suffix);
+          const maxBaseLength = 30 - suffixStr.length;
+          const truncatedBase = baseUsername.slice(0, maxBaseLength);
+          username = `${truncatedBase}${suffixStr}`;
+        }
+      }
+
+      const member = await Member.create({
         username,
         email: googlePayload.email,
         name: googlePayload.name,
-        image: googlePayload.picture,
-        isVerified: true, // Google accounts are pre-verified
-        googleId: googlePayload.sub,
+        avatar: googlePayload.picture,
+        googleConnected: true,
       });
 
       const token = signToken({
-        sub: String(crew._id),
-        username: crew.username,
-        role: crew.role,
+        sub: String(member._id),
+        username: member.username,
+        role: member.role,
       });
 
       res.status(201).json({
         success: true,
         message: "Account created successfully. Welcome to MotoXCode!",
         token,
-        user: serializeUser(crew),
+        user: serializeUser(member),
       });
       return;
     }
@@ -440,12 +503,15 @@ export async function googleAuth(
 export async function linkGoogleAccount(
   req: AuthenticatedRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<void> {
   try {
     const parsed = LinkGoogleSchema.safeParse(req.body);
     if (!parsed.success) {
-      throw new AppError(parsed.error.errors[0]?.message ?? "Invalid input", 400);
+      throw new AppError(
+        parsed.error.errors[0]?.message ?? "Invalid input",
+        400,
+      );
     }
 
     if (!req.user) {
@@ -455,20 +521,11 @@ export async function linkGoogleAccount(
     const { id_token } = parsed.data;
     const googlePayload = await verifyGoogleToken(id_token);
 
-    // Query the entire database collection to ensure no alternate user row is already linked
-    const conflict = await Crew.findOne({ googleId: googlePayload.sub });
-    if (conflict && String(conflict._id) !== req.user._id) {
-      throw new AppError(
-        "This Google profile is already linked to another account.",
-        400
-      );
-    }
-
     // Perform a targeted atomic mutation updating the active session row
-    const updatedUser = await Crew.findByIdAndUpdate(
+    const updatedUser = await Member.findByIdAndUpdate(
       req.user._id,
-      { googleId: googlePayload.sub },
-      { new: true }
+      { googleConnected: true },
+      { new: true },
     );
 
     if (!updatedUser) {
@@ -496,22 +553,25 @@ export async function linkGoogleAccount(
 export async function registerSendOTP(
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<void> {
   try {
     const parsed = RegisterSendOTPSchema.safeParse(req.body);
     if (!parsed.success) {
-      throw new AppError(parsed.error.errors[0]?.message ?? "Invalid input", 400);
+      throw new AppError(
+        parsed.error.errors[0]?.message ?? "Invalid input",
+        400,
+      );
     }
 
     const { email } = parsed.data;
 
     // Reject emails already registered to prevent account squatting
-    const existing = await Crew.findOne({ email }).select("_id").lean();
+    const existing = await Member.findOne({ email }).select("_id").lean();
     if (existing) {
       throw new AppError(
         "An account with that email already exists. Please sign in instead.",
-        409
+        409,
       );
     }
 
@@ -523,7 +583,7 @@ export async function registerSendOTP(
     await VerificationToken.findOneAndUpdate(
       { email },
       { otp: hashedOtp, expiresAt },
-      { upsert: true, new: true }
+      { upsert: true, new: true },
     );
 
     // Fire-and-forget — never blocks the response thread
@@ -547,19 +607,25 @@ export async function registerSendOTP(
 export async function registerVerifyOTP(
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<void> {
   try {
     const parsed = RegisterVerifyOTPSchema.safeParse(req.body);
     if (!parsed.success) {
-      throw new AppError(parsed.error.errors[0]?.message ?? "Invalid input", 400);
+      throw new AppError(
+        parsed.error.errors[0]?.message ?? "Invalid input",
+        400,
+      );
     }
 
     const { email, otp } = parsed.data;
 
     const tokenRecord = await VerificationToken.findOne({ email });
     if (!tokenRecord) {
-      throw new AppError("OTP has expired or was never requested. Please request a new one.", 400);
+      throw new AppError(
+        "OTP has expired or was never requested. Please request a new one.",
+        400,
+      );
     }
 
     if (tokenRecord.expiresAt < new Date()) {
@@ -569,7 +635,10 @@ export async function registerVerifyOTP(
 
     const isMatch = await comparePassword(otp, tokenRecord.otp);
     if (!isMatch) {
-      throw new AppError("Invalid OTP. Please check your email and try again.", 401);
+      throw new AppError(
+        "Invalid OTP. Please check your email and try again.",
+        401,
+      );
     }
 
     // Consume the token immediately — single-use
@@ -580,7 +649,8 @@ export async function registerVerifyOTP(
 
     res.status(200).json({
       success: true,
-      message: "Email verified. Please complete your profile to finish registration.",
+      message:
+        "Email verified. Please complete your profile to finish registration.",
       verifiedToken,
     });
   } catch (err) {
@@ -596,10 +666,12 @@ export async function registerVerifyOTP(
 export async function checkUsername(
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<void> {
   try {
-    const username = (req.query["username"] as string | undefined)?.toLowerCase().trim();
+    const username = (req.query["username"] as string | undefined)
+      ?.toLowerCase()
+      .trim();
 
     if (!username || username.length < 3 || username.length > 30) {
       res.status(200).json({ available: false });
@@ -607,7 +679,7 @@ export async function checkUsername(
     }
 
     // Minimal projection — only load the _id field for max performance
-    const exists = await Crew.findOne({ username }).select("_id").lean();
+    const exists = await Member.findOne({ username }).select("_id").lean();
 
     res.status(200).json({ available: !exists });
   } catch (err) {
@@ -618,18 +690,21 @@ export async function checkUsername(
 /**
  * POST /api/auth/register/complete
  * Step 3: Validate the full registration payload, verify the registration JWT,
- * check for username/email conflicts, hash the password, persist the Crew
+ * check for username/email conflicts, hash the password, persist the Member
  * document, and return a full auth JWT with a 201 Created response.
  */
 export async function registerComplete(
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<void> {
   try {
     const parsed = RegisterCompleteSchema.safeParse(req.body);
     if (!parsed.success) {
-      throw new AppError(parsed.error.errors[0]?.message ?? "Invalid input", 400);
+      throw new AppError(
+        parsed.error.errors[0]?.message ?? "Invalid input",
+        400,
+      );
     }
 
     const { email, verifiedToken, username, password } = parsed.data;
@@ -638,38 +713,39 @@ export async function registerComplete(
     verifyRegistrationToken(verifiedToken, email);
 
     // Guard: prevent duplicate email or username
-    const existing = await Crew.findOne({ $or: [{ email }, { username }] }).select("email").lean();
+    const existing = await Member.findOne({ $or: [{ email }, { username }] })
+      .select("email")
+      .lean();
     if (existing) {
       throw new AppError(
         (existing as { email?: string }).email === email
           ? "An account with that email already exists. Please sign in instead."
           : "That username is already taken. Please choose another.",
-        409
+        409,
       );
     }
 
     // Hash with consistent SALT_ROUNDS (12 rounds, as defined in auth.service)
     const hashed = await hashPassword(password);
 
-    const crew = await Crew.create({
+    const member = await Member.create({
       username,
       email,
       password: hashed,
-      isVerified: true, // Email was verified via OTP
-      role: "crew",
+      role: "rider",
     });
 
     const token = signToken({
-      sub: String(crew._id),
-      username: crew.username,
-      role: crew.role,
+      sub: String(member._id),
+      username: member.username,
+      role: member.role,
     });
 
     res.status(201).json({
       success: true,
       message: "Account created successfully. Welcome to MotoXCode!",
       token,
-      user: serializeUser(crew),
+      user: serializeUser(member),
     });
   } catch (err) {
     next(err);

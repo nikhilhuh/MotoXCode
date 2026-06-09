@@ -8,7 +8,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     <UserProvider>
       <FeedbackProvider>
         {children}
-        <Toaster position="bottom-right" reverseOrder={false} />
+        <Toaster position="bottom-right" reverseOrder={false} containerStyle={{ zIndex: 99999 }} />
       </FeedbackProvider>
     </UserProvider>
   );

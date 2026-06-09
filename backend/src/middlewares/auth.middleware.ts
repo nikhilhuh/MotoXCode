@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { AppError } from "./error.middleware";
-import { verifyToken, JwtPayload } from "../services/auth.service";
-import { Crew } from "../models/Crew";
+import { verifyToken } from "../services/auth.service";
+import { Member } from "../models";
 
 export interface AuthenticatedRequest extends Request {
   user?: {
@@ -18,7 +18,7 @@ export interface AuthenticatedRequest extends Request {
 export async function requireAuth(
   req: AuthenticatedRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<void> {
   try {
     let token: string | undefined;
@@ -31,15 +31,23 @@ export async function requireAuth(
     }
 
     if (!token) {
-      throw new AppError("You are not logged in. Please log in to get access.", 401);
+      throw new AppError(
+        "You are not logged in. Please log in to get access.",
+        401,
+      );
     }
 
     const decoded = verifyToken(token);
 
     // Ensure the user still exists
-    const currentUser = await Crew.findById(decoded.sub).select("_id username role");
+    const currentUser = await Member.findById(decoded.sub).select(
+      "_id username role",
+    );
     if (!currentUser) {
-      throw new AppError("The user belonging to this token no longer exists.", 401);
+      throw new AppError(
+        "The user belonging to this token no longer exists.",
+        401,
+      );
     }
 
     req.user = {

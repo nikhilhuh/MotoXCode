@@ -5,6 +5,8 @@ import SignUpStep1 from "@/components/pages/signup/SignUpStep1";
 import SignUpStep2 from "@/components/pages/signup/SignUpStep2";
 import SignUpStep3 from "@/components/pages/signup/SignUpStep3";
 import GoogleLoginButton from "@/components/auth/GoogleLoginButton";
+import AlreadySignedIn from "@/components/auth/AlreadySignedIn";
+import { useUser } from "@/context/UserContext";
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
@@ -12,6 +14,7 @@ const SignUp: React.FC = () => {
   const [signUpStep, setSignUpStep] = useState<number>(1);
   const [email, setEmail] = useState<string>("");
   const [verifiedToken, setVerifiedToken] = useState<string>("");
+  const { userDetails } = useUser();
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -114,61 +117,69 @@ const SignUp: React.FC = () => {
           <div className="flex flex-col flex-1 items-center justify-center relative z-10">
             <div className="flex flex-col justify-center gap-6 lg:text-lg w-[90vw] md:w-[70vw] lg:w-[40vw] xl:w-[30vw]">
 
-              {/* ── Dynamic Step Render ─────────────────────────────────── */}
-              <div className="flex items-center w-full">
-                {signUpStep === 1 && (
-                  <SignUpStep1
-                    email={email}
-                    setEmail={setEmail}
-                    onSuccess={() => setSignUpStep(2)}
-                  />
-                )}
-                {signUpStep === 2 && (
-                  <SignUpStep2
-                    email={email}
-                    onSuccess={(token) => {
-                      setVerifiedToken(token);
-                      setSignUpStep(3);
-                    }}
-                    onBack={() => setSignUpStep(1)}
-                  />
-                )}
-                {signUpStep === 3 && (
-                  <SignUpStep3
-                    email={email}
-                    verifiedToken={verifiedToken}
-                  />
-                )}
-              </div>
-
-              {/* Only show OR divider + Google on Step 1 */}
-              {signUpStep === 1 && (
+              {userDetails ? (
+                <AlreadySignedIn />
+              ) : (
                 <>
-                  {/* OR divider */}
-                  <div className="h-[1px] w-full bg-white/10 mt-2 mb-2 relative flex justify-center items-center">
-                    <div className="absolute hidden lg:block bg-[var(--color-bg)] text-[var(--color-text-secondary)] px-4 font-[var(--font-mono)] text-xs tracking-widest uppercase">
-                      or
-                    </div>
+                  {/* ── Dynamic Step Render ─────────────────────────────────── */}
+                  <div className="flex items-center w-full">
+                    {signUpStep === 1 && (
+                      <SignUpStep1
+                        email={email}
+                        setEmail={setEmail}
+                        onSuccess={() => setSignUpStep(2)}
+                      />
+                    )}
+                    {signUpStep === 2 && (
+                      <SignUpStep2
+                        email={email}
+                        onSuccess={(token) => {
+                          setVerifiedToken(token);
+                          setSignUpStep(3);
+                        }}
+                        onBack={() => setSignUpStep(1)}
+                      />
+                    )}
+                    {signUpStep === 3 && (
+                      <SignUpStep3
+                        email={email}
+                        verifiedToken={verifiedToken}
+                      />
+                    )}
                   </div>
 
-                  {/* Google OAuth — reuses existing component, handles upsert + redirect */}
-                  <GoogleLoginButton key={`mxc-auth-signup-state-${true}`} isSignUp={true} />
+                  {/* Only show OR divider + Google on Step 1 */}
+                  {signUpStep === 1 && (
+                    <>
+                      {/* OR divider */}
+                      <div className="h-[1px] w-full bg-white/10 mt-2 mb-2 relative flex justify-center items-center">
+                        <div className="absolute hidden lg:block bg-[var(--color-bg)] text-[var(--color-text-secondary)] px-4 font-[var(--font-mono)] text-xs tracking-widest uppercase">
+                          or
+                        </div>
+                      </div>
+
+                      {/* Google OAuth — reuses existing component, handles upsert + redirect */}
+                      <GoogleLoginButton key={`mxc-auth-signup-state-${true}`} isSignUp={true} />
+                    </>
+                  )}
                 </>
               )}
             </div>
 
             {/* Footer: Already a member? */}
-            <div className="text-center mt-10 pb-6 relative z-10">
-              <p className="text-xs md:text-sm text-[var(--color-text-secondary)] font-[var(--font-body)]">
-                Already a member?{" "}
-                <Link
-                  to="/signin"
-                  className="text-[var(--color-accent)] hover:underline font-medium transition-colors hover:text-[var(--color-primary)]"
-                >
-                  Sign In
-                </Link>
-              </p>
-            </div>
+            {!userDetails && (
+              <div className="text-center mt-10 pb-6 relative z-10">
+                <p className="text-xs md:text-sm text-[var(--color-text-secondary)] font-[var(--font-body)]">
+                  Already a member?{" "}
+                  <Link
+                    to="/signin"
+                    className="text-[var(--color-accent)] hover:underline font-medium transition-colors hover:text-[var(--color-primary)]"
+                  >
+                    Sign In
+                  </Link>
+                </p>
+              </div>
+            )}
           </div>
         </div>
       </main>

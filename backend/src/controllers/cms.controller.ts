@@ -10,8 +10,7 @@ import {
   IValueDocument,
   RideModel,
   IRideDocument,
-  MemberModel,
-  IMemberDocument,
+  Member,
   GalleryModel,
   IGalleryDocument,
   PhilosophyModel,
@@ -36,7 +35,7 @@ interface HomeDataResponse {
     stats: IStatDocument[];
     values: IValueDocument[];
     upcomingRides: IRideDocument[];
-    mvpMembers: IMemberDocument[];
+    mvpMembers: any[];
     gallery: IGalleryDocument[];
   };
 }
@@ -100,13 +99,24 @@ export class CmsController {
             .sort({ date: 1 })
             .limit(3)
             .lean<IRideDocument[]>(),
-          MemberModel.find({ mvp: true }).lean<IMemberDocument[]>(),
+          Member.find({ role: { $in: ["crew", "admin"] }})
+            .select("username avatar name headline location years")
+            .lean(),
           GalleryModel.find({ page: "home" }).lean<IGalleryDocument[]>(),
         ]);
 
+      const mvpMembersMapped = mvpMembers.map((m: any) => ({
+        username: m.username,
+        avatar: m.avatar,
+        name: m.name,
+        headline: m.headline,
+        location: m.location,
+        years: m.years
+      }));
+
       const body: HomeDataResponse = {
         success: true,
-        data: { hero, stats, values, upcomingRides, mvpMembers, gallery },
+        data: { hero, stats, values, upcomingRides, mvpMembers: mvpMembersMapped, gallery },
       };
       res.status(200).json(body);
     } catch (err) {

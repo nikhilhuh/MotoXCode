@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import CrewHero from '../components/pages/crew/CrewHero'
 import CrewGrid from '../components/pages/crew/CrewGrid'
+import RiderGrid from '../components/pages/crew/RiderGrid'
 import CrewCTA from '../components/pages/crew/CrewCTA'
 import { crewService } from '@/services';
 import { CrewSkeleton } from "../components/skeletons/CrewSkeleton";
@@ -29,10 +30,14 @@ export default function Crew() {
     return <CrewSkeleton />;
   }
 
+  const crewMembers = crewData.members.filter(m => m.role === 'crew' || m.role === 'admin');
+  const riderMembers = crewData.members.filter(m => m.role === 'rider');
+
   return (
     <>
       <CrewHero CrewHeroBg={crewData.hero.image} />
-      <CrewGrid crew={crewData.members}/>
+      <CrewGrid crew={crewMembers}/>
+      {riderMembers.length > 0 && <RiderGrid riders={riderMembers} />}
       <CrewCTA />
     </>
   )

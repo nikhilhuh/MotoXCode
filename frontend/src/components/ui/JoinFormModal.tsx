@@ -51,8 +51,8 @@ export default function JoinFormModal({ isOpen, onClose, target }: JoinFormModal
   });
 
   const [errors, setErrors] = useState<FormErrors>({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [isSuccess, setIsSuccess] = useState<boolean>(false);
 
   const uniqueIdPrefix = `join-${target.type}-${target._id}`;
 

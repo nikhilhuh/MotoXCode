@@ -89,7 +89,7 @@ const SignInStep2: React.FC<Props> = ({
       setUserDetails(userWithToken);
       localStorage.setItem("userDetails", JSON.stringify(userWithToken));
 
-      showSuccess(`Welcome to MotoXCode ${user.name || user.username}`);
+      showSuccess(`Welcome to MotoXCode ${user.username}`);
       navigate("/");
     } catch (err) {
       const error = err as AxiosError<{ message: string }>;

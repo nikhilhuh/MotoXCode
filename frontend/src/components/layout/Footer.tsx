@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Social } from "@/types/social";
+import { useUser } from "@/context/UserContext";
 import {
   FaInstagram,
   FaYoutube,
@@ -67,6 +68,7 @@ interface FooterProps {
   socials: Social[];
 }
 export default function Footer({ socials }: FooterProps) {
+  const { userDetails, isInitialized } = useUser();
   const footerRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -151,7 +153,12 @@ export default function Footer({ socials }: FooterProps) {
                 {group.heading}
               </h4>
               <ul className="flex flex-col gap-3">
-                {group.links.map((link) => (
+                {group.links
+                  .filter((link) => {
+                    if (link.to === "/join" && isInitialized && userDetails) return false;
+                    return true;
+                  })
+                  .map((link) => (
                   <li key={link.to + link.label}>
                     <Link
                       to={link.to}

@@ -15,11 +15,11 @@ const ResetPassword: React.FC = () => {
   const token = searchParams.get("token");
   const email = searchParams.get("email");
 
-  const [verifying, setVerifying] = useState(true);
-  const [isTokenValid, setIsTokenValid] = useState(false);
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [submitting, setSubmitting] = useState(false);
+  const [verifying, setVerifying] = useState<boolean>(true);
+  const [isTokenValid, setIsTokenValid] = useState<boolean>(false);
+  const [newPassword, setNewPassword] = useState<string>("");
+  const [confirmPassword, setConfirmPassword] = useState<string>("");
+  const [submitting, setSubmitting] = useState<boolean>(false);
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {

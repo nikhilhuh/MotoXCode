@@ -27,7 +27,7 @@ interface FormErrors {
 
 export default function JoinForm() {
   const formRef = useRef<HTMLDivElement>(null);
-  const [submitted, setSubmitted] = useState(false);
+  const [submitted, setSubmitted] = useState<boolean>(false);
   const [formData, setFormData] = useState<Membership>({
     name: "",
     email: "",

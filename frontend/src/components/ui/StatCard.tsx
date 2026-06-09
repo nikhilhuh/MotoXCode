@@ -14,7 +14,7 @@ interface StatCardProps {
 }
 
 export const StatCard: React.FC<StatCardProps> = ({ target, suffix, label, image, isFloat, index }) => {
-  const [value, setValue] = useState(0);
+  const [value, setValue] = useState<number>(0);
   const cardRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
