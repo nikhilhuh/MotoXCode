@@ -1,60 +1,36 @@
-import { useEffect, useRef } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { motion } from "framer-motion";
 import { Value } from "@/types/value";
-
-gsap.registerPlugin(ScrollTrigger);
 
 interface ValuesProps {
   valuesData: Value[];
 }
 
+const headerVariants = {
+  hidden: { opacity: 0, y: 40 },
+  visible: { 
+    opacity: 1, 
+    y: 0, 
+    transition: { duration: 1, ease: [0.22, 1, 0.36, 1] as const } 
+  }
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 60 },
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 1.2,
+      delay: i * 0.2,
+      ease: [0.22, 1, 0.36, 1] as const,
+    },
+  }),
+};
+
 export default function Values({ valuesData }: ValuesProps) {
-  const valuesRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      // Header Animation
-      gsap.fromTo(
-        [".section-heading", ".section-subheading"],
-        { opacity: 0, y: 40 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 1,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: valuesRef.current,
-            start: "top 80%",
-            once: true,
-          },
-        },
-      );
-
-      // Value Items Animation
-      gsap.fromTo(
-        ".value-item",
-        { opacity: 0, y: 60 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 1.2,
-          stagger: 0.2,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: valuesRef.current,
-            start: "top 60%",
-            once: true,
-          },
-        },
-      );
-    }, valuesRef);
-    return () => ctx.revert();
-  }, []);
 
   return (
     <section
-      ref={valuesRef}
       className="py-12 lg:py-22 bg-gradient-to-b from-[var(--color-section)] via-[var(--color-bg)] to-[var(--color-surface)] relative overflow-hidden"
     >
       {/* Decorative Blur Backgrounds */}
@@ -62,18 +38,28 @@ export default function Values({ valuesData }: ValuesProps) {
       <div className="absolute bottom-[10%] left-[5%] w-[30%] h-[50%] bg-[var(--color-accent)]/5 rounded-full blur-[120px] pointer-events-none"></div>
 
       <div className="max-w-7xl mx-auto px-6 lg:px-12 w-full relative z-10">
-        <div className="mb-12 lg:mb-22 text-center max-w-4xl mx-auto">
-          <h2 className="section-heading">THE MOTOXCODE WAY</h2>
-          <p className="section-subheading">
+        <motion.div 
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          className="mb-12 lg:mb-22 text-center max-w-4xl mx-auto"
+        >
+          <motion.h2 variants={headerVariants} className="section-heading">THE MOTOXCODE WAY</motion.h2>
+          <motion.p variants={headerVariants} className="section-subheading">
             We don't just share a passion for motorcycles. We share a code.
-          </p>
-        </div>
+          </motion.p>
+        </motion.div>
 
         <div className="flex flex-col gap-10 lg:gap-20">
           {valuesData.map((v, idx) => (
-            <div
+            <motion.div
               key={v._id}
-              className={`value-item flex flex-col lg:flex-row items-center gap-8 lg:gap-16 group ${
+              custom={idx}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-100px" }}
+              variants={itemVariants}
+              className={`flex flex-col lg:flex-row items-center gap-8 lg:gap-16 group ${
                 idx % 2 !== 0 ? "lg:flex-row-reverse" : ""
               }`}
             >
@@ -110,7 +96,7 @@ export default function Values({ valuesData }: ValuesProps) {
                   <div className="absolute inset-0 bg-gradient-to-t from-[var(--color-bg)]/90 via-[var(--color-bg)]/20 to-transparent opacity-80 group-hover:opacity-50 transition-opacity duration-700 pointer-events-none" />
                 </div>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
       </div>

@@ -1,35 +1,21 @@
-import { useEffect, useRef } from 'react'
+import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
-import gsap from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import MemberCard from '../../ui/MemberCard'
 import { Member } from '@/types/member'
-
-gsap.registerPlugin(ScrollTrigger)
 
 interface MemberSpotlightProps {
   mvpCrew: Member[];
 }
 
 export default function MemberSpotlight({mvpCrew}: MemberSpotlightProps) {
-  const sectionRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.fromTo(
-        sectionRef.current,
-        { opacity: 0, y: 40 },
-        {
-          opacity: 1, y: 0, duration: 0.8, ease: 'power3.out',
-          scrollTrigger: { trigger: sectionRef.current, start: 'top 80%', once: true },
-        }
-      )
-    })
-    return () => ctx.revert()
-  }, [])
 
   return (
-    <section ref={sectionRef} className="py-12 lg:py-22 relative overflow-hidden bg-gradient-to-b from-[var(--color-bg)] to-[var(--color-surface)]">
+    <motion.section 
+      initial={{ opacity: 0, y: 40 }}
+      whileInView={{ opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] as const } }}
+      viewport={{ once: true, margin: "-50px" }}
+      className="py-12 lg:py-22 relative overflow-hidden bg-gradient-to-b from-[var(--color-bg)] to-[var(--color-surface)]"
+    >
       {/* Decorative ambient lighting */}
       <div className="absolute -top-[10%] left-[10%] w-[40%] h-[40%] rounded-full bg-[var(--color-primary)]/5 blur-[120px] pointer-events-none z-0" />
       <div className="absolute top-[30%] -right-[10%] w-[40%] h-[50%] rounded-full bg-[var(--color-accent)]/5 blur-[120px] pointer-events-none z-0" />
@@ -60,6 +46,6 @@ export default function MemberSpotlight({mvpCrew}: MemberSpotlightProps) {
           </svg>
         </Link>
       </div>
-    </section>
+    </motion.section>
   )
 }

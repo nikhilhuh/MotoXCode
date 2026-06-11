@@ -1,17 +1,10 @@
-import React, { useRef, useEffect, useState } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "@/context/UserContext";
 import { useFeedback } from "@/context/FeedbackContext";
 import { apiClient } from "@/services/apiClient";
-import { env } from "@/config/env.config";
-
-declare global {
-  interface Window {
-    google?: any;
-    __mxcGoogleAuthInitialized?: boolean;
-    __mxcGoogleAuthCallback?: (response: any) => void;
-  }
-}
+import { useGoogleLogin } from "@react-oauth/google";
+import { FcGoogle } from "react-icons/fc";
 
 interface GoogleLoginButtonProps {
   isSignUp?: boolean;
@@ -23,37 +16,10 @@ const GoogleLoginButton: React.FC<GoogleLoginButtonProps> = ({
   action,
 }) => {
   const navigate = useNavigate();
-  const { setUserDetails } = useUser();
+  const { userDetails, setUserDetails } = useUser();
   const { showError, showSuccess } = useFeedback();
-  const [scriptLoaded, setScriptLoaded] = useState<boolean>(false);
-  const buttonRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    return () => {
-      // Force clear any lingering third-party implicit or federated credential tokens cached in memory on unmount
-      if (window.google?.accounts?.id) {
-        window.google.accounts.id.cancel();
-      }
-    };
-  }, []);
-
-  const handleGoogleCredentialResponse = async (response: any) => {
-    const credential = response?.credential;
-
-    if (!credential) {
-      showError(
-        "Google authentication returned no credential. Please try again.",
-      );
-      return;
-    }
-
-    // Validate the existence of the 3-segment JSON Web Token
-    const segments = credential.split(".");
-    if (segments.length !== 3) {
-      showError("Invalid Google credential format. Please try again.");
-      return;
-    }
-
+  const handleGoogleCredentialResponse = async (credential: string) => {
     try {
       let endpoint = `/auth/google`;
       let payload: any = { id_token: credential, isSignUp: isSignUp };
@@ -70,14 +36,15 @@ const GoogleLoginButton: React.FC<GoogleLoginButtonProps> = ({
       const apiResponse = await apiClient.post(endpoint, payload);
 
       const { user, token } = apiResponse.data;
-      const userWithToken = { ...user, token };
+      const finalToken = token || userDetails?.token;
+      const userWithToken = { ...user, token: finalToken };
       setUserDetails(userWithToken);
       localStorage.setItem("userDetails", JSON.stringify(userWithToken));
 
       showSuccess(
         action === "link"
           ? "Successfully linked Google account!"
-          : "Successfully signed in with Google!",
+          : `You are signed in as ${user.username}`,
       );
       if (action !== "link") {
         navigate("/");
@@ -89,57 +56,25 @@ const GoogleLoginButton: React.FC<GoogleLoginButtonProps> = ({
     }
   };
 
-  // Constantly bind the global callback proxy to the latest closure
-  window.__mxcGoogleAuthCallback = handleGoogleCredentialResponse;
-
-  // Monitor Google library script availability
-  useEffect(() => {
-    const checkScript = () => {
-      if (window.google?.accounts?.id) {
-        setScriptLoaded(true);
-        if (window.__mxcGoogleAuthInitialized) {
-          return;
-        }
-        window.google.accounts.id.initialize({
-          client_id: env.VITE_GOOGLE_CLIENT_ID,
-          callback: (res: any) => window.__mxcGoogleAuthCallback?.(res),
-        });
-        window.__mxcGoogleAuthInitialized = true;
-      }
-    };
-
-    checkScript();
-
-    // In case the script is loading asynchronously
-    const interval = setInterval(() => {
-      if (window.google?.accounts?.id) {
-        checkScript();
-        clearInterval(interval);
-      }
-    }, 100);
-
-    return () => clearInterval(interval);
-  }, [isSignUp, action]);
-
-  // DOM container rendering lifecycle
-  useEffect(() => {
-    if (scriptLoaded && buttonRef.current && window.google?.accounts?.id) {
-      // Force-clear the internal DOM container to wipe old React StrictMode duplicates
-      buttonRef.current.innerHTML = "";
-
-      window.google.accounts.id.renderButton(buttonRef.current, {
-        type: "standard",
-        theme: "outline",
-        size: "large",
-        shape: "rectangular",
-        text: action === "link" ? "continue_with" : "continue_with",
-      });
-    }
-  }, [scriptLoaded, buttonRef]);
+  const login = useGoogleLogin({
+    onSuccess: (tokenResponse) => {
+      handleGoogleCredentialResponse(tokenResponse.access_token);
+    },
+    onError: () => {
+      showError("Google authentication failed or was cancelled.");
+    },
+  });
 
   return (
     <div className="w-full flex justify-center py-2">
-      <div id="googleButtonContainer" ref={buttonRef} className="w-full"></div>
+      <button
+        onClick={() => login()}
+        type="button"
+        className="w-full flex items-center justify-center gap-3 py-3 px-6 rounded-xl bg-white/5 border border-white/10 text-white font-medium hover:bg-white/10 hover:border-white/20 transition-all hover:scale-[1.02] active:scale-95 shadow-sm hover:shadow-md cursor-pointer"
+      >
+        <FcGoogle className="w-6 h-6 shrink-0" />
+        <span>Continue with Google</span>
+      </button>
     </div>
   );
 };

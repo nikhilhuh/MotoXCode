@@ -10,6 +10,7 @@ import {
   checkUsername,
   registerComplete,
   linkGoogleAccount,
+  unlinkGoogleAccount,
 } from "../controllers/auth.controller";
 import { requireAuth } from "../middlewares/auth.middleware";
 
@@ -52,6 +53,12 @@ authRouter.post("/google", googleAuth);
  * Link a Google ID token to the active session account.
  */
 authRouter.post("/link-google", requireAuth as any, linkGoogleAccount as any);
+
+/**
+ * POST /api/auth/unlink-google
+ * Unlink a Google ID token from the active session account.
+ */
+authRouter.post("/unlink-google", requireAuth as any, unlinkGoogleAccount as any);
 
 // ─── Multi-Step Registration Routes ──────────────────────────────────────────
 

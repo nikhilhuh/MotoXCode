@@ -1,16 +1,25 @@
-import { useEffect, useRef } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { motion } from "framer-motion";
 import { RidingCode } from "@/types/ridingCode";
-
-gsap.registerPlugin(ScrollTrigger);
 
 interface AboutRidingCodeProps {
   ridingCode: RidingCode[];
 }
-export default function AboutRidingCode({ ridingCode }: AboutRidingCodeProps) {
-  const containerRef = useRef<HTMLDivElement>(null);
 
+const itemVariants = {
+  hidden: { opacity: 0, y: 30, filter: "blur(10px)" },
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    filter: "blur(0px)",
+    transition: {
+      duration: 0.6,
+      delay: i * 0.15,
+      ease: [0.16, 1, 0.3, 1] as const, // Equivalent to power4.out
+    },
+  }),
+};
+
+export default function AboutRidingCode({ ridingCode }: AboutRidingCodeProps) {
   // Pool of vibrant accent colors
   const accentColors = [
     "text-red-500",
@@ -23,33 +32,12 @@ export default function AboutRidingCode({ ridingCode }: AboutRidingCodeProps) {
     "text-rose-500",
   ];
 
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.fromTo(
-        ".code-card",
-        { opacity: 0, y: 30, filter: "blur(10px)" },
-        {
-          opacity: 1,
-          y: 0,
-          filter: "blur(0px)",
-          duration: 0.6,
-          stagger: 0.15,
-          ease: "power4.out",
-          scrollTrigger: {
-            trigger: containerRef.current,
-            start: "top 80%",
-            once: true,
-          },
-        }
-      );
-    }, containerRef);
-    return () => ctx.revert();
-  }, []);
-
   return (
-    <section
+    <motion.section
       id="riding-code"
-      ref={containerRef}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, margin: "-100px" }}
       className="py-12 lg:py-22 bg-gradient-to-b from-[var(--color-bg)] to-black relative overflow-hidden"
     >
       {/* Decorative ambient lighting */}
@@ -66,7 +54,7 @@ export default function AboutRidingCode({ ridingCode }: AboutRidingCodeProps) {
           {ridingCode.map((item, i) => {
             const accentClass = accentColors[i % accentColors.length];
             return (
-              <div key={item.rule} className="code-card group relative">
+              <motion.div key={item.rule} custom={i} variants={itemVariants} className="group relative">
                 {/* Premium Glassmorphic Card */}
                 <div className="h-full bg-slate-950/98 border border-white/10 backdrop-blur-2xl p-8 lg:p-10 rounded-2xl shadow-[0_20px_50px_-10px_rgba(0,0,0,0.8)] hover:border-white/20 transition-all duration-500 overflow-hidden flex flex-col">
                   {/* Rule Number - Large, Transparent background */}
@@ -93,12 +81,12 @@ export default function AboutRidingCode({ ridingCode }: AboutRidingCodeProps) {
                   {/* Bottom Accent Line */}
                   <div className="absolute bottom-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-white/10 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-700 origin-center" />
                 </div>
-              </div>
+              </motion.div>
             );
           })}
 
           {/* Special Mission Card */}
-          <div className="code-card group lg:col-span-1 md:col-span-2 lg:col-start-2">
+          <motion.div custom={ridingCode.length} variants={itemVariants} className="group lg:col-span-1 md:col-span-2 lg:col-start-2">
             <div className="h-full bg-[var(--color-primary)]/10 border border-[var(--color-primary)]/20 backdrop-blur-2xl p-8 lg:p-10 rounded-2xl shadow-2xl transition-all duration-500 overflow-hidden flex flex-col justify-center items-center text-center">
               <p className="font-mono text-[0.7rem] font-bold tracking-[0.4em] text-[var(--color-primary)] uppercase mb-4">
                 Final Clause
@@ -110,9 +98,9 @@ export default function AboutRidingCode({ ridingCode }: AboutRidingCodeProps) {
                 "One team, one ride, one code."
               </p>
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
-    </section>
+    </motion.section>
   );
 }

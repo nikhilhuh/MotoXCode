@@ -4,7 +4,7 @@ import crypto from "crypto";
 import { AppError } from "../middlewares/error.middleware";
 import { Member } from "../models";
 import { PasswordResetToken } from "../models/PasswordResetToken";
-import { sendPasswordResetEmail } from "../services/mail.service";
+import { MailService } from "../services/mail/mail.service";
 import { hashPassword } from "../services/auth.service";
 import { env } from "../config/env.config";
 
@@ -79,7 +79,11 @@ export async function forgotPassword(
     const resetLink = `${env.FRONTEND_URL}/reset-password?token=${rawToken}&email=${encodeURIComponent(email)}`;
 
     // Send email (fire and forget)
-    sendPasswordResetEmail(email, resetLink);
+    MailService.send({
+      template: "password-reset",
+      to: email,
+      data: { resetLink },
+    });
 
     res.status(200).json({
       success: true,

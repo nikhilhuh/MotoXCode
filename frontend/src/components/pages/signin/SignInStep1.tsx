@@ -20,7 +20,7 @@ const SignInStep1: React.FC<Props> = ({
   setVerifying,
   setStep,
 }) => {
-  const { showError } = useFeedback();
+  const { showError, showSuccess } = useFeedback();
   const [emailError, setEmailError] = useState<string>("");
 
   const validateEmail = (value: string): boolean => {
@@ -44,6 +44,7 @@ const SignInStep1: React.FC<Props> = ({
     setVerifying(true);
     try {
       await requestOTP(email.trim().toLowerCase());
+      showSuccess("An OTP has been sent to your email.");
       setStep(2);
     } catch (err) {
       const error = err as AxiosError<{ message: string }>;

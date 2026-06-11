@@ -30,11 +30,13 @@
 @layer base {
   html {
     scroll-behavior: smooth;
+    position: relative;
   }
   body {
     background-color: var(--color-bg);
     color: var(--color-text-primary);
     overflow-x: hidden;
+    position: relative;
   }
 }
 

@@ -1,8 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import gsap from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
-
-gsap.registerPlugin(ScrollTrigger)
+import { motion, useInView, animate } from 'framer-motion'
 
 interface StatCardProps {
   target: number;
@@ -16,34 +13,29 @@ interface StatCardProps {
 export const StatCard: React.FC<StatCardProps> = ({ target, suffix, label, image, isFloat, index }) => {
   const [value, setValue] = useState<number>(0);
   const cardRef = useRef<HTMLDivElement>(null);
+  const isInView = useInView(cardRef, { once: true, margin: "-50px" });
 
   useEffect(() => {
-    const obj = { val: 0 };
-    const ctx = gsap.context(() => {
-      // Animate number count-up
-      gsap.to(obj, {
-        val: target,
+    if (isInView) {
+      const controls = animate(0, target, {
         duration: 2.5,
         delay: index * 0.15,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: cardRef.current,
-          start: 'top 90%',
-          once: true,
-        },
-        onUpdate: () => {
-          setValue(isFloat ? Number(obj.val.toFixed(1)) : Math.floor(obj.val));
+        ease: [0.22, 1, 0.36, 1] as const, // Equivalent to power3.out
+        onUpdate: (val) => {
+          setValue(isFloat ? Number(val.toFixed(1)) : Math.floor(val));
         }
       });
-    });
-
-    return () => ctx.revert();
-  }, [target, isFloat, index]);
+      return controls.stop;
+    }
+  }, [isInView, target, isFloat, index]);
 
   return (
-    <div 
+    <motion.div 
       ref={cardRef} 
-      className="stat-card relative flex flex-col overflow-hidden rounded-[2rem] bg-[var(--color-surface)]/20 backdrop-blur-xl border border-[var(--color-border)]/50 shadow-[0_8px_32px_rgba(0,0,0,0.2)] hover:bg-[var(--color-surface)]/40 hover:border-[var(--color-accent)]/50 hover:-translate-y-2 hover:shadow-[0_16px_48px_rgba(0,0,0,0.4)] transition-all duration-500 group"
+      initial={{ opacity: 0, y: 30 }}
+      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+      transition={{ duration: 0.8, delay: index * 0.1, ease: [0.22, 1, 0.36, 1] as const }}
+      className="relative flex flex-col overflow-hidden rounded-[2rem] bg-[var(--color-surface)]/20 backdrop-blur-xl border border-[var(--color-border)]/50 shadow-[0_8px_32px_rgba(0,0,0,0.2)] hover:bg-[var(--color-surface)]/40 hover:border-[var(--color-accent)]/50 hover:-translate-y-2 hover:shadow-[0_16px_48px_rgba(0,0,0,0.4)] transition-all duration-500 group"
     >
       <div className="w-full overflow-hidden relative border-b border-[var(--color-border)]/50">
         <div className="absolute inset-0 bg-gradient-to-t from-[var(--color-bg)] to-transparent z-10 opacity-60 mix-blend-multiply transition-opacity duration-500 group-hover:opacity-40"></div>
@@ -58,6 +50,6 @@ export const StatCard: React.FC<StatCardProps> = ({ target, suffix, label, image
           {label}
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };

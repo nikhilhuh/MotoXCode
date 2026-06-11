@@ -1,6 +1,5 @@
-import { useEffect, useRef, useState } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useState } from "react";
+import { motion } from "framer-motion";
 import {
   FaMapPin,
   FaEnvelope,
@@ -12,8 +11,6 @@ import {
 import { ContactInfoItem } from "@/types/contactInfo";
 import { ContactFormData } from "@/types/contactForm";
 import { intakeService } from "@/services";
-
-gsap.registerPlugin(ScrollTrigger);
 
 interface ContactFormProps {
   contactInfo: ContactInfoItem[];
@@ -79,8 +76,20 @@ interface FormErrors {
   message?: string;
 }
 
+const itemVariants = {
+  hidden: { opacity: 0, y: 30 },
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.8,
+      delay: i * 0.12,
+      ease: [0.22, 1, 0.36, 1] as const, // Equivalent to power3.out
+    },
+  }),
+};
+
 export default function ContactForm({ contactInfo }: ContactFormProps) {
-  const contentRef = useRef<HTMLDivElement>(null);
   const [submitted, setSubmitted] = useState<boolean>(false);
   const [formData, setFormData] = useState<ContactFormData>({
     name: "",
@@ -89,28 +98,6 @@ export default function ContactForm({ contactInfo }: ContactFormProps) {
     message: "",
   });
   const [errors, setErrors] = useState<FormErrors>({});
-
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.fromTo(
-        ".anim-item",
-        { opacity: 0, y: 30 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.8,
-          stagger: 0.12,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: contentRef.current,
-            start: "top 80%",
-            once: true,
-          },
-        },
-      );
-    }, contentRef);
-    return () => ctx.revert();
-  }, []);
 
   function handleInputChange(
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -171,12 +158,14 @@ export default function ContactForm({ contactInfo }: ContactFormProps) {
       <div className="absolute bottom-[10%] left-[5%] w-[30%] h-[50%] bg-[var(--color-accent)]/5 rounded-full blur-[120px] pointer-events-none z-0"></div>
 
       <div className="max-w-7xl mx-auto px-6 lg:px-12 w-full relative z-10">
-        <div
-          ref={contentRef}
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
           className="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-12 items-stretch"
         >
           {/* Info Card */}
-          <div className="lg:col-span-2 anim-item bg-transparent lg:bg-[var(--color-bg)]/40 lg:border lg:border-[var(--color-border)]/50 lg:backdrop-blur-2xl lg:p-6 lg:rounded-2xl lg:shadow-[0_20px_50px_-10px_rgba(0,0,0,0.8)] relative overflow-hidden flex flex-col justify-between">
+          <motion.div custom={0} variants={itemVariants} className="lg:col-span-2 bg-transparent lg:bg-[var(--color-bg)]/40 lg:border lg:border-[var(--color-border)]/50 lg:backdrop-blur-2xl lg:p-6 lg:rounded-2xl lg:shadow-[0_20px_50px_-10px_rgba(0,0,0,0.8)] relative overflow-hidden flex flex-col justify-between">
             <div className="hidden lg:block absolute -top-10 -right-10 size-32 bg-[var(--color-primary)]/5 rounded-full blur-2xl pointer-events-none z-0"></div>
 
             <div className="relative z-10 flex flex-col h-full justify-between gap-6 border-b border-[var(--color-border)]/20 lg:border-0 pb-8">
@@ -213,10 +202,10 @@ export default function ContactForm({ contactInfo }: ContactFormProps) {
                 </div>
               </div>
             </div>
-          </div>
+          </motion.div>
 
           {/* Form Card */}
-          <div className="lg:col-span-3 anim-item bg-transparent lg:bg-[var(--color-bg)]/40 lg:border lg:border-[var(--color-border)]/50 lg:backdrop-blur-2xl lg:p-6 lg:rounded-2xl lg:shadow-[0_20px_50px_-10px_rgba(0,0,0,0.8)] relative overflow-hidden flex flex-col justify-between">
+          <motion.div custom={1} variants={itemVariants} className="lg:col-span-3 bg-transparent lg:bg-[var(--color-bg)]/40 lg:border lg:border-[var(--color-border)]/50 lg:backdrop-blur-2xl lg:p-6 lg:rounded-2xl lg:shadow-[0_20px_50px_-10px_rgba(0,0,0,0.8)] relative overflow-hidden flex flex-col justify-between">
             <div className="hidden lg:block absolute -bottom-10 -left-10 size-32 bg-[var(--color-accent)]/5 rounded-full blur-2xl pointer-events-none z-0"></div>
 
             {submitted ? (
@@ -369,8 +358,8 @@ export default function ContactForm({ contactInfo }: ContactFormProps) {
                 </div>
               </div>
             )}
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
 
         {/* note */}
         <div className="pt-4 md:pt-6 lg:pt-8 text-center">

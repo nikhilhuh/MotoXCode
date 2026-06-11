@@ -1,10 +1,7 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { motion } from "framer-motion";
 import { GalleryImage } from "@/types/galleryImage";
-
-gsap.registerPlugin(ScrollTrigger);
 
 interface GalleryPreviewProps {
   galleryPreviewImages: GalleryImage[];
@@ -15,7 +12,6 @@ export default function GalleryPreview({
   galleryPreviewImages,
   className,
 }: GalleryPreviewProps) {
-  const sectionRef = useRef<HTMLDivElement>(null);
   const [lightbox, setLightbox] = useState<{
     src: string;
     title: string;
@@ -28,27 +24,6 @@ export default function GalleryPreview({
       document.body.style.overflow = "";
     };
   }, [lightbox]);
-
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.fromTo(
-        sectionRef.current,
-        { opacity: 0, y: 40 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.8,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: "top 80%",
-            once: true,
-          },
-        },
-      );
-    });
-    return () => ctx.revert();
-  }, []);
 
   return (
     <>
@@ -108,8 +83,10 @@ export default function GalleryPreview({
         )}
 
       {/* ── SECTION ── */}
-      <section
-        ref={sectionRef}
+      <motion.section
+        initial={{ opacity: 0, y: 40 }}
+        whileInView={{ opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] as const } }}
+        viewport={{ once: true, margin: "-50px" }}
         className={`py-12 lg:py-22 relative overflow-hidden ${className || "bg-gradient-to-b from-[var(--color-surface)] to-[var(--color-section)]"}`}
       >
         {/* Ambient glow blobs */}
@@ -162,7 +139,7 @@ export default function GalleryPreview({
             ))}
           </div>
         </div>
-      </section>
+      </motion.section>
     </>
   );
 }

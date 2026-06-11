@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useWindowSize } from "@/hooks/useWindowSize";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import { motion, Variants } from "framer-motion";
 import StaggeredMenu from "./StaggeredMenu";
@@ -64,27 +65,20 @@ interface NavbarProps {
 const Navbar: React.FC<NavbarProps> = ({ socials }) => {
   const { userDetails, isInitialized } = useUser();
   const [scrolled, setScrolled] = useState<boolean>(() => typeof window !== 'undefined' ? window.scrollY > 20 : false);
-  const [windowWidth, setWindowWidth] = useState<number>(typeof window !== 'undefined' ? window.innerWidth : 1024);
+  const { width: windowWidth } = useWindowSize();
   const location = useLocation();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
-    const onResize = () => {
-      const newWidth = window.innerWidth;
-      setWindowWidth(newWidth);
-      if (newWidth >= 768) {
-        document.body.style.overflow = "";
-      }
-    };
-
     window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onResize);
-
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onResize);
-    };
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  useEffect(() => {
+    if (windowWidth >= 768) {
+      document.body.style.overflow = "";
+    }
+  }, [windowWidth]);
 
   useEffect(() => {
     document.body.style.overflow = "";

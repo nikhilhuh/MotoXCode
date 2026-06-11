@@ -1,10 +1,7 @@
-import { useEffect, useRef, useState } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useState } from "react";
+import { motion } from "framer-motion";
 import { Membership } from "@/types/membership";
 import { intakeService } from "@/services";
-
-gsap.registerPlugin(ScrollTrigger);
 
 const experienceLevels = [
   "< 1 year",
@@ -26,7 +23,6 @@ interface FormErrors {
 }
 
 export default function JoinForm() {
-  const formRef = useRef<HTMLDivElement>(null);
   const [submitted, setSubmitted] = useState<boolean>(false);
   const [formData, setFormData] = useState<Membership>({
     name: "",
@@ -40,27 +36,6 @@ export default function JoinForm() {
     agree: false,
   });
   const [errors, setErrors] = useState<FormErrors>({});
-
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.fromTo(
-        formRef.current,
-        { opacity: 0, y: 30 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.9,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: formRef.current,
-            start: "top 80%",
-            once: true,
-          },
-        }
-      );
-    });
-    return () => ctx.revert();
-  }, []);
 
   function handleInputChange(
     e: React.ChangeEvent<
@@ -150,9 +125,11 @@ export default function JoinForm() {
       <div className="absolute top-[35%] -left-[10%] w-[40%] h-[50%] rounded-full bg-[var(--color-accent)]/5 blur-[120px] pointer-events-none z-0"></div>
 
       <div className="max-w-7xl mx-auto px-6 lg:px-12 w-full relative z-10">
-        <div
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0, transition: { duration: 0.9, ease: [0.22, 1, 0.36, 1] as const } }}
+          viewport={{ once: true, margin: "-50px" }}
           className="max-w-3xl mx-auto anim-item bg-transparent lg:bg-[var(--color-bg)]/40 lg:border lg:border-[var(--color-border)]/50 lg:backdrop-blur-2xl lg:p-6 lg:rounded-2xl lg:shadow-[0_20px_50px_-10px_rgba(0,0,0,0.8)] relative overflow-hidden flex flex-col justify-between"
-          ref={formRef}
         >
           <div className="hidden lg:block absolute -top-10 -right-10 size-32 bg-[var(--color-primary)]/5 rounded-full blur-2xl pointer-events-none z-0"></div>
 
@@ -442,7 +419,7 @@ export default function JoinForm() {
               for assistance.
             </p>
           </div>
-        </div>
+        </motion.div>
       </div>
     </section>
   );

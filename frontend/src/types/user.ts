@@ -5,4 +5,5 @@ export interface User {
   role: "crew" | "admin" | "rider";
   token: string;
   avatar?: string;
+  googleConnected?: boolean;
 }

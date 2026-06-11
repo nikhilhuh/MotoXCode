@@ -1,35 +1,21 @@
-import { useEffect, useRef } from 'react'
+import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
-import gsap from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import RideCard from '../../ui/RideCard'
 import { Ride } from '@/types/ride'
-
-gsap.registerPlugin(ScrollTrigger)
 
 interface UpcomingRidesProps {
   upcomingRidesData: Ride[];
 }
 
 export default function UpcomingRides({ upcomingRidesData }: UpcomingRidesProps) {
-  const ridesRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.fromTo(
-        ridesRef.current,
-        { opacity: 0, y: 40 },
-        {
-          opacity: 1, y: 0, duration: 0.8, ease: 'power3.out',
-          scrollTrigger: { trigger: ridesRef.current, start: 'top 80%', once: true },
-        }
-      )
-    })
-    return () => ctx.revert()
-  }, [])
 
   return (
-    <section ref={ridesRef} className="py-12 lg:py-22 relative overflow-hidden bg-gradient-to-b from-[var(--color-surface)] to-[var(--color-bg)]">
+    <motion.section 
+      initial={{ opacity: 0, y: 40 }}
+      whileInView={{ opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] as const } }}
+      viewport={{ once: true, margin: "-50px" }}
+      className="py-12 lg:py-22 relative overflow-hidden bg-gradient-to-b from-[var(--color-surface)] to-[var(--color-bg)]"
+    >
       {/* Decorative ambient lighting */}
       <div className="absolute -top-[10%] right-[10%] w-[40%] h-[40%] rounded-full bg-[var(--color-primary)]/5 blur-[120px] pointer-events-none z-0"></div>
       <div className="absolute top-[30%] -left-[10%] w-[40%] h-[50%] rounded-full bg-[var(--color-accent)]/5 blur-[120px] pointer-events-none z-0"></div>
@@ -60,6 +46,6 @@ export default function UpcomingRides({ upcomingRidesData }: UpcomingRidesProps)
           </svg>
         </Link>
       </div>
-    </section>
+    </motion.section>
   )
 }

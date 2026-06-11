@@ -11,7 +11,7 @@ import {
   verifyGoogleToken,
   generateOTP,
 } from "../services/auth.service";
-import { sendOTPEmail } from "../services/mail.service";
+import { MailService } from "../services/mail/mail.service";
 import { env } from "../config/env.config";
 import { AuthenticatedRequest } from "../middlewares/auth.middleware";
 
@@ -148,6 +148,7 @@ function serializeUser(member: InstanceType<typeof Member>) {
     email: member.email,
     role: member.role,
     avatar: member.avatar,
+    googleConnected: member.googleConnected,
   };
 }
 
@@ -279,12 +280,7 @@ export async function otpRequest(
     // Verify the account exists
     const member = await Member.findOne({ email });
     if (!member) {
-      // Intentionally vague — do not reveal account existence
-      res.status(200).json({
-        success: true,
-        message: "If that email is registered, an OTP has been sent.",
-      });
-      return;
+      throw new AppError("Account not found. Please register first.", 404);
     }
 
     const otp = generateOTP();
@@ -299,7 +295,11 @@ export async function otpRequest(
     );
 
     // Fire-and-forget email (non-blocking)
-    sendOTPEmail(email, otp);
+    MailService.send({
+      template: "otp",
+      to: email,
+      data: { otp },
+    });
 
     res
       .status(200)
@@ -521,10 +521,23 @@ export async function linkGoogleAccount(
     const { id_token } = parsed.data;
     const googlePayload = await verifyGoogleToken(id_token);
 
+    // Check if the Google email is already used by ANOTHER user
+    const existingOtherUser = await Member.findOne({
+      email: googlePayload.email,
+      _id: { $ne: req.user._id },
+    }).select("_id").lean();
+
+    if (existingOtherUser) {
+      throw new AppError(
+        "This Google account is already linked to another user.",
+        409,
+      );
+    }
+
     // Perform a targeted atomic mutation updating the active session row
     const updatedUser = await Member.findByIdAndUpdate(
       req.user._id,
-      { googleConnected: true },
+      { googleConnected: true, email: googlePayload.email },
       { new: true },
     );
 
@@ -535,6 +548,40 @@ export async function linkGoogleAccount(
     res.status(200).json({
       success: true,
       message: "Google account successfully linked.",
+      user: serializeUser(updatedUser),
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+/**
+ * POST /api/auth/unlink-google
+ * Unlink the Google account from the currently authenticated session user.
+ */
+export async function unlinkGoogleAccount(
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
+  try {
+    if (!req.user) {
+      throw new AppError("Unauthorized session context.", 401);
+    }
+
+    const updatedUser = await Member.findByIdAndUpdate(
+      req.user._id,
+      { $set: { googleConnected: false } },
+      { new: true },
+    );
+
+    if (!updatedUser) {
+      throw new AppError("User account not found.", 404);
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Google account successfully unlinked.",
       user: serializeUser(updatedUser),
     });
   } catch (err) {
@@ -587,7 +634,11 @@ export async function registerSendOTP(
     );
 
     // Fire-and-forget — never blocks the response thread
-    sendOTPEmail(email, otp);
+    MailService.send({
+      template: "otp",
+      to: email,
+      data: { otp },
+    });
 
     res.status(200).json({
       success: true,

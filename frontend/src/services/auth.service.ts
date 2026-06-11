@@ -58,6 +58,13 @@ export async function loginWithGoogle(
   return apiClient.post<AuthResponse>("/auth/google", { credential });
 }
 
+/**
+ * Unlink the Google account from the current user session.
+ */
+export async function unlinkGoogleAccount(): Promise<AxiosResponse<{ success: boolean; message: string; user: User }>> {
+  return apiClient.post<{ success: boolean; message: string; user: User }>("/auth/unlink-google");
+}
+
 // ─── Registration Flow Methods ────────────────────────────────────────────────
 
 /**

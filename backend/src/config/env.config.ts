@@ -8,6 +8,7 @@ dotenv.config();
  * The server will fail fast at startup if any key is missing or invalid.
  */
 const EnvSchema = z.object({
+  NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
   PORT: z
     .string()
     .regex(/^\d+$/, "PORT must be a numeric string")
@@ -43,7 +44,10 @@ const EnvSchema = z.object({
     .transform(Number),
   SMTP_USER: z.string().min(1, "SMTP_USER is required"),
   SMTP_PASS: z.string().min(1, "SMTP_PASS is required"),
-  SMTP_FROM: z.string().min(1, "SMTP_FROM is required"),
+  EMAIL_FROM: z.string().min(1, "EMAIL_FROM is required"),
+
+  // ─── Production Resend ──────────────────────────────────────────────────────
+  RESEND_API_KEY: z.string().optional(),
 });
 
 /**

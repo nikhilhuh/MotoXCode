@@ -100,11 +100,6 @@ export async function verifyGoogleToken(credential: string): Promise<GooglePaylo
       );
     }
 
-    console.warn(
-      "[Auth] Received an access_token (ya29.*) instead of an id_token. " +
-        "Update the frontend to send credential from CredentialResponse.credential."
-    );
-
     return {
       sub: data.sub,
       email: data.email,

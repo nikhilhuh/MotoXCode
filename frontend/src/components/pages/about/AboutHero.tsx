@@ -1,36 +1,38 @@
-import { useEffect, useRef } from "react";
-import gsap from "gsap";
+import { useRef } from "react";
+import { motion } from "framer-motion";
 
 interface AboutHeroProps {
   AboutHeroBg: string;
 }
 
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.15,
+      delayChildren: 0.1,
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 30 },
+  visible: { 
+    opacity: 1, 
+    y: 0, 
+    transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] as const } 
+  },
+};
+
 export default function AboutHero({ AboutHeroBg }: AboutHeroProps) {
   const heroRef = useRef<HTMLDivElement>(null);
-  const contentRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      const tl = gsap.timeline({ delay: 0.3 });
-      tl.fromTo(
-        ".hero-anim",
-        { opacity: 0, y: 50 },
-        { 
-          opacity: 1, 
-          y: 0, 
-          duration: 1, 
-          stagger: 0.15, 
-          ease: "power3.out" 
-        }
-      );
-    }, contentRef);
-    return () => ctx.revert();
-  }, []);
 
   return (
     <section
       ref={heroRef}
       className="relative w-full min-h-[100dvh] flex flex-col items-center justify-center overflow-hidden"
+      style={{ position: "relative" }}
     >
       <div
         className="absolute inset-0 size-full bg-cover bg-center"
@@ -44,17 +46,23 @@ export default function AboutHero({ AboutHeroBg }: AboutHeroProps) {
         }}
       />
 
-      <div className="relative z-10 w-full" ref={contentRef}>
+      <motion.div 
+        className="relative z-10 w-full" 
+        style={{ position: "relative" }}
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+      >
         <div className="max-w-7xl mx-auto text-center flex flex-col items-center justify-center px-4 py-10 md:px-6 md:py-12 lg:px-12 lg:py-20">
-          <div className="hero-anim mb-6">
+          <motion.div variants={itemVariants} className="mb-6">
             <span className="inline-flex items-center gap-2.5 text-[0.7rem] md:text-xs lg:text-sm font-bold tracking-[0.05em] uppercase px-4 md:px-6 py-2.5 rounded-full text-[var(--color-bg)] bg-[var(--color-primary)] shadow-[0_8px_32px_rgba(248,250,252,0.2)]">
               Our Story
             </span>
-          </div>
+          </motion.div>
 
-          <h1
+          <motion.h1
+            variants={itemVariants}
             className="
-              hero-anim
               font-[var(--font-heading)]
               font-black
               leading-[0.9]
@@ -69,14 +77,14 @@ export default function AboutHero({ AboutHeroBg }: AboutHeroProps) {
           >
             Built on Asphalt,<br />
             <span className="text-[var(--color-accent)]">Bonded by Grit</span>
-          </h1>
+          </motion.h1>
 
-          <p className="hero-anim font-[var(--font-body)] font-medium max-w-2xl mx-auto text-sm md:text-base lg:text-xl text-[var(--color-text-primary)] opacity-90 leading-relaxed mb-10">
+          <motion.p variants={itemVariants} className="font-[var(--font-body)] font-medium max-w-2xl mx-auto text-sm md:text-base lg:text-xl text-[var(--color-text-primary)] opacity-90 leading-relaxed mb-10">
             MotoXCode was never supposed to be this big. It started as an
             obsession. It became a movement.
-          </p>
+          </motion.p>
 
-          <div className="hero-anim flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 w-full max-w-[16rem] sm:max-w-none mx-auto">
+          <motion.div variants={itemVariants} className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 w-full max-w-[16rem] sm:max-w-none mx-auto">
             <a
               href="#philosophy"
               className="btn-primary w-full sm:w-auto px-8 py-4 text-sm lg:text-base"
@@ -89,16 +97,21 @@ export default function AboutHero({ AboutHeroBg }: AboutHeroProps) {
             >
               The Code
             </a>
-          </div>
+          </motion.div>
         </div>
-      </div>
+      </motion.div>
 
-      <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 hero-anim text-[var(--color-text-primary)] opacity-60">
+      <motion.div 
+        variants={itemVariants}
+        initial="hidden"
+        animate="visible"
+        className="absolute bottom-2 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 text-[var(--color-text-primary)] opacity-60"
+      >
         <span className="font-[var(--font-body)] text-xs tracking-widest uppercase">
           Scroll
         </span>
         <div className="w-px h-6 bg-gradient-to-b from-[var(--color-text-primary)] to-transparent" />
-      </div>
+      </motion.div>
     </section>
   );
 }

@@ -1,32 +1,20 @@
-import { useEffect, useRef, useState } from 'react'
-import gsap from 'gsap'
-import { motion } from 'framer-motion'
+import { useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import RideCard from '../../ui/RideCard'
 import { Ride, RideFilter } from '@/types/ride'
 
 interface RidesGridProps {
   rides: Ride[];
 }
+
 export default function RidesGrid({ rides }: RidesGridProps) {
   const [filter, setFilter] = useState<RideFilter>('all')
-  const contentRef = useRef<HTMLDivElement>(null)
 
   const filtered = rides.filter((r) => {
     if (filter === 'upcoming') return !r.past
     if (filter === 'past') return r.past
     return true
   })
-
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.fromTo(
-        '.ride-card-anim',
-        { opacity: 0, y: 30 },
-        { opacity: 1, y: 0, duration: 0.6, stagger: 0.08, ease: 'power3.out' }
-      )
-    }, contentRef)
-    return () => ctx.revert()
-  }, [filter])
 
   return (
     <section id="rides-grid" className="py-12 lg:py-22 relative overflow-hidden bg-gradient-to-b from-[var(--color-bg)] via-[var(--color-section)] to-[var(--color-surface)]">
@@ -72,16 +60,25 @@ export default function RidesGrid({ rides }: RidesGridProps) {
         </div>
 
         {/* Grid */}
-        <div
-          ref={contentRef}
+        <motion.div
+          layout
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8"
         >
-          {filtered.map((ride) => (
-            <div key={ride._id} className="ride-card-anim">
-              <RideCard ride={ride} />
-            </div>
-          ))}
-        </div>
+          <AnimatePresence mode="popLayout">
+            {filtered.map((ride) => (
+              <motion.div 
+                key={ride._id}
+                layout
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.9 }}
+                transition={{ duration: 0.4 }}
+              >
+                <RideCard ride={ride} />
+              </motion.div>
+            ))}
+          </AnimatePresence>
+        </motion.div>
 
         {filtered.length === 0 && (
           <div className="text-center py-20">
