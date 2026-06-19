@@ -477,6 +477,13 @@ export async function googleAuth(
         googleConnected: true,
       });
 
+      // Fire-and-forget welcome email — non-blocking
+      void MailService.send({
+        template: "welcome",
+        to: member.email,
+        data: { username: member.username, email: member.email },
+      });
+
       const token = signToken({
         sub: String(member._id),
         username: member.username,
@@ -784,6 +791,13 @@ export async function registerComplete(
       email,
       password: hashed,
       role: "rider",
+    });
+
+    // Fire-and-forget welcome email — non-blocking
+    void MailService.send({
+      template: "welcome",
+      to: member.email,
+      data: { username: member.username, email: member.email },
     });
 
     const token = signToken({

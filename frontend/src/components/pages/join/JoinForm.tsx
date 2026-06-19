@@ -2,6 +2,8 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Membership } from "@/types/membership";
 import { intakeService } from "@/services";
+import { useFeedback } from "@/context/FeedbackContext";
+import Cliploader from "@/components/ui/Cliploader";
 
 const experienceLevels = [
   "< 1 year",
@@ -23,7 +25,9 @@ interface FormErrors {
 }
 
 export default function JoinForm() {
+  const { showSuccess, showError } = useFeedback();
   const [submitted, setSubmitted] = useState<boolean>(false);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [formData, setFormData] = useState<Membership>({
     name: "",
     email: "",
@@ -105,13 +109,17 @@ export default function JoinForm() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!validateForm()) return;
-    
+
+    setIsSubmitting(true);
     try {
       await intakeService.submitJoinForm(formData);
+      showSuccess("Application submitted! We'll review it and get back to you within 7 days.");
       setSubmitted(true);
     } catch (err) {
       console.error("Failed to submit form:", err);
-      alert("Failed to submit application. Please try again later.");
+      showError("Failed to submit application. Please try again later.");
+    } finally {
+      setIsSubmitting(false);
     }
   }
 
@@ -134,7 +142,7 @@ export default function JoinForm() {
           <div className="hidden lg:block absolute -top-10 -right-10 size-32 bg-[var(--color-primary)]/5 rounded-full blur-2xl pointer-events-none z-0"></div>
 
           {submitted ? (
-            <div className="text-center py-20 rounded-xl bg-[var(--color-surface)]/20 border border-[var(--color-border)]/30 backdrop-blur-md relative z-10 size-full flex flex-col items-center justify-center">
+            <div className="text-center py-12 relative z-10 size-full flex flex-col items-center justify-center">
               <div className="size-16 rounded-full flex items-center justify-center mx-auto mb-6 bg-[var(--color-primary)]/10 text-[var(--color-primary)] border border-[var(--color-primary)]/20 shadow-[0_0_20px_rgba(248,250,252,0.15)]">
                 <svg
                   width="28"
@@ -387,21 +395,31 @@ export default function JoinForm() {
               <button
                 type="submit"
                 id="membership-submit"
-                className="btn-primary w-full py-4 text-sm font-semibold tracking-[0.06em] uppercase cursor-pointer"
+                disabled={isSubmitting}
+                className={`btn-primary w-full py-4 text-sm font-semibold tracking-[0.06em] uppercase ${isSubmitting ? "opacity-60 cursor-not-allowed" : "cursor-pointer"}`}
               >
-                Submit Application
-                <svg
-                  width="14"
-                  height="14"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  className="transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-0.5"
-                >
-                  <line x1="22" y1="2" x2="11" y2="13" />
-                  <polygon points="22 2 15 22 11 13 2 9 22 2" />
-                </svg>
+                {isSubmitting ? (
+                  <span className="flex gap-2 items-center justify-center">
+                    <Cliploader size={14} color="var(--color-bg)" />
+                    Submitting…
+                  </span>
+                ) : (
+                  <>
+                    Submit Application
+                    <svg
+                      width="14"
+                      height="14"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      className="transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-0.5"
+                    >
+                      <line x1="22" y1="2" x2="11" y2="13" />
+                      <polygon points="22 2 15 22 11 13 2 9 22 2" />
+                    </svg>
+                  </>
+                )}
               </button>
             </form>
           )}

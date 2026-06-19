@@ -149,6 +149,9 @@ const SignInStep2: React.FC<Props> = ({
           {otp.map((digit, index) => (
             <input
               id={`digit-${index}`}
+              name={`digit-${index}`}
+              autoComplete="one-time-code"
+              aria-label={`OTP Digit ${index + 1}`}
               key={index}
               ref={(el) => { inputRefs.current[index] = el; }}
               type="text"

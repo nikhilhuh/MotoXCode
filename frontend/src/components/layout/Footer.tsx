@@ -1,6 +1,10 @@
 import { Link } from "react-router-dom";
+import { useState } from "react";
 import { Social } from "@/types/social";
 import { useUser } from "@/context/UserContext";
+import { useFeedback } from "@/context/FeedbackContext";
+import { cmsService } from "@/services";
+import Cliploader from "@/components/ui/Cliploader";
 import {
   FaInstagram,
   FaYoutube,
@@ -11,7 +15,22 @@ import {
   FaDiscord,
   FaLinkedin,
   FaGlobe,
+  FaPencil,
+  FaTrash,
+  FaPlus,
 } from "react-icons/fa6";
+
+const SOCIAL_OPTIONS = [
+  "Instagram",
+  "YouTube",
+  "WhatsApp",
+  "Strava",
+  "Facebook",
+  "Twitter",
+  "Discord",
+  "LinkedIn",
+  "Other"
+];
 
 const getSocialIcon = (label: string) => {
   const cleanLabel = label.toLowerCase().trim();
@@ -61,9 +80,63 @@ const footerGroups = [
 
 interface FooterProps {
   socials: Social[];
+  onUpdateSocials?: (newSocials: Social[]) => void;
 }
-export default function Footer({ socials }: FooterProps) {
+export default function Footer({ socials, onUpdateSocials }: FooterProps) {
   const { userDetails, isInitialized } = useUser();
+  const isAdmin = userDetails?.role === "admin";
+  const { showSuccess, showError } = useFeedback();
+
+  const [isEditingSocials, setIsEditingSocials] = useState<boolean>(false);
+  const [isSaving, setIsSaving] = useState<boolean>(false);
+  const [editSocials, setEditSocials] = useState<Social[]>([]);
+
+  const startEditingSocials = () => {
+    setEditSocials([...socials]);
+    setIsEditingSocials(true);
+  };
+
+  const handleSocialChange = (index: number, field: keyof Social, value: string) => {
+    const newSocials = [...editSocials];
+    newSocials[index] = { ...newSocials[index], [field]: value };
+    setEditSocials(newSocials);
+  };
+
+  const addSocial = () => {
+    setEditSocials([...editSocials, { _id: "", label: "Globe", link: "" }]);
+  };
+
+  const removeSocial = (index: number) => {
+    const newSocials = [...editSocials];
+    newSocials.splice(index, 1);
+    setEditSocials(newSocials);
+  };
+
+  const handleSaveSocials = async () => {
+    setIsSaving(true);
+    try {
+      const formData = new FormData();
+      const payload = editSocials.map(s => ({
+        id: s._id || "",
+        label: s.label,
+        link: s.link
+      }));
+      formData.append("socials", JSON.stringify(payload));
+      
+      const res = await cmsService.updateHomeCMSData("socials", formData);
+      if (res.success) {
+        showSuccess("Socials updated!");
+        setIsEditingSocials(false);
+        if (onUpdateSocials) onUpdateSocials(res.data as Social[]);
+      } else {
+        showError(res.message || "Failed to update socials");
+      }
+    } catch (err: any) {
+      showError(err.response?.data?.message || "Error updating socials");
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   return (
     <footer className="relative border-t border-[var(--color-border)]/20 bg-gradient-to-b from-black via-[var(--color-bg)] to-[var(--color-surface)]  overflow-hidden">
@@ -98,33 +171,146 @@ export default function Footer({ socials }: FooterProps) {
             </p>
 
             {/* Social icons */}
-            <div className="flex items-center gap-3">
-              {socials &&
-                socials.map((s) => (
-                  <a
-                    key={s._id}
-                    href={s.link}
-                    aria-label={s.label}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="size-9 flex items-center justify-center rounded-full border border-[var(--color-border)]/50 text-[var(--color-text-secondary)] hover:text-[var(--color-primary)] hover:border-[var(--color-primary)]/50 hover:bg-[var(--color-primary)]/5 transition-all duration-300"
-                  >
-                    {getSocialIcon(s.label)}
-                  </a>
-                ))}
+            <div className={isEditingSocials ? "flex flex-col w-full gap-3 relative" : "flex items-center gap-3 relative"}>
+              {isEditingSocials ? (
+                <div className="flex flex-col gap-3 w-full max-w-xl mt-4 bg-[var(--color-surface)]/50 p-4 rounded-xl border border-[var(--color-border)]/50">
+                  <p className="text-[var(--color-text-secondary)] text-xs font-mono uppercase tracking-widest mb-2">
+                    Editing Socials
+                  </p>
+                  {editSocials.map((s, idx) => {
+                    const isOther = !SOCIAL_OPTIONS.slice(0, -1).some(opt => opt.toLowerCase() === s.label.toLowerCase().trim());
+                    const selectValue = isOther ? "Other" : SOCIAL_OPTIONS.find(opt => opt.toLowerCase() === s.label.toLowerCase().trim()) || "Globe";
+                    return (
+                      <div key={idx} className="flex flex-col sm:flex-row w-full gap-2 items-start sm:items-center bg-[var(--color-bg)]/40 sm:bg-transparent p-3 sm:p-0 rounded-xl sm:rounded-none border border-[var(--color-border)]/50 sm:border-none">
+                        <div className="flex flex-col sm:flex-row w-full sm:w-auto gap-2">
+                          <select
+                            id={`social-label-select-${idx}`}
+                            name={`social-label-select-${idx}`}
+                            autoComplete="off"
+                            value={selectValue}
+                            onChange={(e) => {
+                              if (e.target.value === "Other") {
+                                handleSocialChange(idx, "label", "");
+                              } else {
+                                handleSocialChange(idx, "label", e.target.value);
+                              }
+                            }}
+                            className="w-full sm:w-32 bg-[var(--color-bg)]/80 border border-[var(--color-border)] text-[var(--color-text-primary)] rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[var(--color-primary)] transition-colors"
+                          >
+                            {SOCIAL_OPTIONS.map(opt => (
+                              <option key={opt} value={opt}>{opt}</option>
+                            ))}
+                          </select>
+                          {isOther && (
+                            <input
+                              id={`social-label-input-${idx}`}
+                              name={`social-label-input-${idx}`}
+                              autoComplete="off"
+                              type="text"
+                              value={s.label}
+                              onChange={(e) => handleSocialChange(idx, "label", e.target.value)}
+                              placeholder="Custom Label"
+                              className="w-full sm:w-32 bg-[var(--color-bg)]/80 border border-[var(--color-border)] text-[var(--color-text-primary)] rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[var(--color-primary)] transition-colors min-w-0"
+                            />
+                          )}
+                        </div>
+                        <div className="flex flex-row w-full sm:flex-1 gap-2 items-center">
+                          <input
+                            id={`social-link-input-${idx}`}
+                            name={`social-link-input-${idx}`}
+                            autoComplete="off"
+                            type="text"
+                            value={s.link}
+                            onChange={(e) => handleSocialChange(idx, "link", e.target.value)}
+                            placeholder="URL"
+                            className="flex-1 w-full bg-[var(--color-bg)]/80 border border-[var(--color-border)] text-[var(--color-text-primary)] rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[var(--color-primary)] transition-colors min-w-0"
+                          />
+                          <button
+                            onClick={() => removeSocial(idx)}
+                            className="text-red-500/80 hover:text-red-500 hover:bg-red-500/10 transition-colors p-2 rounded-lg cursor-pointer flex-shrink-0"
+                            title="Remove"
+                            aria-label="Remove social link"
+                          >
+                            <FaTrash size={14} />
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                  
+                  <div className="flex justify-between items-center mt-2">
+                    <button
+                      onClick={addSocial}
+                      className="text-xs font-bold py-1.5 px-3 rounded-lg border border-[var(--color-primary)] text-[var(--color-primary)] hover:bg-[var(--color-primary)]/10 transition-colors flex items-center gap-1 cursor-pointer"
+                    >
+                      <FaPlus size={10} /> Add
+                    </button>
+                    
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => setIsEditingSocials(false)}
+                        disabled={isSaving}
+                        className="text-xs font-bold py-1.5 px-3 rounded-lg border border-[var(--color-border)] text-[var(--color-primary)] hover:bg-[var(--color-bg)]/60 transition-colors cursor-pointer disabled:opacity-50"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        onClick={handleSaveSocials}
+                        disabled={isSaving}
+                        className="text-xs font-bold py-1.5 px-3 rounded-lg bg-[var(--color-primary)] text-[var(--color-bg)] hover:opacity-90 transition-colors cursor-pointer disabled:opacity-50"
+                      >
+                        {isSaving ? <Cliploader size={10} color="var(--color-bg)" /> : "Save"}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <>
+                  {socials &&
+                    socials.map((s) => (
+                      <a
+                        key={s._id}
+                        href={s.link}
+                        aria-label={s.label}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="size-9 flex items-center justify-center rounded-full border border-[var(--color-border)]/50 text-[var(--color-text-secondary)] hover:text-[var(--color-primary)] hover:border-[var(--color-primary)]/50 hover:bg-[var(--color-primary)]/5 transition-all duration-300"
+                      >
+                        {getSocialIcon(s.label)}
+                      </a>
+                    ))}
+                  {isAdmin && (
+                    <button
+                      onClick={startEditingSocials}
+                      title="Edit Socials"
+                      aria-label="Edit socials"
+                      className="ml-2 size-8 flex items-center justify-center rounded-full bg-[var(--color-primary)]/10 text-[var(--color-primary)] hover:bg-[var(--color-primary)]/20 transition-all cursor-pointer"
+                    >
+                      <FaPencil size={12} />
+                    </button>
+                  )}
+                </>
+              )}
             </div>
           </div>
 
           {/* Link columns */}
-          {footerGroups.map((group) => (
+          {footerGroups.map((group) => {
+            const groupLinks = [...group.links];
+            if (group.heading === "Explore" && isInitialized && userDetails) {
+              groupLinks.push({ to: `/profile/@${userDetails.username}`, label: "My Profile" });
+            }
+
+            return (
             <div key={group.heading}>
               <h4 className="font-accent text-[0.65rem] font-bold tracking-[0.2em] text-[var(--color-text-secondary)] uppercase mb-5">
                 {group.heading}
               </h4>
               <ul className="flex flex-col gap-3">
-                {group.links
+                {groupLinks
                   .filter((link) => {
-                    if (link.to === "/join" && isInitialized && userDetails) return false;
+                    if (link.to === "/join" && isInitialized && userDetails && userDetails.role !== "admin") return false;
+                    if (link.to === "/contact" && isInitialized && userDetails && userDetails.role !== "admin") return false;
                     return true;
                   })
                   .map((link) => (
@@ -140,7 +326,7 @@ export default function Footer({ socials }: FooterProps) {
                 ))}
               </ul>
             </div>
-          ))}
+          )})}
         </div>
 
         {/* Divider */}
@@ -152,15 +338,18 @@ export default function Footer({ socials }: FooterProps) {
             © <span suppressHydrationWarning>{new Date().getFullYear()}</span> MotoXCode. All rights reserved.
           </p>
           <div className="flex gap-6">
-            {["Privacy Policy", "Terms of Service"].map((item) => (
-              <button
-                key={item}
-                type="button"
-                className="font-accent text-xs text-[var(--color-text-secondary)]/50 hover:text-[var(--color-text-secondary)] transition-colors duration-200"
-              >
-                {item}
-              </button>
-            ))}
+            <Link
+              to="/legal/privacy"
+              className="font-accent text-xs text-[var(--color-text-secondary)]/50 hover:text-[var(--color-text-secondary)] transition-colors duration-200"
+            >
+              Privacy Policy
+            </Link>
+            <Link
+              to="/legal/terms"
+              className="font-accent text-xs text-[var(--color-text-secondary)]/50 hover:text-[var(--color-text-secondary)] transition-colors duration-200"
+            >
+              Terms of Service
+            </Link>
           </div>
         </div>
 

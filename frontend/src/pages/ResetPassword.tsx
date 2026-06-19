@@ -165,15 +165,17 @@ const ResetPassword: React.FC = () => {
                       <input
                         type="password"
                         id="newPassword"
+                        name="newPassword"
+                        autoComplete="new-password"
                         value={newPassword}
                         onChange={(e) => {
-                          setFormErrors((prev) => ({ ...prev, newPassword: "" }));
                           setNewPassword(e.target.value);
+                          setFormErrors((prev) => ({ ...prev, newPassword: "" }));
                         }}
                         className={`w-full bg-white/5 border ${
                           formErrors.newPassword ? "border-red-500/50" : "border-white/10"
-                        } rounded-xl py-3.5 px-4 text-[var(--color-primary)] font-[var(--font-body)] text-sm focus:outline-none focus:border-[var(--color-highlight)] focus:ring-1 focus:ring-[var(--color-highlight)]/50 transition-all duration-300`}
-                        placeholder="••••••••"
+                        } rounded-xl py-3.5 px-4 pr-10 text-[var(--color-primary)] font-[var(--font-body)] text-sm focus:outline-none focus:border-[var(--color-highlight)] focus:ring-1 focus:ring-[var(--color-highlight)]/50 transition-all duration-300 placeholder:text-[var(--color-text-secondary)]/50`}
+                        placeholder="Enter new password"
                       />
                       {formErrors.newPassword && (
                         <p className="text-xs md:text-sm text-red-400 font-[var(--font-body)] mt-1">
@@ -194,15 +196,17 @@ const ResetPassword: React.FC = () => {
                       <input
                         type="password"
                         id="confirmPassword"
+                        name="confirmPassword"
+                        autoComplete="new-password"
                         value={confirmPassword}
                         onChange={(e) => {
-                          setFormErrors((prev) => ({ ...prev, confirmPassword: "" }));
                           setConfirmPassword(e.target.value);
+                          setFormErrors((prev) => ({ ...prev, confirmPassword: "" }));
                         }}
                         className={`w-full bg-white/5 border ${
                           formErrors.confirmPassword ? "border-red-500/50" : "border-white/10"
-                        } rounded-xl py-3.5 px-4 text-[var(--color-primary)] font-[var(--font-body)] text-sm focus:outline-none focus:border-[var(--color-highlight)] focus:ring-1 focus:ring-[var(--color-highlight)]/50 transition-all duration-300`}
-                        placeholder="••••••••"
+                        } rounded-xl py-3.5 px-4 pr-10 text-[var(--color-primary)] font-[var(--font-body)] text-sm focus:outline-none focus:border-[var(--color-highlight)] focus:ring-1 focus:ring-[var(--color-highlight)]/50 transition-all duration-300 placeholder:text-[var(--color-text-secondary)]/50`}
+                        placeholder="Confirm new password"
                       />
                       {formErrors.confirmPassword && (
                         <p className="text-xs md:text-sm text-red-400 font-[var(--font-body)] mt-1">

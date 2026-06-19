@@ -120,6 +120,7 @@ const UsernameForm: React.FC<UsernameFormProps> = ({ onForgotPassword }) => {
             value={credentials.password}
             onChange={handleCredentialsChange}
             placeholder="your password"
+            autoComplete="current-password"
             className={`w-full bg-white/5 border ${
               formError.password ? "border-red-500/50" : "border-white/10"
             } rounded-xl py-3.5 px-10 text-[var(--color-primary)] font-[var(--font-body)] text-sm focus:outline-none focus:border-[var(--color-highlight)] focus:ring-1 focus:ring-[var(--color-highlight)]/50 transition-all duration-300 placeholder:text-[var(--color-text-secondary)]/50`}

@@ -48,6 +48,11 @@ const EnvSchema = z.object({
 
   // ─── Production Resend ──────────────────────────────────────────────────────
   RESEND_API_KEY: z.string().optional(),
+
+  // ─── Contact Inquiry Forwarding ─────────────────────────────────────────────
+  INQUIRY_RECEIVER_EMAIL: z
+    .string()
+    .email("INQUIRY_RECEIVER_EMAIL must be a valid email address"),
 });
 
 /**

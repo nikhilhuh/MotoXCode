@@ -3,6 +3,22 @@ import { gsap } from "gsap";
 import "./StaggeredMenu.css";
 import { Link, useLocation } from "react-router-dom";
 import { useUser } from "@/context/UserContext";
+import { useFeedback } from "@/context/FeedbackContext";
+import { cmsService } from "@/services";
+import Cliploader from "@/components/ui/Cliploader";
+import { FaPencil, FaTrash, FaPlus } from "react-icons/fa6";
+
+const SOCIAL_OPTIONS = [
+  "Instagram",
+  "YouTube",
+  "WhatsApp",
+  "Strava",
+  "Facebook",
+  "Twitter",
+  "Discord",
+  "LinkedIn",
+  "Other",
+];
 
 export interface StaggeredMenuItem {
   label: string;
@@ -27,6 +43,7 @@ export interface StaggeredMenuProps {
   closeOnClickAway?: boolean;
   onMenuOpen?: () => void;
   onMenuClose?: () => void;
+  onUpdateSocials?: (newSocials: StaggeredMenuSocialItem[]) => void;
 }
 
 const EMPTY_ITEMS: StaggeredMenuItem[] = [];
@@ -46,11 +63,71 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
   closeOnClickAway = true,
   onMenuOpen,
   onMenuClose,
+  onUpdateSocials,
 }: StaggeredMenuProps) => {
   const { userDetails, isInitialized } = useUser();
+  const isAdmin = userDetails?.role === "admin";
+  const { showSuccess, showError } = useFeedback();
+
   const [open, setOpen] = useState<boolean>(false);
   const openRef = useRef<boolean>(false);
   const location = useLocation();
+
+  const [isEditingSocials, setIsEditingSocials] = useState<boolean>(false);
+  const [isSaving, setIsSaving] = useState<boolean>(false);
+  const [editSocials, setEditSocials] = useState<StaggeredMenuSocialItem[]>([]);
+
+  const startEditingSocials = () => {
+    setEditSocials([...socialItems]);
+    setIsEditingSocials(true);
+  };
+
+  const handleSocialChange = (
+    index: number,
+    field: keyof StaggeredMenuSocialItem,
+    value: string,
+  ) => {
+    const newSocials = [...editSocials];
+    newSocials[index] = { ...newSocials[index], [field]: value };
+    setEditSocials(newSocials);
+  };
+
+  const addSocial = () => {
+    setEditSocials([...editSocials, { _id: "", label: "Globe", link: "" }]);
+  };
+
+  const removeSocial = (index: number) => {
+    const newSocials = [...editSocials];
+    newSocials.splice(index, 1);
+    setEditSocials(newSocials);
+  };
+
+  const handleSaveSocials = async () => {
+    setIsSaving(true);
+    try {
+      const formData = new FormData();
+      const payload = editSocials.map((s) => ({
+        id: s._id || "",
+        label: s.label,
+        link: s.link,
+      }));
+      formData.append("socials", JSON.stringify(payload));
+
+      const res = await cmsService.updateHomeCMSData("socials", formData);
+      if (res.success) {
+        showSuccess("Socials updated!");
+        setIsEditingSocials(false);
+        // Note: We cast to any here because onUpdateSocials might expect Social[] but StaggeredMenuSocialItem is compatible
+        if (onUpdateSocials) onUpdateSocials(res.data as any);
+      } else {
+        showError(res.message || "Failed to update socials");
+      }
+    } catch (err: any) {
+      showError(err.response?.data?.message || "Error updating socials");
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   const panelRef = useRef<HTMLDivElement | null>(null);
   const preLayersRef = useRef<HTMLDivElement | null>(null);
@@ -690,10 +767,18 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
             >
               {items && items.length ? (
                 (() => {
-                  const itemsToRender = [...items];
+                  let itemsToRender = [...items];
+                  if (isInitialized && userDetails) {
+                    itemsToRender = itemsToRender.filter(
+                      (item) => item.to !== "/contact",
+                    );
+                  }
                   if (isInitialized) {
                     if (userDetails) {
-                      itemsToRender.push({ label: "Profile", to: `/profile/@${userDetails.username}` });
+                      itemsToRender.push({
+                        label: "Profile",
+                        to: `/profile/@${userDetails.username}`,
+                      });
                     } else {
                       itemsToRender.push({ label: "Join", to: "/join" });
                     }
@@ -735,31 +820,167 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
               )}
             </ul>
 
-            {displaySocials && socialItems && socialItems.length > 0 && (
+            {displaySocials && (
               <div
                 className="sm-socials mt-auto pt-8 flex flex-col gap-3"
                 aria-label="Social links"
               >
-                <h3 className="sm-socials-title m-0 text-base font-medium">
-                  Socials
-                </h3>
-                <ul
-                  className="sm-socials-list list-none m-0 p-0 flex flex-row items-center gap-4 flex-wrap"
-                >
-                  {socialItems.map((s) => (
-                    <li key={s._id} className="sm-socials-item">
-                      <a
-                        href={s.link}
-                        onClick={toggleMenu}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="sm-socials-link text-[1.2rem] font-medium no-underline relative inline-block py-[2px] transition-[color,opacity] duration-300 ease-linear"
+                <div className="flex items-center gap-3">
+                  <h3 className="sm-socials-title m-0 text-base font-medium">
+                    Socials
+                  </h3>
+                  {isAdmin && !isEditingSocials && (
+                    <button
+                      onClick={startEditingSocials}
+                      title="Edit Socials"
+                      aria-label="Edit socials"
+                      className="size-6 flex items-center justify-center rounded-full bg-[var(--color-primary)]/10 text-[var(--color-primary)] hover:bg-[var(--color-primary)]/20 transition-all cursor-pointer"
+                    >
+                      <FaPencil size={10} />
+                    </button>
+                  )}
+                </div>
+
+                {isEditingSocials ? (
+                  <div className="flex flex-col gap-3 w-full mt-2 bg-[var(--color-surface)]/50 p-4 rounded-xl border border-[var(--color-border)]/50 pointer-events-auto">
+                    <p className="text-[var(--color-text-secondary)] text-xs font-mono uppercase tracking-widest mb-2">
+                      Editing Socials
+                    </p>
+                    {editSocials.map((s, idx) => {
+                      const isOther = !SOCIAL_OPTIONS.slice(0, -1).some(
+                        (opt) =>
+                          opt.toLowerCase() === s.label.toLowerCase().trim(),
+                      );
+                      const selectValue = isOther
+                        ? "Other"
+                        : SOCIAL_OPTIONS.find(
+                            (opt) =>
+                              opt.toLowerCase() ===
+                              s.label.toLowerCase().trim(),
+                          ) || "Globe";
+                      return (
+                        <div
+                          key={idx}
+                          className="flex flex-col sm:flex-row w-full gap-2 items-start sm:items-center bg-[var(--color-bg)]/40 sm:bg-transparent p-3 sm:p-0 rounded-xl sm:rounded-none border border-[var(--color-border)]/50 sm:border-none"
+                        >
+                          <div className="flex flex-col sm:flex-row w-full sm:w-auto gap-2">
+                            <select
+                              id={`staggered-social-label-select-${idx}`}
+                              name={`staggered-social-label-select-${idx}`}
+                              autoComplete="off"
+                              value={selectValue}
+                              onChange={(e) => {
+                                if (e.target.value === "Other") {
+                                  handleSocialChange(idx, "label", "");
+                                } else {
+                                  handleSocialChange(
+                                    idx,
+                                    "label",
+                                    e.target.value,
+                                  );
+                                }
+                              }}
+                              className="w-full sm:w-32 bg-[var(--color-bg)]/80 border border-[var(--color-border)] text-[var(--color-text-primary)] rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[var(--color-primary)] transition-colors"
+                            >
+                              {SOCIAL_OPTIONS.map((opt) => (
+                                <option key={opt} value={opt}>
+                                  {opt}
+                                </option>
+                              ))}
+                            </select>
+                            {isOther && (
+                              <input
+                                id={`staggered-social-label-input-${idx}`}
+                                name={`staggered-social-label-input-${idx}`}
+                                autoComplete="off"
+                                type="text"
+                                value={s.label}
+                                onChange={(e) =>
+                                  handleSocialChange(
+                                    idx,
+                                    "label",
+                                    e.target.value,
+                                  )
+                                }
+                                placeholder="Custom Label"
+                                className="w-full sm:w-32 bg-[var(--color-bg)]/80 border border-[var(--color-border)] text-[var(--color-text-primary)] rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[var(--color-primary)] transition-colors min-w-0"
+                              />
+                            )}
+                          </div>
+                          <div className="flex flex-row w-full sm:flex-1 gap-2 items-center">
+                            <input
+                              id={`staggered-social-link-input-${idx}`}
+                              name={`staggered-social-link-input-${idx}`}
+                              autoComplete="off"
+                              type="text"
+                              value={s.link}
+                              onChange={(e) =>
+                                handleSocialChange(idx, "link", e.target.value)
+                              }
+                              placeholder="URL"
+                              className="flex-1 w-full bg-[var(--color-bg)]/80 border border-[var(--color-border)] text-[var(--color-text-primary)] rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[var(--color-primary)] transition-colors min-w-0"
+                            />
+                            <button
+                              onClick={() => removeSocial(idx)}
+                              className="text-red-500/80 hover:text-red-500 hover:bg-red-500/10 transition-colors p-2 rounded-lg cursor-pointer flex-shrink-0"
+                              title="Remove"
+                              aria-label="Remove social link"
+                            >
+                              <FaTrash size={14} />
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
+
+                    <div className="flex justify-between items-center mt-2">
+                      <button
+                        onClick={addSocial}
+                        className="text-xs font-bold py-1.5 px-3 rounded-lg border border-[var(--color-primary)] text-[var(--color-primary)] hover:bg-[var(--color-primary)]/10 transition-colors flex items-center gap-1 cursor-pointer"
                       >
-                        {s.label}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
+                        <FaPlus size={10} /> Add
+                      </button>
+
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => setIsEditingSocials(false)}
+                          disabled={isSaving}
+                          className="text-xs font-bold py-1.5 px-3 rounded-lg border border-[var(--color-border)] text-[var(--color-text-primary)] hover:bg-[var(--color-bg)]/60 transition-colors cursor-pointer disabled:opacity-50"
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          onClick={handleSaveSocials}
+                          disabled={isSaving}
+                          className="text-xs font-bold py-1.5 px-3 rounded-lg bg-[var(--color-primary)] text-[var(--color-bg)] hover:opacity-90 transition-colors cursor-pointer disabled:opacity-50"
+                        >
+                          {isSaving ? (
+                            <Cliploader size={10} color="var(--color-bg)" />
+                          ) : (
+                            "Save"
+                          )}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <ul className="sm-socials-list list-none m-0 p-0 flex flex-row items-center gap-4 flex-wrap">
+                    {socialItems &&
+                      socialItems.map((s) => (
+                        <li key={s._id} className="sm-socials-item">
+                          <a
+                            href={s.link}
+                            onClick={toggleMenu}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="sm-socials-link text-[1.2rem] font-medium no-underline relative inline-block py-[2px] transition-[color,opacity] duration-300 ease-linear hover:text-[var(--color-primary)]"
+                          >
+                            {s.label}
+                          </a>
+                        </li>
+                      ))}
+                  </ul>
+                )}
               </div>
             )}
           </div>

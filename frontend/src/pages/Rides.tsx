@@ -1,9 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import RidesHero from '../components/pages/rides/RidesHero'
 import RidesGrid from '../components/pages/rides/RidesGrid'
 import GalleryPreview from '@/components/ui/GalleryPreview';
 import { ridesService } from '@/services';
 import { RidesSkeleton } from "../components/skeletons/RidesSkeleton";
+import type { PageHero } from "@/services/cms.service";
+import type { GalleryImage } from "@/types/galleryImage";
 
 type RidesPageData = Awaited<ReturnType<typeof ridesService.fetchRidesPageData>>;
 
@@ -25,15 +27,28 @@ export default function Rides() {
     hydrate();
   }, []);
 
+  const handleHeroUpdate = useCallback((updatedHero: PageHero) => {
+    setRidesData((prev) => (prev ? { ...prev, hero: updatedHero } : prev));
+  }, []);
+
+  const handleGalleryUpdate = useCallback((updatedGallery: GalleryImage[]) => {
+    setRidesData((prev) => (prev ? { ...prev, galleryPreview: updatedGallery } : prev));
+  }, []);
+
   if (isLoading || !ridesData) {
     return <RidesSkeleton />;
   }
 
   return (
     <>
-      <RidesHero RidesHeroBg={ridesData.hero.image} />
+      <RidesHero RidesHeroBg={ridesData.hero.image} onUpdate={handleHeroUpdate} />
       <RidesGrid rides={ridesData.allRides} />
-      <GalleryPreview galleryPreviewImages={ridesData.galleryPreview} className="bg-gradient-to-b from-[var(--color-surface)] to-black" />
+      <GalleryPreview 
+        galleryPreviewImages={ridesData.galleryPreview} 
+        page="rides"
+        onGalleryUpdate={handleGalleryUpdate}
+        className="bg-gradient-to-b from-[var(--color-surface)] to-black" 
+      />
     </>
   )
 }

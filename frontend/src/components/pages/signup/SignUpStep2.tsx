@@ -158,6 +158,9 @@ const SignUpStep2: React.FC<SignUpStep2Props> = ({ email, onSuccess, onBack }) =
           {otp.map((digit, index) => (
             <input
               id={`signup-otp-${index}`}
+              name={`signup-otp-${index}`}
+              autoComplete="one-time-code"
+              aria-label={`OTP Digit ${index + 1}`}
               key={index}
               ref={(el) => { inputRefs.current[index] = el; }}
               type="text"

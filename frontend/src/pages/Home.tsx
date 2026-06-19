@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Hero from "../components/pages/home/Hero";
 import Stats from "../components/pages/home/Stats";
 import Values from "../components/pages/home/Values";
@@ -8,6 +8,10 @@ import GalleryPreview from "../components/ui/GalleryPreview";
 import Cta from "../components/pages/home/CTA";
 import { cmsService } from "@/services";
 import { HomeSkeleton } from "../components/skeletons/HomeSkeleton";
+import type { PageHero } from "@/services/cms.service";
+import type { Stat } from "@/types/stat";
+import type { Value } from "@/types/value";
+import { GalleryImage } from "@/types/galleryImage";
 
 type HomeData = Awaited<ReturnType<typeof cmsService.fetchHomeData>>;
 
@@ -29,18 +33,50 @@ export default function Home() {
     hydrate();
   }, []);
 
+  /**
+   * Optimistic state refresh callbacks — called by admin-editable sections
+   * after a successful save so the live page reflects persisted changes
+   * without a full re-fetch.
+   */
+  const handleHeroUpdate = useCallback((updatedHero: PageHero) => {
+    setHomeData((prev) => (prev ? { ...prev, hero: updatedHero } : prev));
+  }, []);
+
+  const handleStatsUpdate = useCallback((updatedStats: Stat[]) => {
+    setHomeData((prev) => (prev ? { ...prev, stats: updatedStats } : prev));
+  }, []);
+
+  const handleValuesUpdate = useCallback((updatedValues: Value[]) => {
+    setHomeData((prev) => (prev ? { ...prev, values: updatedValues } : prev));
+  }, []);
+
+  const handleGalleryUpdate = useCallback((updatedGallery: GalleryImage[]) => {
+    setHomeData((prev) =>
+      prev ? { ...prev, galleryPreview: updatedGallery } : prev,
+    );
+  }, []);
+
   if (isLoading || !homeData) {
     return <HomeSkeleton />;
   }
 
   return (
     <>
-      <Hero HeroBg={homeData.hero.image} />
-      <Stats statsData={homeData.stats} />
-      <Values valuesData={homeData.values} />
+      <Hero HeroBg={homeData.hero.image} onUpdate={handleHeroUpdate} />
+      <Stats statsData={homeData.stats} onStatsUpdate={handleStatsUpdate} />
+      <Values
+        valuesData={homeData.values}
+        onValuesUpdate={handleValuesUpdate}
+      />
       <UpcomingRides upcomingRidesData={homeData.upcomingRides} />
       <MemberSpotlight mvpCrew={homeData.mvpCrew} />
-      <GalleryPreview galleryPreviewImages={homeData.galleryPreview} />
+      {homeData.galleryPreview.length > 0 && (
+        <GalleryPreview
+          galleryPreviewImages={homeData.galleryPreview}
+          page="home"
+          onGalleryUpdate={handleGalleryUpdate}
+        />
+      )}
       <Cta statsData={homeData.stats} />
     </>
   );

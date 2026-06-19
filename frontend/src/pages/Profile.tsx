@@ -11,6 +11,10 @@ import ProfileHeader from "../components/pages/profile/ProfileHeader";
 import ProfileGarage from "../components/pages/profile/ProfileGarage";
 import ProfileStats from "../components/pages/profile/ProfileStats";
 import ProfileSettings from "../components/pages/profile/ProfileSettings";
+import ProfileCompleteStatus from "../components/pages/profile/ProfileCompleteStatus";
+import MaxStrikesStatus from "../components/pages/profile/MaxStrikesStatus";
+import DisciplinaryRecord from "../components/pages/profile/DisciplinaryRecord";
+import OperationsDesk from "../components/pages/profile/OperationsDesk";
 import ImageCropModal from "../components/pages/profile/ImageCropModal";
 import ConfirmModal from "../components/ui/ConfirmModal";
 import imageCompression from "browser-image-compression";
@@ -67,10 +71,30 @@ export default function Profile() {
   }, [fetchTarget]);
 
   const isOwner =
-    userDetails &&
-    profile &&
-    (userDetails.username === profile.username ||
-      userDetails._id === profile._id);
+    userDetails && profile && userDetails.username === profile.username;
+
+  const getMissingFields = () => {
+    if (!profile || !userDetails) return [];
+    const missing: string[] = [];
+    if (!profile.username) missing.push("Username");
+    if (!userDetails.email) missing.push("Email");
+    if (!profile.coverImage) missing.push("Cover Image");
+    if (!profile.avatar) missing.push("Avatar");
+    if (!profile.name) missing.push("Name");
+    if (!profile.headline) missing.push("Headline");
+    if (!profile.bio) missing.push("Bio");
+    if (profile.years === undefined || profile.years === null)
+      missing.push("Years Riding");
+    if (!profile.location) missing.push("Location");
+    if (!profile.bike || profile.bike.length === 0) missing.push("Bike");
+    if (!profile.instagram && !profile.youtube && !profile.facebook)
+      missing.push("Socials");
+    if (!userDetails.googleConnected) missing.push("Link Google Account");
+    return missing;
+  };
+
+  const missingFields = isOwner ? getMissingFields() : [];
+  const isProfileComplete = isOwner && missingFields.length === 0;
 
   const handleSaveProfile = async (updates: Partial<ProfileType>) => {
     try {
@@ -80,7 +104,7 @@ export default function Profile() {
       setIsEditModalOpen(false);
 
       // Sync global user state if it's the logged-in user
-      if (userDetails && userDetails._id === profile._id) {
+      if (userDetails && userDetails.username === profile.username) {
         setUserDetails((prev) =>
           prev
             ? {
@@ -97,7 +121,10 @@ export default function Profile() {
       showSuccess("Profile updated successfully!");
     } catch (err: any) {
       console.error("Failed to update profile", err);
-      showError(err.response?.data?.message || "Failed to update profile. Please try again.");
+      showError(
+        err.response?.data?.message ||
+          "Failed to update profile. Please try again.",
+      );
     }
   };
 
@@ -141,7 +168,7 @@ export default function Profile() {
       if (
         cropType === "avatar" &&
         userDetails &&
-        userDetails._id === profile._id
+        userDetails.username === profile.username
       ) {
         setUserDetails((prev) =>
           prev
@@ -155,7 +182,10 @@ export default function Profile() {
       showSuccess("Image updated successfully!");
     } catch (err: any) {
       console.error("Upload failed", err);
-      showError(err.response?.data?.message || "Failed to upload image. Please try again.");
+      showError(
+        err.response?.data?.message ||
+          "Failed to upload image. Please try again.",
+      );
     } finally {
       setUploading(false);
       setCropImageSrc(null);
@@ -175,7 +205,11 @@ export default function Profile() {
       setProfile(res.profile);
 
       // Sync global user state if avatar was removed
-      if (type === "avatar" && userDetails && userDetails._id === profile._id) {
+      if (
+        type === "avatar" &&
+        userDetails &&
+        userDetails.username === profile.username
+      ) {
         setUserDetails((prev) =>
           prev
             ? {
@@ -188,7 +222,10 @@ export default function Profile() {
       showSuccess("Image removed successfully!");
     } catch (err: any) {
       console.error("Failed to remove image", err);
-      showError(err.response?.data?.message || "Failed to remove image. Please try again.");
+      showError(
+        err.response?.data?.message ||
+          "Failed to remove image. Please try again.",
+      );
     } finally {
       setUploading(false);
       setConfirmModal(null);
@@ -250,6 +287,17 @@ export default function Profile() {
             onRemoveClick={() => confirmRemoveImage("avatar")}
             onEditClick={() => setIsEditModalOpen(true)}
           />
+
+          {isOwner && (
+            <ProfileCompleteStatus
+              isProfileComplete={isProfileComplete}
+              missingFields={missingFields}
+            />
+          )}
+
+          {(isOwner || userDetails?.role === "admin") && (profile.strikes ?? 0) >= 3 && (
+            <MaxStrikesStatus isOwner={!!isOwner} />
+          )}
         </div>
 
         {/* Content Grid */}
@@ -257,6 +305,14 @@ export default function Profile() {
           <ProfileGarage profile={profile} />
           <ProfileStats profile={profile} />
         </div>
+
+        {(isOwner || userDetails?.role === "admin") && (
+          <DisciplinaryRecord profile={profile} />
+        )}
+
+        {userDetails?.role === "admin" && !isOwner && (
+          <OperationsDesk profile={profile} setProfile={setProfile} />
+        )}
 
         {isOwner && (
           <div className="pointer-events-auto relative z-20 mt-8">

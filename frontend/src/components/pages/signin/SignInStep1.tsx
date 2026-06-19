@@ -66,6 +66,7 @@ const SignInStep1: React.FC<Props> = ({
         An OTP will be sent to the mail you provide below
       </p>
       <div className="relative mb-4">
+        <label htmlFor="email" className="sr-only">Email Address</label>
         <input
           type="email"
           name="email"

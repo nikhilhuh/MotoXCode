@@ -7,12 +7,12 @@ export type ApplicationStatus = "pending" | "approved" | "rejected";
 export interface IMembershipDocument extends Document {
   name: string;
   email: string;
-  phone: string;
+  phone?: string;
   location: string;
   bike: string;
   experience: string;
   why: string;
-  ridden: string;
+  ridden?: string;
   agree: boolean;
   status: ApplicationStatus;
   createdAt: Date;
@@ -36,8 +36,9 @@ const membershipSchema = new Schema<IMembershipDocument>(
     },
     phone: {
       type: String,
-      required: [true, "phone is required"],
+      required: false,
       trim: true,
+      default: "",
     },
     location: {
       type: String,
@@ -61,8 +62,9 @@ const membershipSchema = new Schema<IMembershipDocument>(
     },
     ridden: {
       type: String,
-      required: [true, "ridden is required"],
+      required: false,
       trim: true,
+      default: "",
     },
     agree: {
       type: Boolean,

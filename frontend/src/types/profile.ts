@@ -1,7 +1,9 @@
 export interface Profile {
-  _id: string;
+  _id?: string;
   username: string;
   email: string;
+  role?: "crew" | "admin" | "rider";
+  strikes?: number;
   coverImage?: string;
   avatar?: string;
   name?: string;

@@ -5,7 +5,7 @@ import mongoose, { Schema, Document, Model } from "mongoose";
 export interface IContactDocument extends Document {
   name: string;
   email: string;
-  subject: string;
+  subject?: string;
   message: string;
   createdAt: Date;
   updatedAt: Date;
@@ -28,8 +28,9 @@ const contactSchema = new Schema<IContactDocument>(
     },
     subject: {
       type: String,
-      required: [true, "subject is required"],
+      required: false,
       trim: true,
+      default: "",
     },
     message: {
       type: String,

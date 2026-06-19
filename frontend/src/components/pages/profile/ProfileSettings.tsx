@@ -51,7 +51,7 @@ export default function ProfileSettings() {
   };
 
   return (
-    <section className="w-full max-w-5xl mx-auto mt-16 md:mt-12 relative z-20">
+    <section className="w-full max-w-7xl mx-auto mt-16 md:mt-12 relative z-20">
       
       <div className="md:bg-white/[0.03] md:backdrop-blur-2xl md:border md:border-white/10 md:rounded-[2.5rem] md:p-10 md:shadow-[0_8px_30px_rgb(0,0,0,0.5)]">
         {/* Header */}

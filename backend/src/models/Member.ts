@@ -7,6 +7,7 @@ export interface IMember extends Document {
   email: string;
   password?: string;
   role: "crew" | "admin" | "rider";
+  strikes?: number;
   name?: string;
   headline?: string;
   bike?: string[];
@@ -52,6 +53,13 @@ const MemberSchema = new Schema<IMember>(
       type: String,
       enum: ["crew", "admin", "rider"],
       default: "rider",
+    },
+    // ─── Disciplinary Tracking ────────────────────────────────────────────
+    strikes: {
+      type: Number,
+      default: 0,
+      min: 0,
+      select: false, // Never returned in queries unless explicitly requested (+strikes)
     },
     // ─── Optional Display Fields ─────────────────────────────────────────
     name: { type: String, trim: true },

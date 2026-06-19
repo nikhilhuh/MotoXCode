@@ -1,8 +1,20 @@
 import { useRef } from "react";
 import { motion } from "framer-motion";
+import { FaPencil } from "react-icons/fa6";
+import { useAdminEditable } from "@/hooks/useAdminEditable";
+import { useFeedback } from "@/context/FeedbackContext";
+import { cmsService } from "@/services";
+import type { PageHero } from "@/services/cms.service";
+import Cliploader from "@/components/ui/Cliploader";
+import { compressImage } from "@/services/imageCompression.service";
+
+interface JoinHeroEditData {
+  image: string | File;
+}
 
 interface JoinHeroProps {
   JoinHeroBg: string;
+  onUpdate?: (updatedHero: PageHero) => void;
 }
 
 const containerVariants = {
@@ -25,8 +37,61 @@ const itemVariants = {
   },
 };
 
-export default function JoinHero({ JoinHeroBg }: JoinHeroProps) {
+export default function JoinHero({ JoinHeroBg, onUpdate }: JoinHeroProps) {
   const heroRef = useRef<HTMLDivElement>(null);
+  const { showSuccess, showError } = useFeedback();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const {
+    isAdmin,
+    isEditing,
+    isSaving,
+    editData,
+    previewData,
+    startEditing,
+    cancelEditing,
+    finishEditing,
+    setField,
+    handleImageChange,
+    setIsSaving,
+  } = useAdminEditable<JoinHeroEditData>({ image: JoinHeroBg });
+
+  const hasChanges = editData.image instanceof File;
+
+  const resolvedBg =
+    previewData.image instanceof File
+      ? URL.createObjectURL(previewData.image)
+      : (previewData.image as string);
+
+  async function handleSave(): Promise<void> {
+    setIsSaving(true);
+    try {
+      const selectedFile = editData.image instanceof File ? editData.image : null;
+      if (!selectedFile) throw new Error("No compressed file binary found.");
+      const { file: compressedFile } = await compressImage(selectedFile);
+      const formData = new FormData();
+      formData.append("image", compressedFile, compressedFile.name);
+      formData.append("page", "join");
+      const result = await cmsService.updatePageHeroCMSData(formData);
+      if (result.success) {
+        showSuccess("Join hero background updated successfully!");
+        const resultData = result.data as { image?: string } | undefined;
+        if (resultData?.image) {
+          setField({ image: resultData.image });
+          onUpdate?.({ page: "join", image: resultData.image });
+        } else {
+          onUpdate?.({ page: "join", image: resolvedBg });
+        }
+        finishEditing();
+      } else {
+        showError(result.message || "Failed to update hero background.");
+      }
+    } catch (error: unknown) {
+      showError(error instanceof Error ? error.message : "Failed to update hero background.");
+    } finally {
+      setIsSaving(false);
+    }
+  }
 
   return (
     <section
@@ -34,8 +99,8 @@ export default function JoinHero({ JoinHeroBg }: JoinHeroProps) {
       className="relative w-full min-h-[100dvh] flex flex-col items-center justify-center overflow-hidden"
     >
       <div
-        className="absolute inset-0 size-full bg-cover bg-center"
-        style={{ backgroundImage: `url(${JoinHeroBg})` }}
+        className="absolute inset-0 size-full bg-cover bg-center transition-all duration-500"
+        style={{ backgroundImage: `url(${resolvedBg})` }}
       />
       <div
         className="absolute inset-0"
@@ -44,6 +109,69 @@ export default function JoinHero({ JoinHeroBg }: JoinHeroProps) {
             "linear-gradient(to bottom, rgba(2,6,23,0.95) 0%, rgba(2,6,23,0.4) 40%, rgba(2,6,23,0.4) 60%, rgba(2,6,23,1) 100%)",
         }}
       />
+
+
+      {/* ── Floating Admin Edit Button ── */}
+      {isAdmin && !isEditing && (
+        <button
+          onClick={startEditing}
+          title="Edit Hero Section"
+          aria-label="Edit join hero section"
+          className="absolute bottom-4 right-4 z-30 btn-admin-edit"
+        >
+          <FaPencil size={18} />
+        </button>
+      )}
+
+      {/* ── Edit Mode Panel ── */}
+      {isAdmin && isEditing && (
+        <div className="absolute bottom-6 right-6 md:bottom-10 md:right-10 z-30 flex flex-col gap-3 p-4 bg-[var(--color-surface)]/90 border border-[var(--color-border)] rounded-2xl shadow-2xl backdrop-blur-md min-w-[220px]">
+          <p className="text-[var(--color-text-secondary)] text-xs font-mono uppercase tracking-widest mb-1">
+            Join Hero
+          </p>
+          <label className="flex items-center justify-center gap-2 px-3 py-2.5 mt-1 text-xs text-[var(--color-primary)] font-bold cursor-pointer rounded-xl border border-dashed border-[var(--color-border)] hover:bg-[var(--color-bg)]/40 hover:border-[var(--color-primary)]/50 hover:scale-[1.02] transition-all duration-300">
+            <FaPencil size={12} className="opacity-70" />
+            Change Background
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={async (e) => {
+                const file = e.target.files?.[0];
+                if (file) await handleImageChange("image", file);
+              }}
+            />
+          </label>
+          <div className="flex gap-2 mt-1">
+            <button
+              onClick={handleSave}
+              disabled={isSaving || !hasChanges}
+              className={`flex-1 text-xs font-bold py-2 px-3 rounded-xl transition-all ${
+                isSaving || !hasChanges
+                  ? "bg-[var(--color-primary)]/50 text-[var(--color-bg)]/70 cursor-not-allowed opacity-60"
+                  : "bg-[var(--color-primary)] text-[var(--color-bg)] hover:opacity-90 cursor-pointer hover:shadow-lg"
+              }`}
+            >
+              {isSaving ? (
+                <span className="flex gap-1 items-center justify-center">
+                  <Cliploader size={12} color="var(--color-bg)" />
+                  Saving..
+                </span>
+              ) : (
+                "Save"
+              )}
+            </button>
+            <button
+              onClick={cancelEditing}
+              disabled={isSaving}
+              className="flex-1 text-xs font-bold py-2 px-3 rounded-xl border border-[var(--color-border)] text-[var(--color-primary)] transition-all hover:bg-[var(--color-bg)]/60 hover:cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
 
       <motion.div 
         className="relative z-10 w-full" 

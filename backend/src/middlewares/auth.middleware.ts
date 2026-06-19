@@ -61,3 +61,26 @@ export async function requireAuth(
     next(err);
   }
 }
+
+/**
+ * Administrative gate interceptor — must be mounted after requireAuth.
+ *
+ * Validates that the authenticated session belongs to a user with the
+ * "admin" role. Non-admin requests are immediately rejected with a 403
+ * so no privileged mutation logic is ever reached.
+ */
+export async function verifyAdminGate(
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
+  if (!req.user || req.user.role !== "admin") {
+    res.status(403).json({
+      success: false,
+      message:
+        "Access Denied: Administrative privileges required to perform this transaction.",
+    });
+    return;
+  }
+  next();
+}

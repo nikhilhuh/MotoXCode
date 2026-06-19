@@ -61,8 +61,9 @@ const navItemVariants: Variants = {
 /* ===================== COMPONENT ===================== */
 interface NavbarProps {
   socials: Social[];
+  onUpdateSocials?: (newSocials: Social[]) => void;
 }
-const Navbar: React.FC<NavbarProps> = ({ socials }) => {
+const Navbar: React.FC<NavbarProps> = ({ socials, onUpdateSocials }) => {
   const { userDetails, isInitialized } = useUser();
   const [scrolled, setScrolled] = useState<boolean>(() => typeof window !== 'undefined' ? window.scrollY > 20 : false);
   const { width: windowWidth } = useWindowSize();
@@ -135,7 +136,12 @@ const Navbar: React.FC<NavbarProps> = ({ socials }) => {
             </motion.div>
 
             <ul className="flex md:gap-5 xl:gap-8 items-center">
-              {navLinks.map((item, i) => (
+              {navLinks
+                .filter((item) => {
+                  if (item.to === "/contact" && isInitialized && userDetails) return false;
+                  return true;
+                })
+                .map((item, i) => (
                 <motion.li
                   key={item.to}
                   custom={i + 1}
@@ -210,6 +216,7 @@ const Navbar: React.FC<NavbarProps> = ({ socials }) => {
         <StaggeredMenu
           items={navLinks}
           socialItems={socials}
+          onUpdateSocials={onUpdateSocials as any}
           displaySocials={true}
           colors={["var(--color-primary)", "var(--color-bg)"]}
           menuButtonColor="var(--color-text-primary)"

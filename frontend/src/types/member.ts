@@ -6,4 +6,7 @@ export interface Member {
   location?: string;
   years?: number;
   role?: string;
+  bike?: string[];
+  bio?: string;
+  strikes?: number;
 }

@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { useUser } from "@/context/UserContext";
 import { motion } from "framer-motion";
 
 const containerVariants = {
@@ -23,6 +24,7 @@ const itemVariants = {
 };
 
 export default function CrewCTA() {
+  const { userDetails, isInitialized } = useUser();
   return (
     <section
       id="join"
@@ -55,24 +57,35 @@ export default function CrewCTA() {
         </motion.p>
 
         <motion.div variants={itemVariants} className="flex flex-wrap gap-4 justify-center">
-          <Link
-            to="/join"
-            className="btn-primary px-10 py-4 text-sm"
-          >
-            Apply for Membership
-            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
-              <path
-                fillRule="evenodd"
-                d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
-              />
-            </svg>
-          </Link>
-          <Link
-            to="/contact"
-            className="btn-secondary px-10 py-4 text-sm"
-          >
-            Contact the Crew
-          </Link>
+          {!isInitialized ? null : userDetails ? (
+            <Link
+              to={`/profile/@${userDetails.username}`}
+              className="btn-primary px-10 py-4 text-sm"
+            >
+              View My Profile
+            </Link>
+          ) : (
+            <Link
+              to="/join"
+              className="btn-primary px-10 py-4 text-sm"
+            >
+              Apply for Membership
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+                <path
+                  fillRule="evenodd"
+                  d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"
+                />
+              </svg>
+            </Link>
+          )}
+          {(!isInitialized || !userDetails) && (
+            <Link
+              to="/contact"
+              className="btn-secondary px-10 py-4 text-sm"
+            >
+              Contact the Crew
+            </Link>
+          )}
         </motion.div>
       </motion.div>
     </section>

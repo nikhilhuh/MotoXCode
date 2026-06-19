@@ -25,7 +25,7 @@ export default function ProfileHeader({
   onEditClick,
 }: ProfileHeaderProps) {
   return (
-    <div className="flex flex-col md:flex-row flex-wrap items-center md:items-end gap-6 md:gap-8 mb-12">
+    <div className="flex flex-col md:flex-row flex-wrap items-center md:items-end gap-6 md:gap-8 mb-6 md:mb-10">
       {/* Avatar Area */}
       <div className="relative z-30 group">
         <div className="w-40 h-40 sm:w-48 sm:h-48 rounded-full border-[6px] border-[var(--color-bg)] bg-[#111] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.8)] shrink-0 relative">

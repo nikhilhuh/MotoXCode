@@ -23,11 +23,11 @@ export default function Layout() {
 
   return (
     <div className="min-h-screen flex flex-col bg-[var(--color-bg)] text-text-primary relative" style={{ position: "relative" }}>
-      <Navbar socials={socials} />
+      <Navbar socials={socials} onUpdateSocials={setSocials} />
       <main className="flex-1">
         <Outlet />
       </main>
-      <Footer socials={socials} />
+      <Footer socials={socials} onUpdateSocials={setSocials} />
     </div>
   );
 }

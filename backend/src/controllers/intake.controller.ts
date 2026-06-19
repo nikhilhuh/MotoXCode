@@ -12,6 +12,8 @@ import {
   MembershipModel,
   IMembershipDocument,
 } from "../models";
+import { MailService } from "../services/mail/mail.service";
+import { env } from "../config/env.config";
 
 // ─── Zod Validation Contracts ─────────────────────────────────────────────────
 
@@ -22,7 +24,7 @@ import {
 export const ContactSubmissionSchema = z.object({
   name: z.string().min(1, "name is required").trim(),
   email: z.string().email("valid email is required").trim().toLowerCase(),
-  subject: z.string().min(1, "subject is required").trim(),
+  subject: z.string().trim().optional().or(z.literal("")), // optional — no * in the UI
   message: z.string().min(1, "message is required").trim(),
 });
 
@@ -36,12 +38,12 @@ export type ContactSubmissionInput = z.infer<typeof ContactSubmissionSchema>;
 export const JoinSubmissionSchema = z.object({
   name: z.string().min(1, "name is required").trim(),
   email: z.string().email("valid email is required").trim().toLowerCase(),
-  phone: z.string().min(1, "phone is required").trim(),
+  phone: z.string().trim().optional().or(z.literal("")),
   location: z.string().min(1, "location is required").trim(),
   bike: z.string().min(1, "bike is required").trim(),
   experience: z.string().min(1, "experience is required").trim(),
   why: z.string().min(1, "why is required").trim(),
-  ridden: z.string().min(1, "ridden is required").trim(),
+  ridden: z.string().trim().optional().or(z.literal("")),
   agree: z.boolean().refine((val) => val === true, {
     message: "you must agree to the terms",
   }),
@@ -174,6 +176,27 @@ export class IntakeController {
 
       const contact: IContactDocument = await ContactModel.create(parsed.data);
 
+      // Fire-and-forget: forward inquiry to the configured receiver inbox.
+      // Any mail failure is logged internally and never surfaces to the client.
+      void MailService.send({
+        template: "contact-inquiry",
+        to: env.INQUIRY_RECEIVER_EMAIL,
+        data: {
+          name: parsed.data.name,
+          email: parsed.data.email,
+          subject: parsed.data.subject,
+          message: parsed.data.message,
+          submittedAt: new Date().toLocaleString("en-IN", {
+            timeZone: "Asia/Kolkata",
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+          }),
+        },
+      });
+
       const body: ContactCreatedResponse = {
         success: true,
         message: "Contact request submitted successfully",
@@ -218,6 +241,31 @@ export class IntakeController {
       const membership: IMembershipDocument = await MembershipModel.create({
         ...parsed.data,
         status: "pending",
+      });
+
+      // Fire-and-forget: forward application details to the configured receiver inbox.
+      // Any mail failure is logged internally and never surfaces to the client.
+      void MailService.send({
+        template: "membership-application",
+        to: env.INQUIRY_RECEIVER_EMAIL,
+        data: {
+          name: parsed.data.name,
+          email: parsed.data.email,
+          phone: parsed.data.phone,
+          location: parsed.data.location,
+          bike: parsed.data.bike,
+          experience: parsed.data.experience,
+          why: parsed.data.why,
+          ridden: parsed.data.ridden,
+          submittedAt: new Date().toLocaleString("en-IN", {
+            timeZone: "Asia/Kolkata",
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+          }),
+        },
       });
 
       const body: JoinCreatedResponse = {

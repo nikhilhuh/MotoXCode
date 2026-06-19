@@ -10,12 +10,15 @@ interface UpcomingRidesProps {
 export default function UpcomingRides({ upcomingRidesData }: UpcomingRidesProps) {
 
   return (
-    <motion.section 
-      initial={{ opacity: 0, y: 40 }}
-      whileInView={{ opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] as const } }}
-      viewport={{ once: true, margin: "-50px" }}
+    <section 
       className="py-12 lg:py-22 relative overflow-hidden bg-gradient-to-b from-[var(--color-surface)] to-[var(--color-bg)]"
     >
+      <motion.div
+        initial={{ opacity: 0, y: 40 }}
+        whileInView={{ opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] as const } }}
+        viewport={{ once: true, margin: "-50px" }}
+        className="w-full relative z-10"
+      >
       {/* Decorative ambient lighting */}
       <div className="absolute -top-[10%] right-[10%] w-[40%] h-[40%] rounded-full bg-[var(--color-primary)]/5 blur-[120px] pointer-events-none z-0"></div>
       <div className="absolute top-[30%] -left-[10%] w-[40%] h-[50%] rounded-full bg-[var(--color-accent)]/5 blur-[120px] pointer-events-none z-0"></div>
@@ -46,6 +49,7 @@ export default function UpcomingRides({ upcomingRidesData }: UpcomingRidesProps)
           </svg>
         </Link>
       </div>
-    </motion.section>
+      </motion.div>
+    </section>
   )
 }

@@ -10,6 +10,7 @@ import { EventsSkeleton } from "./components/skeletons/EventsSkeleton";
 import { ContactSkeleton } from "./components/skeletons/ContactSkeleton";
 import { SignInSkeleton } from "./components/skeletons/SignInSkeleton";
 import { ProfileSkeleton } from "./components/skeletons/ProfileSkeleton";
+import { LegalSkeleton } from "./components/skeletons/LegalSkeleton";
 
 const Home = lazy(() => import("./pages/Home"));
 const About = lazy(() => import("./pages/About"));
@@ -22,6 +23,8 @@ const SignIn = lazy(() => import("./pages/SignIn"));
 const SignUp = lazy(() => import("./pages/SignUp"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const Profile = lazy(() => import("./pages/Profile"));
+const PrivacyPolicy = lazy(() => import("./pages/legal/PrivacyPolicy"));
+const TermsOfService = lazy(() => import("./pages/legal/TermsOfService"));
 
 export default function App() {
 
@@ -91,6 +94,22 @@ export default function App() {
             element={
               <Suspense fallback={<ProfileSkeleton />}>
                 <Profile />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/legal/privacy"
+            element={
+              <Suspense fallback={<LegalSkeleton />}>
+                <PrivacyPolicy />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/legal/terms"
+            element={
+              <Suspense fallback={<LegalSkeleton />}>
+                <TermsOfService />
               </Suspense>
             }
           />
