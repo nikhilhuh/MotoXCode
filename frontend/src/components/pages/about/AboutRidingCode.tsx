@@ -233,7 +233,7 @@ export default function AboutRidingCode({
                 <div className="flex justify-end pt-2 border-t border-[var(--color-border)]/30 mt-2">
                   <button
                     onClick={() => confirmDeleteDraft(idx)}
-                    className="flex w-full text-center justify-center items-center gap-2 px-4 py-2 text-red-500 hover:text-white hover:bg-red-500 rounded-lg transition-colors border border-red-500/30 text-xs font-bold uppercase tracking-widest"
+                    className="flex w-full text-center justify-center items-center gap-2 px-4 py-2 text-red-500 hover:text-white hover:bg-red-500 rounded-lg transition-colors border border-red-500/30 text-xs font-bold uppercase tracking-widest hover:cursor-pointer"
                     title="Remove Rule"
                   >
                     <FaTrash size={12} /> Remove Rule
@@ -244,7 +244,7 @@ export default function AboutRidingCode({
 
             <button
               onClick={handleAddDraft}
-              className="mt-4 flex items-center justify-center gap-2 w-full py-4 border-2 border-dashed border-[var(--color-border)] rounded-2xl text-[var(--color-text-secondary)] hover:text-[var(--color-primary)] hover:border-[var(--color-primary)]/50 hover:bg-[var(--color-primary)]/5 transition-all font-bold tracking-widest uppercase text-xs"
+              className="mt-4 flex items-center justify-center gap-2 w-full py-4 border-2 border-dashed border-[var(--color-border)] rounded-2xl text-[var(--color-text-secondary)] hover:text-[var(--color-primary)] hover:border-[var(--color-primary)]/50 hover:bg-[var(--color-primary)]/5 transition-all font-bold tracking-widest uppercase text-xs hover:cursor-pointer"
             >
               <FaPlus /> Add New Rule
             </button>

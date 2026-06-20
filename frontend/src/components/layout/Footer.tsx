@@ -5,6 +5,7 @@ import { useUser } from "@/context/UserContext";
 import { useFeedback } from "@/context/FeedbackContext";
 import { cmsService } from "@/services";
 import Cliploader from "@/components/ui/Cliploader";
+import ConfirmModal from "@/components/ui/ConfirmModal";
 import {
   FaInstagram,
   FaYoutube,
@@ -106,10 +107,19 @@ export default function Footer({ socials, onUpdateSocials }: FooterProps) {
     setEditSocials([...editSocials, { _id: "", label: "Globe", link: "" }]);
   };
 
-  const removeSocial = (index: number) => {
-    const newSocials = [...editSocials];
-    newSocials.splice(index, 1);
-    setEditSocials(newSocials);
+  const [deleteIndex, setDeleteIndex] = useState<number | null>(null);
+
+  const confirmDeleteDraft = (index: number) => {
+    setDeleteIndex(index);
+  };
+
+  const executeDeleteDraft = () => {
+    if (deleteIndex !== null) {
+      const newSocials = [...editSocials];
+      newSocials.splice(deleteIndex, 1);
+      setEditSocials(newSocials);
+      setDeleteIndex(null);
+    }
   };
 
   const handleSaveSocials = async () => {
@@ -173,93 +183,128 @@ export default function Footer({ socials, onUpdateSocials }: FooterProps) {
             {/* Social icons */}
             <div className={isEditingSocials ? "flex flex-col w-full gap-3 relative" : "flex items-center gap-3 relative"}>
               {isEditingSocials ? (
-                <div className="flex flex-col gap-3 w-full max-w-xl mt-4 bg-[var(--color-surface)]/50 p-4 rounded-xl border border-[var(--color-border)]/50">
+                <div className="flex flex-col gap-3 w-full max-w-xl mt-4">
                   <p className="text-[var(--color-text-secondary)] text-xs font-mono uppercase tracking-widest mb-2">
                     Editing Socials
                   </p>
-                  {editSocials.map((s, idx) => {
-                    const isOther = !SOCIAL_OPTIONS.slice(0, -1).some(opt => opt.toLowerCase() === s.label.toLowerCase().trim());
-                    const selectValue = isOther ? "Other" : SOCIAL_OPTIONS.find(opt => opt.toLowerCase() === s.label.toLowerCase().trim()) || "Globe";
-                    return (
-                      <div key={idx} className="flex flex-col sm:flex-row w-full gap-2 items-start sm:items-center bg-[var(--color-bg)]/40 sm:bg-transparent p-3 sm:p-0 rounded-xl sm:rounded-none border border-[var(--color-border)]/50 sm:border-none">
-                        <div className="flex flex-col sm:flex-row w-full sm:w-auto gap-2">
-                          <select
-                            id={`social-label-select-${idx}`}
-                            name={`social-label-select-${idx}`}
-                            autoComplete="off"
-                            value={selectValue}
-                            onChange={(e) => {
-                              if (e.target.value === "Other") {
-                                handleSocialChange(idx, "label", "");
-                              } else {
-                                handleSocialChange(idx, "label", e.target.value);
-                              }
-                            }}
-                            className="w-full sm:w-32 bg-[var(--color-bg)]/80 border border-[var(--color-border)] text-[var(--color-text-primary)] rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[var(--color-primary)] transition-colors"
-                          >
-                            {SOCIAL_OPTIONS.map(opt => (
-                              <option key={opt} value={opt}>{opt}</option>
-                            ))}
-                          </select>
-                          {isOther && (
-                            <input
-                              id={`social-label-input-${idx}`}
-                              name={`social-label-input-${idx}`}
-                              autoComplete="off"
-                              type="text"
-                              value={s.label}
-                              onChange={(e) => handleSocialChange(idx, "label", e.target.value)}
-                              placeholder="Custom Label"
-                              className="w-full sm:w-32 bg-[var(--color-bg)]/80 border border-[var(--color-border)] text-[var(--color-text-primary)] rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[var(--color-primary)] transition-colors min-w-0"
-                            />
-                          )}
+                  <div className="flex flex-col gap-4 w-full mt-2">
+                    {editSocials.map((s, idx) => {
+                      const isOther = !SOCIAL_OPTIONS.slice(0, -1).some(opt => opt.toLowerCase() === s.label.toLowerCase().trim());
+                      const selectValue = isOther ? "Other" : SOCIAL_OPTIONS.find(opt => opt.toLowerCase() === s.label.toLowerCase().trim()) || "Globe";
+                      return (
+                        <div
+                          key={idx}
+                          className="flex flex-col w-full gap-4 bg-[var(--color-surface)]/50 p-4 rounded-xl border border-[var(--color-border)]/50"
+                        >
+                          <div className="flex flex-col w-full gap-4 items-start sm:items-center">
+                            <div className="flex flex-col gap-1 w-full">
+                              <label
+                                htmlFor={`social-label-select-${idx}`}
+                                className="text-[0.65rem] font-bold uppercase tracking-widest text-[var(--color-text-secondary)]"
+                              >
+                                Platform
+                              </label>
+                              <select
+                                id={`social-label-select-${idx}`}
+                                name={`social-label-select-${idx}`}
+                                autoComplete="off"
+                                value={selectValue}
+                                onChange={(e) => {
+                                  if (e.target.value === "Other") {
+                                    handleSocialChange(idx, "label", "");
+                                  } else {
+                                    handleSocialChange(idx, "label", e.target.value);
+                                  }
+                                }}
+                                className="w-full bg-[var(--color-bg)]/80 border border-[var(--color-border)] text-[var(--color-text-primary)] rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[var(--color-primary)] transition-colors"
+                              >
+                                {SOCIAL_OPTIONS.map(opt => (
+                                  <option key={opt} value={opt}>{opt}</option>
+                                ))}
+                              </select>
+                            </div>
+                            {isOther && (
+                              <div className="flex flex-col gap-1 w-full">
+                                <label
+                                  htmlFor={`social-label-input-${idx}`}
+                                  className="text-[0.65rem] font-bold uppercase tracking-widest text-[var(--color-text-secondary)]"
+                                >
+                                  Custom Label
+                                </label>
+                                <input
+                                  id={`social-label-input-${idx}`}
+                                  name={`social-label-input-${idx}`}
+                                  autoComplete="off"
+                                  type="text"
+                                  value={s.label}
+                                  onChange={(e) => handleSocialChange(idx, "label", e.target.value)}
+                                  placeholder="Custom Label"
+                                  className="w-full bg-[var(--color-bg)]/80 border border-[var(--color-border)] text-[var(--color-text-primary)] rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[var(--color-primary)] transition-colors min-w-0"
+                                />
+                              </div>
+                            )}
+                            <div className="flex flex-col gap-1 w-full sm:flex-1">
+                              <label
+                                htmlFor={`social-link-input-${idx}`}
+                                className="text-[0.65rem] font-bold uppercase tracking-widest text-[var(--color-text-secondary)]"
+                              >
+                                URL
+                              </label>
+                              <input
+                                id={`social-link-input-${idx}`}
+                                name={`social-link-input-${idx}`}
+                                autoComplete="off"
+                                type="text"
+                                value={s.link}
+                                onChange={(e) => handleSocialChange(idx, "link", e.target.value)}
+                                placeholder="URL"
+                                className="w-full bg-[var(--color-bg)]/80 border border-[var(--color-border)] text-[var(--color-text-primary)] rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[var(--color-primary)] transition-colors min-w-0"
+                              />
+                            </div>
+                          </div>
+                          <div className="flex justify-end pt-2 border-t border-[var(--color-border)]/30 mt-2 w-full">
+                            <button
+                              onClick={() => confirmDeleteDraft(idx)}
+                              className="flex w-full text-center justify-center items-center gap-2 px-4 py-2 text-red-500 hover:text-[var(--color-bg)] hover:bg-red-500 rounded-lg transition-colors border border-red-500/30 text-xs font-bold uppercase tracking-widest hover:cursor-pointer hover:text-white"
+                              title="Remove Social"
+                              aria-label="Remove social link"
+                            >
+                              <FaTrash size={12} /> Remove Social
+                            </button>
+                          </div>
                         </div>
-                        <div className="flex flex-row w-full sm:flex-1 gap-2 items-center">
-                          <input
-                            id={`social-link-input-${idx}`}
-                            name={`social-link-input-${idx}`}
-                            autoComplete="off"
-                            type="text"
-                            value={s.link}
-                            onChange={(e) => handleSocialChange(idx, "link", e.target.value)}
-                            placeholder="URL"
-                            className="flex-1 w-full bg-[var(--color-bg)]/80 border border-[var(--color-border)] text-[var(--color-text-primary)] rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[var(--color-primary)] transition-colors min-w-0"
-                          />
-                          <button
-                            onClick={() => removeSocial(idx)}
-                            className="text-red-500/80 hover:text-red-500 hover:bg-red-500/10 transition-colors p-2 rounded-lg cursor-pointer flex-shrink-0"
-                            title="Remove"
-                            aria-label="Remove social link"
-                          >
-                            <FaTrash size={14} />
-                          </button>
-                        </div>
-                      </div>
-                    );
-                  })}
-                  
-                  <div className="flex justify-between items-center mt-2">
+                      );
+                    })}
+
                     <button
                       onClick={addSocial}
-                      className="text-xs font-bold py-1.5 px-3 rounded-lg border border-[var(--color-primary)] text-[var(--color-primary)] hover:bg-[var(--color-primary)]/10 transition-colors flex items-center gap-1 cursor-pointer"
+                      className="mt-2 flex items-center justify-center gap-2 w-full py-4 border-2 border-dashed border-[var(--color-border)] rounded-2xl text-[var(--color-text-secondary)] hover:text-[var(--color-primary)] hover:border-[var(--color-primary)]/50 hover:bg-[var(--color-primary)]/5 transition-all font-bold tracking-widest uppercase text-xs cursor-pointer"
                     >
-                      <FaPlus size={10} /> Add
+                      <FaPlus size={12} /> Add New Social
                     </button>
                     
-                    <div className="flex gap-2">
+                    <div className="flex gap-3 justify-end mt-2">
                       <button
                         onClick={() => setIsEditingSocials(false)}
                         disabled={isSaving}
-                        className="text-xs font-bold py-1.5 px-3 rounded-lg border border-[var(--color-border)] text-[var(--color-primary)] hover:bg-[var(--color-bg)]/60 transition-colors cursor-pointer disabled:opacity-50"
+                        className="px-6 py-2.5 text-sm font-bold rounded-xl border border-[var(--color-border)] text-[var(--color-primary)] transition-all hover:bg-[var(--color-bg)]/60 hover:cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         Cancel
                       </button>
                       <button
                         onClick={handleSaveSocials}
                         disabled={isSaving}
-                        className="text-xs font-bold py-1.5 px-3 rounded-lg bg-[var(--color-primary)] text-[var(--color-bg)] hover:opacity-90 transition-colors cursor-pointer disabled:opacity-50"
+                        className={`px-6 py-2.5 text-sm font-bold rounded-xl transition-all ${
+                          isSaving
+                            ? "bg-[var(--color-primary)]/50 text-[var(--color-bg)]/70 cursor-not-allowed opacity-60"
+                            : "bg-[var(--color-primary)] text-[var(--color-bg)] hover:opacity-90 hover:cursor-pointer"
+                        }`}
                       >
-                        {isSaving ? <Cliploader size={10} color="var(--color-bg)" /> : "Save"}
+                        {isSaving ? (
+                          <span className="flex gap-1 items-center justify-center">
+                            <Cliploader size={12} color="var(--color-bg)" /> Saving..
+                          </span>
+                        ) : "Save"}
                       </button>
                     </div>
                   </div>
@@ -362,6 +407,15 @@ export default function Footer({ socials, onUpdateSocials }: FooterProps) {
           </h2>
         </div>
       </div>
+
+      <ConfirmModal
+        isOpen={deleteIndex !== null}
+        title="Delete Social Link?"
+        message="Are you sure you want to remove this social link? This cannot be undone once saved."
+        confirmText="Remove Social"
+        onConfirm={executeDeleteDraft}
+        onClose={() => setDeleteIndex(null)}
+      />
     </footer>
   );
 }
