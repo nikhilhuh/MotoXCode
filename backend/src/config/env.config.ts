@@ -8,7 +8,9 @@ dotenv.config();
  * The server will fail fast at startup if any key is missing or invalid.
  */
 const EnvSchema = z.object({
-  NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
+  NODE_ENV: z
+    .enum(["development", "production", "test"])
+    .default("development"),
   PORT: z
     .string()
     .regex(/^\d+$/, "PORT must be a numeric string")
@@ -17,26 +19,23 @@ const EnvSchema = z.object({
   MONGO_URI: z
     .string()
     .min(1, "MONGO_URI is required")
-    .startsWith("mongodb", "MONGO_URI must be a valid MongoDB connection string"),
-  SUPABASE_URL: z
-    .string()
-    .url("SUPABASE_URL must be a valid URL"),
+    .startsWith(
+      "mongodb",
+      "MONGO_URI must be a valid MongoDB connection string",
+    ),
+  SUPABASE_URL: z.string().url("SUPABASE_URL must be a valid URL"),
   SUPABASE_SERVICE_ROLE_KEY: z
     .string()
     .min(1, "SUPABASE_SERVICE_ROLE_KEY is required"),
-  FRONTEND_URL: z
-    .string()
-    .url("FRONTEND_URL must be a valid URL"),
-  BACKEND_URL: z
-    .string()
-    .url("BACKEND_URL must be a valid URL"),
+  FRONTEND_URL: z.string().url("FRONTEND_URL must be a valid URL"),
+  BACKEND_URL: z.string().url("BACKEND_URL must be a valid URL"),
 
-  // ─── Auth ────────────────────────────────────────────────────────────────
+  // Auth
   JWT_SECRET: z.string().min(8, "JWT_SECRET must be at least 8 characters"),
   JWT_EXPIRES_IN: z.string().default("7d"),
   GOOGLE_CLIENT_ID: z.string().min(1, "GOOGLE_CLIENT_ID is required"),
 
-  // ─── SMTP ────────────────────────────────────────────────────────────────
+  // SMTP
   SMTP_HOST: z.string().min(1, "SMTP_HOST is required"),
   SMTP_PORT: z
     .string()
@@ -46,10 +45,10 @@ const EnvSchema = z.object({
   SMTP_PASS: z.string().min(1, "SMTP_PASS is required"),
   EMAIL_FROM: z.string().min(1, "EMAIL_FROM is required"),
 
-  // ─── Production Resend ──────────────────────────────────────────────────────
+  // Production Resend
   RESEND_API_KEY: z.string().optional(),
 
-  // ─── Contact Inquiry Forwarding ─────────────────────────────────────────────
+  // Contact Inquiry Forwarding
   INQUIRY_RECEIVER_EMAIL: z
     .string()
     .email("INQUIRY_RECEIVER_EMAIL must be a valid email address"),
@@ -75,7 +74,7 @@ function parseEnv(): Readonly<Env> {
 
     throw new Error(
       `\n🚫 Environment validation failed:\n${formatted}\n\n` +
-        `See .env.example for required variables.\n`
+        `See .env.example for required variables.\n`,
     );
   }
 

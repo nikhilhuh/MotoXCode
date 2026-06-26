@@ -21,12 +21,9 @@ import {
   ITimelineDocument,
   RidingCodeModel,
   IRidingCodeDocument,
-  ContactInfoModel,
-  IContactInfoDocument,
 } from "../models";
 
-// ─── Response Shapes ──────────────────────────────────────────────────────────
-
+//Response Shapes
 interface SocialsResponse {
   success: true;
   data: ISocialDocument[];
@@ -60,8 +57,7 @@ interface CmsUpdateResponse {
   data?: unknown;
 }
 
-// ─── New Payload Interfaces (zero implicit any) ───────────────────────────────
-
+// New Payload Interfaces (zero implicit any)
 interface PhilosophyUpdatePayload {
   id: string;
   quote?: string;
@@ -92,11 +88,9 @@ interface ContactInfoUpdatePayload {
   type?: string;
 }
 
-// ─── Controller ───────────────────────────────────────────────────────────────
-
+// Controller
 /**
  * CmsController — serves static/dynamic CMS text and core presentation assets.
- *
  * Aggregates data from multiple collections into page-ready payloads
  * using concurrent Mongoose queries via Promise.all().
  */
@@ -108,10 +102,11 @@ export class CmsController {
   async getSocials(
     _req: Request,
     res: Response<SocialsResponse>,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> {
     try {
-      const data: ISocialDocument[] = await SocialModel.find().lean<ISocialDocument[]>();
+      const data: ISocialDocument[] =
+        await SocialModel.find().lean<ISocialDocument[]>();
       const body: SocialsResponse = {
         success: true,
         data,
@@ -127,38 +122,47 @@ export class CmsController {
    * Concurrently fetches all data needed for the Home page.
    */
   async getHomeData(
-    _req: Request,
+    req: Request,
     res: Response<HomeDataResponse>,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> {
     try {
+      const user = (req as any).user;
+      const isAdminOrCrew =
+        user && (user.role === "admin" || user.role === "crew");
+
+      let rideQuery = RideModel.find({ past: false })
+        .sort({ date: 1 })
+        .limit(3);
+
+      if (!isAdminOrCrew) {
+        rideQuery = rideQuery.select("-riders -__v") as any;
+      } else rideQuery = rideQuery.populate("riders", "-_id username") as any;
+
       const [hero, stats, values, upcomingRides, mvpMembers, gallery] =
         await Promise.all([
           PageHeroModel.findOne({ page: "home" }).lean<IPageHero | null>(),
           StatModel.find().lean<IStatDocument[]>(),
           ValueModel.find().lean<IValueDocument[]>(),
-          RideModel.find({ past: false })
-            .sort({ date: 1 })
-            .limit(3)
-            .lean<IRideDocument[]>(),
-          Member.find({ role: { $in: ["crew", "admin"] }})
-            .select("username avatar name headline location years")
+          rideQuery.lean<IRideDocument[]>(),
+          Member.find({ role: { $in: ["crew", "admin"] } })
+            .select("-_id username avatar name headline location years")
             .lean(),
-          GalleryModel.find({ page: "home" }).lean<IGalleryDocument[]>(),
+          GalleryModel.find({ page: "home" })
+            .select("-__v")
+            .lean<IGalleryDocument[]>(),
         ]);
-
-      const mvpMembersMapped = mvpMembers.map((m: any) => ({
-        username: m.username,
-        avatar: m.avatar,
-        name: m.name,
-        headline: m.headline,
-        location: m.location,
-        years: m.years
-      }));
 
       const body: HomeDataResponse = {
         success: true,
-        data: { hero, stats, values, upcomingRides, mvpMembers: mvpMembersMapped, gallery },
+        data: {
+          hero,
+          stats,
+          values,
+          upcomingRides,
+          mvpMembers,
+          gallery,
+        },
       };
       res.status(200).json(body);
     } catch (err) {
@@ -173,7 +177,7 @@ export class CmsController {
   async getAboutData(
     _req: Request,
     res: Response<AboutDataResponse>,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> {
     try {
       const [hero, philosophies, timeline, ridingCodes] = await Promise.all([
@@ -207,26 +211,38 @@ export class CmsController {
   async updateHeroData(
     req: Request,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> {
     try {
-      console.log("[CMS Controller] Received incoming patch request for Hero update.");
-      console.log("[CMS Controller] Is file present in request payload?:", !!req.file);
+      console.log(
+        "[CMS Controller] Received incoming patch request for Hero update.",
+      );
+      console.log(
+        "[CMS Controller] Is file present in request payload?:",
+        !!req.file,
+      );
 
       if (!req.file) {
-        res.status(400).json({ 
-          success: false, 
-          message: "Validation Error: No image file detected in multi-part form-data payload." 
+        res.status(400).json({
+          success: false,
+          message:
+            "Validation Error: No image file detected in multi-part form-data payload.",
         });
         return;
       }
 
-      const { supabaseStorageService } = await import("../services/supabaseStorage.service");
+      const { supabaseStorageService } =
+        await import("../services/supabaseStorage.service");
       const BUCKET = "images";
       const hero = await PageHeroModel.findOne({ page: "home" });
 
       if (!hero) {
-        res.status(404).json({ success: false, message: "Hero document database row not found." });
+        res
+          .status(404)
+          .json({
+            success: false,
+            message: "Hero document database row not found.",
+          });
         return;
       }
 
@@ -236,32 +252,53 @@ export class CmsController {
           const urlParts = hero.image.split("/public/images/");
           if (urlParts.length === 2) {
             const oldFileName = urlParts[1];
-            console.log("[CMS Purge Loop] Target filename to destroy in Supabase:", oldFileName);
-            await supabaseStorageService.deleteFileFromBucket(BUCKET, oldFileName);
-            console.log("[CMS Purge Loop] Successfully destroyed old asset from bucket memory.");
+            console.log(
+              "[CMS Purge Loop] Target filename to destroy in Supabase:",
+              oldFileName,
+            );
+            await supabaseStorageService.deleteFileFromBucket(
+              BUCKET,
+              oldFileName,
+            );
+            console.log(
+              "[CMS Purge Loop] Successfully destroyed old asset from bucket memory.",
+            );
           }
         } catch (e) {
-          console.error("[CMS Purge Loop Fault] Failed to drop clean-sweep asset from bucket:", e);
+          console.error(
+            "[CMS Purge Loop Fault] Failed to drop clean-sweep asset from bucket:",
+            e,
+          );
         }
       }
 
       // Construct unique filename with proper dot suffix mapping
-      const ext = (req.file.originalname.split(".").pop() ?? "jpg").toLowerCase();
-      const uniqueName = `${crypto.randomUUID()}.${ext}`; 
-      console.log("[CMS Upload Loop] New calculated filename string payload:", uniqueName);
+      const ext = (
+        req.file.originalname.split(".").pop() ?? "jpg"
+      ).toLowerCase();
+      const uniqueName = `${crypto.randomUUID()}.${ext}`;
+      console.log(
+        "[CMS Upload Loop] New calculated filename string payload:",
+        uniqueName,
+      );
 
       const newImageUrl = await supabaseStorageService.uploadFileToBucket(
         BUCKET,
         uniqueName,
         req.file.buffer,
-        req.file.mimetype
+        req.file.mimetype,
       );
 
-      console.log("[CMS Upload Loop] Resolved Cloud URL from Supabase connection:", newImageUrl);
+      console.log(
+        "[CMS Upload Loop] Resolved Cloud URL from Supabase connection:",
+        newImageUrl,
+      );
 
       hero.image = newImageUrl;
       await hero.save();
-      console.log("[CMS Persistence] Successfully wrote live image string link into MongoDB document.");
+      console.log(
+        "[CMS Persistence] Successfully wrote live image string link into MongoDB document.",
+      );
 
       res.status(200).json({
         success: true,
@@ -284,14 +321,17 @@ export class CmsController {
   async updateStatData(
     req: Request,
     res: Response<CmsUpdateResponse>,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> {
     try {
-      const { supabaseStorageService } = await import("../services/supabaseStorage.service");
+      const { supabaseStorageService } =
+        await import("../services/supabaseStorage.service");
       const BUCKET = "images";
 
       if (!req.body.stats) {
-        res.status(400).json({ success: false, message: "Stats payload is required." });
+        res
+          .status(400)
+          .json({ success: false, message: "Stats payload is required." });
         return;
       }
 
@@ -311,30 +351,44 @@ export class CmsController {
       for (const statData of statsToUpdate) {
         const { id, label, suffix, target, isFloat } = statData;
         const stat = await StatModel.findById(id);
-        
+
         if (!stat) {
-          console.warn(`[CMS Controller] Stat ID ${id} not found during bulk update.`);
+          console.warn(
+            `[CMS Controller] Stat ID ${id} not found during bulk update.`,
+          );
           continue;
         }
 
         let hasChanges = false;
 
         // Apply text field mutations if changed
-        if (label !== undefined && stat.label !== label) { stat.label = label; hasChanges = true; }
-        if (suffix !== undefined && stat.suffix !== suffix) { stat.suffix = suffix; hasChanges = true; }
-        
+        if (label !== undefined && stat.label !== label) {
+          stat.label = label;
+          hasChanges = true;
+        }
+        if (suffix !== undefined && stat.suffix !== suffix) {
+          stat.suffix = suffix;
+          hasChanges = true;
+        }
+
         if (target !== undefined) {
           const parsedTarget = parseFloat(target);
-          if (stat.target !== parsedTarget) { stat.target = parsedTarget; hasChanges = true; }
+          if (stat.target !== parsedTarget) {
+            stat.target = parsedTarget;
+            hasChanges = true;
+          }
         }
-        
+
         if (isFloat !== undefined) {
           const parsedIsFloat = isFloat === "true";
-          if (stat.isFloat !== parsedIsFloat) { stat.isFloat = parsedIsFloat; hasChanges = true; }
+          if (stat.isFloat !== parsedIsFloat) {
+            stat.isFloat = parsedIsFloat;
+            hasChanges = true;
+          }
         }
 
         // Look for corresponding file stream using the specific field key format
-        const file = files.find(f => f.fieldname === `image_${id}`);
+        const file = files.find((f) => f.fieldname === `image_${id}`);
 
         if (file) {
           // Purge old cloud asset
@@ -342,21 +396,29 @@ export class CmsController {
             try {
               const urlParts = stat.image.split("/public/images/");
               if (urlParts.length === 2) {
-                await supabaseStorageService.deleteFileFromBucket(BUCKET, urlParts[1]);
+                await supabaseStorageService.deleteFileFromBucket(
+                  BUCKET,
+                  urlParts[1],
+                );
               }
             } catch (e) {
-              console.error(`[CMS Purge Fault] Failed to drop old stat image for ${id}:`, e);
+              console.error(
+                `[CMS Purge Fault] Failed to drop old stat image for ${id}:`,
+                e,
+              );
             }
           }
 
-          const ext = (file.originalname.split(".").pop() ?? "jpg").toLowerCase();
+          const ext = (
+            file.originalname.split(".").pop() ?? "jpg"
+          ).toLowerCase();
           const destinationPath = `cms/stats/${crypto.randomUUID()}.${ext}`;
 
           stat.image = await supabaseStorageService.uploadFileToBucket(
             BUCKET,
             destinationPath,
             file.buffer,
-            file.mimetype
+            file.mimetype,
           );
           hasChanges = true;
         }
@@ -365,7 +427,7 @@ export class CmsController {
         if (hasChanges) {
           await stat.save();
         }
-        
+
         updatedDocs.push(stat.toObject());
       }
 
@@ -390,14 +452,17 @@ export class CmsController {
   async updateValueData(
     req: Request,
     res: Response<CmsUpdateResponse>,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> {
     try {
-      const { supabaseStorageService } = await import("../services/supabaseStorage.service");
+      const { supabaseStorageService } =
+        await import("../services/supabaseStorage.service");
       const BUCKET = "images";
 
       if (!req.body.values) {
-        res.status(400).json({ success: false, message: "Values payload is required." });
+        res
+          .status(400)
+          .json({ success: false, message: "Values payload is required." });
         return;
       }
 
@@ -416,38 +481,57 @@ export class CmsController {
         const value = await ValueModel.findById(id);
 
         if (!value) {
-          console.warn(`[CMS Controller] Value ID ${id} not found during bulk update.`);
+          console.warn(
+            `[CMS Controller] Value ID ${id} not found during bulk update.`,
+          );
           continue;
         }
 
         let hasChanges = false;
 
-        if (title !== undefined && value.title !== title) { value.title = title; hasChanges = true; }
-        if (description !== undefined && value.description !== description) { value.description = description; hasChanges = true; }
-        if (tag !== undefined && value.tag !== tag) { value.tag = tag; hasChanges = true; }
+        if (title !== undefined && value.title !== title) {
+          value.title = title;
+          hasChanges = true;
+        }
+        if (description !== undefined && value.description !== description) {
+          value.description = description;
+          hasChanges = true;
+        }
+        if (tag !== undefined && value.tag !== tag) {
+          value.tag = tag;
+          hasChanges = true;
+        }
 
-        const file = files.find(f => f.fieldname === `image_${id}`);
+        const file = files.find((f) => f.fieldname === `image_${id}`);
 
         if (file) {
           if (value.image) {
             try {
               const urlParts = value.image.split("/public/images/");
               if (urlParts.length === 2) {
-                await supabaseStorageService.deleteFileFromBucket(BUCKET, urlParts[1]);
+                await supabaseStorageService.deleteFileFromBucket(
+                  BUCKET,
+                  urlParts[1],
+                );
               }
             } catch (e) {
-              console.error(`[CMS Purge Fault] Failed to drop old value image for ${id}:`, e);
+              console.error(
+                `[CMS Purge Fault] Failed to drop old value image for ${id}:`,
+                e,
+              );
             }
           }
 
-          const ext = (file.originalname.split(".").pop() ?? "jpg").toLowerCase();
+          const ext = (
+            file.originalname.split(".").pop() ?? "jpg"
+          ).toLowerCase();
           const destinationPath = `cms/values/${crypto.randomUUID()}.${ext}`;
 
           value.image = await supabaseStorageService.uploadFileToBucket(
             BUCKET,
             destinationPath,
             file.buffer,
-            file.mimetype
+            file.mimetype,
           );
           hasChanges = true;
         }
@@ -479,11 +563,13 @@ export class CmsController {
   async updateSocialsData(
     req: Request,
     res: Response<CmsUpdateResponse>,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> {
     try {
       if (!req.body.socials) {
-        res.status(400).json({ success: false, message: "Socials payload is required." });
+        res
+          .status(400)
+          .json({ success: false, message: "Socials payload is required." });
         return;
       }
 
@@ -494,12 +580,14 @@ export class CmsController {
       }>;
 
       const existingSocials = await SocialModel.find();
-      const existingIds = existingSocials.map(s => String(s._id));
-      
-      const incomingIds = socialsToUpdate.map(s => s.id).filter(id => id !== undefined && id !== "");
-      
+      const existingIds = existingSocials.map((s) => String(s._id));
+
+      const incomingIds = socialsToUpdate
+        .map((s) => s.id)
+        .filter((id) => id !== undefined && id !== "");
+
       // Find which to delete
-      const idsToDelete = existingIds.filter(id => !incomingIds.includes(id));
+      const idsToDelete = existingIds.filter((id) => !incomingIds.includes(id));
       if (idsToDelete.length > 0) {
         await SocialModel.deleteMany({ _id: { $in: idsToDelete } });
       }
@@ -511,17 +599,29 @@ export class CmsController {
           const social = await SocialModel.findById(socialData.id);
           if (social) {
             let hasChanges = false;
-            if (social.label !== socialData.label) { social.label = socialData.label; hasChanges = true; }
-            if (social.link !== socialData.link) { social.link = socialData.link; hasChanges = true; }
+            if (social.label !== socialData.label) {
+              social.label = socialData.label;
+              hasChanges = true;
+            }
+            if (social.link !== socialData.link) {
+              social.link = socialData.link;
+              hasChanges = true;
+            }
             if (hasChanges) await social.save();
             updatedDocs.push(social.toObject());
           } else {
-            const newSocial = new SocialModel({ label: socialData.label, link: socialData.link });
+            const newSocial = new SocialModel({
+              label: socialData.label,
+              link: socialData.link,
+            });
             await newSocial.save();
             updatedDocs.push(newSocial.toObject());
           }
         } else {
-          const newSocial = new SocialModel({ label: socialData.label, link: socialData.link });
+          const newSocial = new SocialModel({
+            label: socialData.label,
+            link: socialData.link,
+          });
           await newSocial.save();
           updatedDocs.push(newSocial.toObject());
         }
@@ -545,32 +645,39 @@ export class CmsController {
   async addGalleryImage(
     req: Request,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> {
     try {
-      const { supabaseStorageService } = await import("../services/supabaseStorage.service");
+      const { supabaseStorageService } =
+        await import("../services/supabaseStorage.service");
       const { GalleryModel } = await import("../models/Gallery");
       const BUCKET = "images";
 
       const { title, page } = req.body;
 
       if (!req.file) {
-        res.status(400).json({ success: false, message: "Image file is required." });
+        res
+          .status(400)
+          .json({ success: false, message: "Image file is required." });
         return;
       }
       if (!title || !page) {
-        res.status(400).json({ success: false, message: "Title and page are required." });
+        res
+          .status(400)
+          .json({ success: false, message: "Title and page are required." });
         return;
       }
 
-      const ext = (req.file.originalname.split(".").pop() ?? "jpg").toLowerCase();
+      const ext = (
+        req.file.originalname.split(".").pop() ?? "jpg"
+      ).toLowerCase();
       const destinationPath = `cms/gallery/${page}/${crypto.randomUUID()}.${ext}`;
 
       const imageUrl = await supabaseStorageService.uploadFileToBucket(
         BUCKET,
         destinationPath,
         req.file.buffer,
-        req.file.mimetype
+        req.file.mimetype,
       );
 
       const newImage = new GalleryModel({
@@ -599,10 +706,11 @@ export class CmsController {
   async deleteGalleryImage(
     req: Request,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> {
     try {
-      const { supabaseStorageService } = await import("../services/supabaseStorage.service");
+      const { supabaseStorageService } =
+        await import("../services/supabaseStorage.service");
       const { GalleryModel } = await import("../models/Gallery");
       const BUCKET = "images";
 
@@ -610,7 +718,9 @@ export class CmsController {
 
       const imageDoc = await GalleryModel.findById(id);
       if (!imageDoc) {
-        res.status(404).json({ success: false, message: "Gallery image not found." });
+        res
+          .status(404)
+          .json({ success: false, message: "Gallery image not found." });
         return;
       }
 
@@ -619,10 +729,16 @@ export class CmsController {
         try {
           const urlParts = imageDoc.src.split("/public/images/");
           if (urlParts.length === 2) {
-            await supabaseStorageService.deleteFileFromBucket(BUCKET, urlParts[1]);
+            await supabaseStorageService.deleteFileFromBucket(
+              BUCKET,
+              urlParts[1],
+            );
           }
         } catch (e) {
-          console.error(`[CMS Purge Fault] Failed to drop gallery image from bucket:`, e);
+          console.error(
+            `[CMS Purge Fault] Failed to drop gallery image from bucket:`,
+            e,
+          );
         }
       }
 
@@ -657,11 +773,19 @@ export class CmsController {
   async updatePageHeroData(
     req: Request,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> {
     try {
       const { page } = req.body as { page: PageHeroPage };
-      const validPages: PageHeroPage[] = ["home", "about", "crew", "rides", "events", "contact", "join"];
+      const validPages: PageHeroPage[] = [
+        "home",
+        "about",
+        "crew",
+        "rides",
+        "events",
+        "contact",
+        "join",
+      ];
 
       if (!page || !validPages.includes(page)) {
         res.status(400).json({
@@ -674,17 +798,24 @@ export class CmsController {
       if (!req.file) {
         res.status(400).json({
           success: false,
-          message: "Validation Error: No image file detected in multi-part form-data payload.",
+          message:
+            "Validation Error: No image file detected in multi-part form-data payload.",
         });
         return;
       }
 
-      const { supabaseStorageService } = await import("../services/supabaseStorage.service");
+      const { supabaseStorageService } =
+        await import("../services/supabaseStorage.service");
       const BUCKET = "images";
       const hero = await PageHeroModel.findOne({ page });
 
       if (!hero) {
-        res.status(404).json({ success: false, message: `Hero document for page '${page}' not found.` });
+        res
+          .status(404)
+          .json({
+            success: false,
+            message: `Hero document for page '${page}' not found.`,
+          });
         return;
       }
 
@@ -692,15 +823,26 @@ export class CmsController {
         try {
           const urlParts = hero.image.split("/public/images/");
           if (urlParts.length === 2) {
-            console.log(`[CMS Purge Loop] Destroying old hero asset for page '${page}':`, urlParts[1]);
-            await supabaseStorageService.deleteFileFromBucket(BUCKET, urlParts[1]);
+            console.log(
+              `[CMS Purge Loop] Destroying old hero asset for page '${page}':`,
+              urlParts[1],
+            );
+            await supabaseStorageService.deleteFileFromBucket(
+              BUCKET,
+              urlParts[1],
+            );
           }
         } catch (e) {
-          console.error(`[CMS Purge Loop Fault] Failed to drop hero asset for page '${page}':`, e);
+          console.error(
+            `[CMS Purge Loop Fault] Failed to drop hero asset for page '${page}':`,
+            e,
+          );
         }
       }
 
-      const ext = (req.file.originalname.split(".").pop() ?? "jpg").toLowerCase();
+      const ext = (
+        req.file.originalname.split(".").pop() ?? "jpg"
+      ).toLowerCase();
       const uniqueName = `cms/heroes/${page}/${crypto.randomUUID()}.${ext}`;
       console.log("[CMS Upload Loop] New filename:", uniqueName);
 
@@ -708,7 +850,7 @@ export class CmsController {
         BUCKET,
         uniqueName,
         req.file.buffer,
-        req.file.mimetype
+        req.file.mimetype,
       );
 
       hero.image = newImageUrl;
@@ -738,43 +880,72 @@ export class CmsController {
   async updateAboutData(
     req: Request,
     res: Response<CmsUpdateResponse>,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> {
     try {
-      const { supabaseStorageService } = await import("../services/supabaseStorage.service");
+      const { supabaseStorageService } =
+        await import("../services/supabaseStorage.service");
       const BUCKET = "images";
-      const updatedDocs: { philosophy?: unknown; timeline?: unknown[]; ridingCode?: unknown[] } = {};
+      const updatedDocs: {
+        philosophy?: unknown;
+        timeline?: unknown[];
+        ridingCode?: unknown[];
+      } = {};
 
       // ── Philosophy block update ──────────────────────────────────────────────
       if (req.body.philosophy) {
-        const philosophyPayload = JSON.parse(req.body.philosophy) as PhilosophyUpdatePayload;
+        const philosophyPayload = JSON.parse(
+          req.body.philosophy,
+        ) as PhilosophyUpdatePayload;
         const { id, quote, author } = philosophyPayload;
 
         const doc = await PhilosophyModel.findById(id);
         if (!doc) {
-          res.status(404).json({ success: false, message: `Philosophy document ${id} not found.` });
+          res
+            .status(404)
+            .json({
+              success: false,
+              message: `Philosophy document ${id} not found.`,
+            });
           return;
         }
 
         let hasChanges = false;
-        if (quote !== undefined && doc.quote !== quote) { doc.quote = quote; hasChanges = true; }
-        if (author !== undefined && doc.author !== author) { doc.author = author; hasChanges = true; }
+        if (quote !== undefined && doc.quote !== quote) {
+          doc.quote = quote;
+          hasChanges = true;
+        }
+        if (author !== undefined && doc.author !== author) {
+          doc.author = author;
+          hasChanges = true;
+        }
 
         if (req.file) {
           if (doc.image) {
             try {
               const urlParts = doc.image.split("/public/images/");
               if (urlParts.length === 2) {
-                await supabaseStorageService.deleteFileFromBucket(BUCKET, urlParts[1]);
+                await supabaseStorageService.deleteFileFromBucket(
+                  BUCKET,
+                  urlParts[1],
+                );
               }
             } catch (e) {
-              console.error("[CMS Purge Fault] Philosophy image purge failed:", e);
+              console.error(
+                "[CMS Purge Fault] Philosophy image purge failed:",
+                e,
+              );
             }
           }
-          const ext = (req.file.originalname.split(".").pop() ?? "jpg").toLowerCase();
+          const ext = (
+            req.file.originalname.split(".").pop() ?? "jpg"
+          ).toLowerCase();
           const destPath = `cms/about/philosophy/${crypto.randomUUID()}.${ext}`;
           doc.image = await supabaseStorageService.uploadFileToBucket(
-            BUCKET, destPath, req.file.buffer, req.file.mimetype
+            BUCKET,
+            destPath,
+            req.file.buffer,
+            req.file.mimetype,
           );
           hasChanges = true;
         }
@@ -785,8 +956,12 @@ export class CmsController {
 
       // ── Timeline entries bulk update (Full Sync) ───────────────────────────
       if (req.body.timeline) {
-        const timelinePayload = JSON.parse(req.body.timeline) as TimelineUpdatePayload[];
-        const payloadIds = timelinePayload.map((e) => e.id).filter((id) => id && mongoose.Types.ObjectId.isValid(id));
+        const timelinePayload = JSON.parse(
+          req.body.timeline,
+        ) as TimelineUpdatePayload[];
+        const payloadIds = timelinePayload
+          .map((e) => e.id)
+          .filter((id) => id && mongoose.Types.ObjectId.isValid(id));
 
         // Delete any timeline entries not present in the new payload
         await TimelineModel.deleteMany({ _id: { $nin: payloadIds } });
@@ -809,9 +984,18 @@ export class CmsController {
           }
 
           let hasChanges = false;
-          if (year !== undefined && doc.year !== year) { doc.year = year; hasChanges = true; }
-          if (location !== undefined && doc.location !== location) { doc.location = location; hasChanges = true; }
-          if (event !== undefined && doc.event !== event) { doc.event = event; hasChanges = true; }
+          if (year !== undefined && doc.year !== year) {
+            doc.year = year;
+            hasChanges = true;
+          }
+          if (location !== undefined && doc.location !== location) {
+            doc.location = location;
+            hasChanges = true;
+          }
+          if (event !== undefined && doc.event !== event) {
+            doc.event = event;
+            hasChanges = true;
+          }
 
           if (hasChanges) await doc.save();
           timelineDocs.push(doc.toObject());
@@ -821,8 +1005,14 @@ export class CmsController {
 
       // ── Riding Code bulk update (Full Sync) ────────────────────────────────
       if (req.body.ridingCode) {
-        const ridingCodePayload = JSON.parse(req.body.ridingCode) as { id?: string; rule: string; detail: string }[];
-        const payloadIds = ridingCodePayload.map((e) => e.id).filter((id) => id && mongoose.Types.ObjectId.isValid(id));
+        const ridingCodePayload = JSON.parse(req.body.ridingCode) as {
+          id?: string;
+          rule: string;
+          detail: string;
+        }[];
+        const payloadIds = ridingCodePayload
+          .map((e) => e.id)
+          .filter((id) => id && mongoose.Types.ObjectId.isValid(id));
 
         // Delete any riding code entries not present in the new payload
         await RidingCodeModel.deleteMany({ _id: { $nin: payloadIds } });
@@ -845,8 +1035,14 @@ export class CmsController {
           }
 
           let hasChanges = false;
-          if (rule !== undefined && doc.rule !== rule) { doc.rule = rule; hasChanges = true; }
-          if (detail !== undefined && doc.detail !== detail) { doc.detail = detail; hasChanges = true; }
+          if (rule !== undefined && doc.rule !== rule) {
+            doc.rule = rule;
+            hasChanges = true;
+          }
+          if (detail !== undefined && doc.detail !== detail) {
+            doc.detail = detail;
+            hasChanges = true;
+          }
 
           if (hasChanges) await doc.save();
           ridingCodeDocs.push(doc.toObject());
@@ -878,35 +1074,55 @@ export class CmsController {
   async updateCrewData(
     req: Request,
     res: Response<CmsUpdateResponse>,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> {
     try {
-      const { supabaseStorageService } = await import("../services/supabaseStorage.service");
+      const { supabaseStorageService } =
+        await import("../services/supabaseStorage.service");
       const BUCKET = "images";
 
       if (!req.body.members) {
-        res.status(400).json({ success: false, message: "Members payload is required." });
+        res
+          .status(400)
+          .json({ success: false, message: "Members payload is required." });
         return;
       }
 
-      const membersToUpdate = JSON.parse(req.body.members) as CrewMemberUpdatePayload[];
+      const membersToUpdate = JSON.parse(
+        req.body.members,
+      ) as CrewMemberUpdatePayload[];
       const files = (req.files as Express.Multer.File[]) || [];
       const updatedDocs: unknown[] = [];
 
       for (const memberData of membersToUpdate) {
-        const { username, name, headline, years, location, bike, bio } = memberData;
+        const { username, name, headline, years, location, bike, bio } =
+          memberData;
         const member = await Member.findOne({ username });
 
         if (!member) {
-          console.warn(`[CMS Controller] Member '${username}' not found — skipping.`);
+          console.warn(
+            `[CMS Controller] Member '${username}' not found — skipping.`,
+          );
           continue;
         }
 
         let hasChanges = false;
-        if (name !== undefined && member.name !== name) { member.name = name; hasChanges = true; }
-        if (headline !== undefined && member.headline !== headline) { member.headline = headline; hasChanges = true; }
-        if (location !== undefined && member.location !== location) { member.location = location; hasChanges = true; }
-        if (bio !== undefined && member.bio !== bio) { member.bio = bio; hasChanges = true; }
+        if (name !== undefined && member.name !== name) {
+          member.name = name;
+          hasChanges = true;
+        }
+        if (headline !== undefined && member.headline !== headline) {
+          member.headline = headline;
+          hasChanges = true;
+        }
+        if (location !== undefined && member.location !== location) {
+          member.location = location;
+          hasChanges = true;
+        }
+        if (bio !== undefined && member.bio !== bio) {
+          member.bio = bio;
+          hasChanges = true;
+        }
 
         if (years !== undefined) {
           const parsedYears = parseInt(years, 10);
@@ -916,25 +1132,41 @@ export class CmsController {
           }
         }
 
-        if (bike !== undefined) { member.bike = bike; hasChanges = true; }
+        if (bike !== undefined) {
+          member.bike = bike;
+          hasChanges = true;
+        }
 
         // Avatar file keyed as avatar_<username>
-        const avatarFile = files.find(f => f.fieldname === `avatar_${username}`);
+        const avatarFile = files.find(
+          (f) => f.fieldname === `avatar_${username}`,
+        );
         if (avatarFile) {
           if (member.avatar) {
             try {
               const urlParts = member.avatar.split("/public/images/");
               if (urlParts.length === 2) {
-                await supabaseStorageService.deleteFileFromBucket(BUCKET, urlParts[1]);
+                await supabaseStorageService.deleteFileFromBucket(
+                  BUCKET,
+                  urlParts[1],
+                );
               }
             } catch (e) {
-              console.error(`[CMS Purge Fault] Failed to drop old avatar for '${username}':`, e);
+              console.error(
+                `[CMS Purge Fault] Failed to drop old avatar for '${username}':`,
+                e,
+              );
             }
           }
-          const ext = (avatarFile.originalname.split(".").pop() ?? "jpg").toLowerCase();
+          const ext = (
+            avatarFile.originalname.split(".").pop() ?? "jpg"
+          ).toLowerCase();
           const destPath = `cms/crew/avatars/${username}/${crypto.randomUUID()}.${ext}`;
           member.avatar = await supabaseStorageService.uploadFileToBucket(
-            BUCKET, destPath, avatarFile.buffer, avatarFile.mimetype
+            BUCKET,
+            destPath,
+            avatarFile.buffer,
+            avatarFile.mimetype,
           );
           hasChanges = true;
         }
@@ -976,23 +1208,32 @@ export class CmsController {
   async updateContactData(
     req: Request,
     res: Response<CmsUpdateResponse>,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> {
     try {
       if (!req.body.items) {
-        res.status(400).json({ success: false, message: "Contact items payload is required." });
+        res
+          .status(400)
+          .json({
+            success: false,
+            message: "Contact items payload is required.",
+          });
         return;
       }
 
-      const itemsToUpdate = JSON.parse(req.body.items) as ContactInfoUpdatePayload[];
+      const itemsToUpdate = JSON.parse(
+        req.body.items,
+      ) as ContactInfoUpdatePayload[];
       const { ContactInfoModel } = await import("../models/ContactInfo");
 
       const existingItems = await ContactInfoModel.find();
-      const existingIds = existingItems.map(s => String(s._id));
-      
-      const incomingIds = itemsToUpdate.map(s => s.id).filter(id => id && id !== "");
-      
-      const idsToDelete = existingIds.filter(id => !incomingIds.includes(id));
+      const existingIds = existingItems.map((s) => String(s._id));
+
+      const incomingIds = itemsToUpdate
+        .map((s) => s.id)
+        .filter((id) => id && id !== "");
+
+      const idsToDelete = existingIds.filter((id) => !incomingIds.includes(id));
       if (idsToDelete.length > 0) {
         await ContactInfoModel.deleteMany({ _id: { $in: idsToDelete } });
       }
@@ -1006,19 +1247,36 @@ export class CmsController {
           const doc = await ContactInfoModel.findById(id);
           if (doc) {
             let hasChanges = false;
-            if (label !== undefined && doc.label !== label) { doc.label = label; hasChanges = true; }
-            if (value !== undefined && doc.value !== value) { doc.value = value; hasChanges = true; }
-            if (type !== undefined && doc.type !== type) { doc.type = type; hasChanges = true; }
+            if (label !== undefined && doc.label !== label) {
+              doc.label = label;
+              hasChanges = true;
+            }
+            if (value !== undefined && doc.value !== value) {
+              doc.value = value;
+              hasChanges = true;
+            }
+            if (type !== undefined && doc.type !== type) {
+              doc.type = type;
+              hasChanges = true;
+            }
 
             if (hasChanges) await doc.save();
             updatedDocs.push(doc.toObject());
           } else {
-            const newDoc = new ContactInfoModel({ label, value, type: type || "text" });
+            const newDoc = new ContactInfoModel({
+              label,
+              value,
+              type: type || "text",
+            });
             await newDoc.save();
             updatedDocs.push(newDoc.toObject());
           }
         } else {
-          const newDoc = new ContactInfoModel({ label, value, type: type || "text" });
+          const newDoc = new ContactInfoModel({
+            label,
+            value,
+            type: type || "text",
+          });
           await newDoc.save();
           updatedDocs.push(newDoc.toObject());
         }

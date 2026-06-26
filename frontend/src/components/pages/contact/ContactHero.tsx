@@ -7,9 +7,9 @@ import { cmsService } from "@/services";
 import type { PageHero } from "@/services/cms.service";
 import Cliploader from "@/components/ui/Cliploader";
 import { compressImage } from "@/services/imageCompression.service";
+import axios from "axios";
 
-// ─── Types ────────────────────────────────────────────────────────────────────
-
+// Types
 interface ContactHeroEditData {
   image: string | File;
 }
@@ -19,8 +19,7 @@ interface ContactHeroProps {
   onUpdate?: (updatedHero: PageHero) => void;
 }
 
-// ─── Animation Variants ───────────────────────────────────────────────────────
-
+// Animation Variants
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
@@ -41,8 +40,7 @@ const itemVariants = {
   },
 };
 
-// ─── Component ────────────────────────────────────────────────────────────────
-
+// Component
 export default function ContactHero({ ContactHeroBg, onUpdate }: ContactHeroProps) {
   const heroRef = useRef<HTMLDivElement>(null)
   const { showSuccess, showError } = useFeedback();
@@ -83,21 +81,26 @@ export default function ContactHero({ ContactHeroBg, onUpdate }: ContactHeroProp
       const result = await cmsService.updatePageHeroCMSData(formData);
       if (result.success) {
         showSuccess("Contact hero background updated successfully!");
-        const resultData = result.data as { image?: string } | undefined;
+        const resultData = result.data as { _id?: string, image?: string } | undefined;
         if (resultData?.image) {
           setField({ image: resultData.image });
-          onUpdate?.({ page: "contact", image: resultData.image });
+          onUpdate?.({ _id: resultData?._id || "contactHero", page: "contact", image: resultData.image });
         } else {
-          onUpdate?.({ page: "contact", image: resolvedBg });
+          onUpdate?.({ _id: resultData?._id || "contactHero", page: "contact", image: resolvedBg });
         }
         finishEditing();
       } else {
         showError(result.message || "Failed to update hero background.");
       }
     } catch (error: unknown) {
-      const msg = error instanceof Error ? error.message : "Failed to update hero background.";
-      showError(msg);
-    } finally {
+        if (axios.isAxiosError(error) && error.response) {
+          showError(error.response.data.message || "Failed to update hero background.");
+        } else if (error instanceof Error) {
+          showError(error.message);
+        } else {
+          showError("An unexpected error occurred.");
+        }
+      } finally {
       setIsSaving(false);
     }
   }

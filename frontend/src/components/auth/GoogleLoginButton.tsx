@@ -5,6 +5,7 @@ import { useFeedback } from "@/context/FeedbackContext";
 import { apiClient } from "@/services/apiClient";
 import { useGoogleLogin } from "@react-oauth/google";
 import { FcGoogle } from "react-icons/fc";
+import axios from "axios";
 
 interface GoogleLoginButtonProps {
   isSignUp?: boolean;
@@ -50,10 +51,14 @@ const GoogleLoginButton: React.FC<GoogleLoginButtonProps> = ({
         navigate("/");
       }
     } catch (err: any) {
-      const errMsg =
-        err?.response?.data?.message ?? "Google flow failed. Please try again.";
-      showError(errMsg);
-    }
+        if (axios.isAxiosError(err) && err.response) {
+          showError(err.response.data.message || "Backend operation failed.");
+        } else if (err instanceof Error) {
+          showError(err.message);
+        } else {
+          showError("An unexpected error occurred.");
+        }
+      }
   };
 
   const login = useGoogleLogin({

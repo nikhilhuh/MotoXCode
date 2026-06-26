@@ -21,6 +21,7 @@ import imageCompression from "browser-image-compression";
 import { ProfileSkeleton } from "@/components/skeletons/ProfileSkeleton";
 import AvatarPlaceholderImg from "/assets/images/placeholders/avatar.png";
 import CoverPlaceholderImg from "/assets/images/placeholders/coverphoto.png";
+import axios from "axios";
 
 export default function Profile() {
   const { id, username } = useParams<{ id?: string; username?: string }>();
@@ -120,12 +121,14 @@ export default function Profile() {
       }
       showSuccess("Profile updated successfully!");
     } catch (err: any) {
-      console.error("Failed to update profile", err);
-      showError(
-        err.response?.data?.message ||
-          "Failed to update profile. Please try again.",
-      );
-    }
+        if (axios.isAxiosError(err) && err.response) {
+          showError(err.response.data.message || "Failed to update profile. Please try again.");
+        } else if (err instanceof Error) {
+          showError(err.message);
+        } else {
+          showError("An unexpected error occurred.");
+        }
+      }
   };
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -181,12 +184,14 @@ export default function Profile() {
       }
       showSuccess("Image updated successfully!");
     } catch (err: any) {
-      console.error("Upload failed", err);
-      showError(
-        err.response?.data?.message ||
-          "Failed to upload image. Please try again.",
-      );
-    } finally {
+        if (axios.isAxiosError(err) && err.response) {
+          showError(err.response.data.message || "Failed to upload image. Please try again.");
+        } else if (err instanceof Error) {
+          showError(err.message);
+        } else {
+          showError("An unexpected error occurred.");
+        }
+      } finally {
       setUploading(false);
       setCropImageSrc(null);
       setCropType(null);
@@ -221,12 +226,14 @@ export default function Profile() {
       }
       showSuccess("Image removed successfully!");
     } catch (err: any) {
-      console.error("Failed to remove image", err);
-      showError(
-        err.response?.data?.message ||
-          "Failed to remove image. Please try again.",
-      );
-    } finally {
+        if (axios.isAxiosError(err) && err.response) {
+          showError(err.response.data.message || "Failed to remove image. Please try again.");
+        } else if (err instanceof Error) {
+          showError(err.message);
+        } else {
+          showError("An unexpected error occurred.");
+        }
+      } finally {
       setUploading(false);
       setConfirmModal(null);
     }

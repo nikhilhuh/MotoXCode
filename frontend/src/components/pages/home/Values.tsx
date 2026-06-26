@@ -6,6 +6,7 @@ import { useUser } from "@/context/UserContext";
 import { useFeedback } from "@/context/FeedbackContext";
 import { compressImage } from "@/services/imageCompression.service";
 import { cmsService } from "@/services";
+import axios from "axios";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -163,9 +164,14 @@ export default function Values({ valuesData, onValuesUpdate }: ValuesProps) {
         showError(result.message || "Failed to save data");
       }
     } catch (err: any) {
-      console.error("[Values CMS Error]:", err);
-      showError(err.response?.data?.message || err.message || "Failed to update values.");
-    } finally {
+        if (axios.isAxiosError(err) && err.response) {
+          showError(err.response.data.message || "Failed to update values.");
+        } else if (err instanceof Error) {
+          showError(err.message);
+        } else {
+          showError("An unexpected error occurred.");
+        }
+      } finally {
       setIsSaving(false);
     }
   }

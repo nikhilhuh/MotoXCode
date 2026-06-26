@@ -1,15 +1,11 @@
 import { Request, Response, NextFunction, ErrorRequestHandler } from "express";
-import { env } from "../config/env.config";
 
-// ─── AppError Class ─────────────────────────────────────────────────────────
-
+// AppError Class
 /**
  * Custom application error class.
- *
  * - `statusCode`: HTTP status to return to the client (4xx = client error, 5xx = server error)
  * - `isOperational`: true = expected/safe error (e.g., 404, validation failure).
  *                    false = unexpected programmer error (e.g., DB schema mismatch).
- *
  * Only operational errors expose their message to the client.
  * Non-operational errors return a generic "Internal server error" message.
  */
@@ -28,8 +24,7 @@ export class AppError extends Error {
   }
 }
 
-// ─── Standardized Error Response Shape ─────────────────────────────────────
-
+// Standardized Error Response Shape
 interface ErrorResponse {
   success: false;
   statusCode: number;
@@ -37,14 +32,11 @@ interface ErrorResponse {
   stack?: string;
 }
 
-// ─── Global Error Handler Middleware ────────────────────────────────────────
-
+// Global Error Handler Middleware
 /**
  * Centralized Express error-handling middleware.
- *
  * Must be registered LAST in app.ts (after all routes).
  * Catches errors forwarded via next(err) from any route or middleware.
- *
  * Behavior:
  * - AppError (operational): returns the error's statusCode + message.
  * - Mongoose ValidationError: maps to 400 Bad Request.
@@ -61,7 +53,7 @@ export const errorHandler: ErrorRequestHandler = (
 ): void => {
   const isDev = (process.env["NODE_ENV"] ?? "development") === "development";
 
-  // ── Operational AppError ─────────────────────────────────────────────────
+  // Operational AppError
   if (err instanceof AppError) {
     const body: ErrorResponse = {
       success: false,
@@ -73,7 +65,7 @@ export const errorHandler: ErrorRequestHandler = (
     return;
   }
 
-  // ── Mongoose Validation Error ────────────────────────────────────────────
+  // Mongoose Validation Error
   if (isMongooseValidationError(err)) {
     const messages = Object.values(err.errors)
       .map((e: { message: string }) => e.message)
@@ -88,7 +80,7 @@ export const errorHandler: ErrorRequestHandler = (
     return;
   }
 
-  // ── Mongoose CastError (e.g. invalid ObjectId) ────────────────────────────
+  // Mongoose CastError (e.g. invalid ObjectId)
   if (isMongooseCastError(err)) {
     const body: ErrorResponse = {
       success: false,
@@ -100,7 +92,7 @@ export const errorHandler: ErrorRequestHandler = (
     return;
   }
 
-  // ── Unknown / Programmer Error ────────────────────────────────────────────
+  // Unknown / Programmer Error
   const unknownStack = err instanceof Error ? err.stack : undefined;
   console.error("❌ Unhandled error:", err);
 
@@ -113,8 +105,7 @@ export const errorHandler: ErrorRequestHandler = (
   res.status(500).json(body);
 };
 
-// ─── Type Guards ─────────────────────────────────────────────────────────────
-
+// Type Guards
 interface MongooseValidationError {
   name: "ValidationError";
   errors: Record<string, { message: string }>;
@@ -145,8 +136,7 @@ function isMongooseCastError(err: unknown): err is MongooseCastError {
   );
 }
 
-// ─── Not-Found Handler ────────────────────────────────────────────────────────
-
+// Not-Found Handler
 /**
  * Catches any request that did not match a registered route.
  * Mount this BEFORE the errorHandler in app.ts.

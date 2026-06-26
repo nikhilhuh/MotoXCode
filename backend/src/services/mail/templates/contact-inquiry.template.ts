@@ -37,7 +37,7 @@ export function generateContactInquiryTemplate(
     .replace(/\n/g, "<br />");
 
   return {
-    subject: `New Inquiry: ${displaySubject} — from ${name}`,
+    subject: `New Contact Request from ${name}`,
     text: [
       `New contact inquiry received on MotoXCode`,
       ``,

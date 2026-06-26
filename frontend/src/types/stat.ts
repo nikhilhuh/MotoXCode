@@ -4,5 +4,5 @@ export interface Stat {
   suffix: string;
   label: string;
   image: string;
-  isFloat?: boolean;
+  isFloat: boolean;
 }

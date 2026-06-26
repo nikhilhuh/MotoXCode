@@ -1,7 +1,6 @@
 import { Schema, model, Document } from "mongoose";
 
-// ─── Interface ──────────────────────────────────────────────────────────────
-
+// Interface
 export interface IMember extends Document {
   username: string;
   email: string;
@@ -21,12 +20,9 @@ export interface IMember extends Document {
   facebook?: string;
   profileCompleted?: boolean;
   googleConnected: boolean;
-  createdAt: Date;
-  updatedAt: Date;
 }
 
-// ─── Schema ─────────────────────────────────────────────────────────────────
-
+// Schema
 const MemberSchema = new Schema<IMember>(
   {
     username: {
@@ -54,14 +50,14 @@ const MemberSchema = new Schema<IMember>(
       enum: ["crew", "admin", "rider"],
       default: "rider",
     },
-    // ─── Disciplinary Tracking ────────────────────────────────────────────
+    // Disciplinary Tracking
     strikes: {
       type: Number,
       default: 0,
       min: 0,
-      select: false, // Never returned in queries unless explicitly requested (+strikes)
+      select: false, // Never returned in queries unless explicitly requested
     },
-    // ─── Optional Display Fields ─────────────────────────────────────────
+    // Optional Display Fields
     name: { type: String, trim: true },
     headline: { type: String, trim: true },
     bike: { type: [String] },

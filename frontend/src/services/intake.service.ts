@@ -7,8 +7,7 @@ import type { Membership } from "../types/membership";
 import type { GalleryImage } from "../types/galleryImage";
 import type { PageHero } from "./cms.service";
 
-// ─── API Response Payloads ────────────────────────────────────────────────────
-
+// API Response Payloads
 interface ContactPageApiResponse {
   success: boolean;
   data: {
@@ -30,8 +29,7 @@ interface FormSubmissionApiResponse {
   message: string;
 }
 
-// ─── Return Types ─────────────────────────────────────────────────────────────
-
+// Return Types
 interface ContactPageData {
   hero: PageHero;
   contactInfo: ContactInfoItem[];
@@ -47,8 +45,7 @@ interface FormSubmissionResult {
   message: string;
 }
 
-// ─── Service ──────────────────────────────────────────────────────────────────
-
+// Service
 export const intakeService = {
   async fetchContactPageData(): Promise<ContactPageData> {
     try {

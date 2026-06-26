@@ -1,15 +1,13 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
 
-// ─── TypeScript Interface ─────────────────────────────────────────────────────
-
+// TypeScript Interface
 export interface IPhilosophyDocument extends Document {
   quote: string;
   author: string;
   image: string;
 }
 
-// ─── Mongoose Schema ──────────────────────────────────────────────────────────
-
+// Mongoose Schema
 const philosophySchema = new Schema<IPhilosophyDocument>(
   {
     quote: {
@@ -35,7 +33,6 @@ const philosophySchema = new Schema<IPhilosophyDocument>(
   }
 );
 
-// ─── Model ────────────────────────────────────────────────────────────────────
-
+// Model
 export const PhilosophyModel: Model<IPhilosophyDocument> =
   mongoose.model<IPhilosophyDocument>("Philosophy", philosophySchema);

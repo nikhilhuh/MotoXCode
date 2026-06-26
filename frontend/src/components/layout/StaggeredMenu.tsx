@@ -8,6 +8,7 @@ import { cmsService } from "@/services";
 import Cliploader from "@/components/ui/Cliploader";
 import ConfirmModal from "@/components/ui/ConfirmModal";
 import { FaPencil, FaTrash, FaPlus } from "react-icons/fa6";
+import axios from "axios";
 
 const SOCIAL_OPTIONS = [
   "Instagram",
@@ -133,8 +134,14 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
         showError(res.message || "Failed to update socials");
       }
     } catch (err: any) {
-      showError(err.response?.data?.message || "Error updating socials");
-    } finally {
+        if (axios.isAxiosError(err) && err.response) {
+          showError(err.response.data.message || "Error updating socials");
+        } else if (err instanceof Error) {
+          showError(err.message);
+        } else {
+          showError("An unexpected error occurred.");
+        }
+      } finally {
       setIsSaving(false);
     }
   };

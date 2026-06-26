@@ -1,12 +1,11 @@
 import { Router } from "express";
 import multer from "multer";
 import { cmsController } from "../controllers/cms.controller";
-import { requireAuth, verifyAdminGate } from "../middlewares/auth.middleware";
+import { requireAuth, verifyAdminGate, optionalAuth } from "../middlewares/auth.middleware";
 
 /**
  * CMS resource routes.
  * Mounted at: /api
- *
  * Serves static/dynamic text and core presentation assets.
  * Mutation routes are guarded by requireAuth + verifyAdminGate.
  */
@@ -18,19 +17,15 @@ const upload = multer({
   limits: { fileSize: 5 * 1024 * 1024 } // 5MB limit max
 });
 
-// ─── Read-only (public) ───────────────────────────────────────────────────────
-
+// Read-only (public)
 // GET /api/socials — fetch all social links
 cmsRouter.get("/socials", cmsController.getSocials.bind(cmsController));
-
 // GET /api/home — aggregated home page payload
-cmsRouter.get("/home", cmsController.getHomeData.bind(cmsController));
-
+cmsRouter.get("/home", optionalAuth as any, cmsController.getHomeData.bind(cmsController));
 // GET /api/about — aggregated about page payload
 cmsRouter.get("/about", cmsController.getAboutData.bind(cmsController));
 
-// ─── Admin Mutations (protected) ─────────────────────────────────────────────
-
+// Admin Mutations (protected)
 // PATCH /api/home/update-hero — swap the home page hero background image
 cmsRouter.patch(
   "/home/update-hero",

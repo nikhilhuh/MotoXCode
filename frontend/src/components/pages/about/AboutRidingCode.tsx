@@ -7,6 +7,7 @@ import { useFeedback } from "@/context/FeedbackContext";
 import { cmsService } from "@/services";
 import ConfirmModal from "@/components/ui/ConfirmModal";
 import Cliploader from "@/components/ui/Cliploader";
+import axios from "axios";
 
 interface RidingCodeEditEntry {
   _id: string;
@@ -135,12 +136,14 @@ export default function AboutRidingCode({
         showError(result.message || "Failed to update riding code.");
       }
     } catch (error: unknown) {
-      showError(
-        error instanceof Error
-          ? error.message
-          : "Failed to update riding code.",
-      );
-    } finally {
+        if (axios.isAxiosError(error) && error.response) {
+          showError(error.response.data.message || "Failed to update riding code.");
+        } else if (error instanceof Error) {
+          showError(error.message);
+        } else {
+          showError("An unexpected error occurred.");
+        }
+      } finally {
       setIsSaving(false);
     }
   }

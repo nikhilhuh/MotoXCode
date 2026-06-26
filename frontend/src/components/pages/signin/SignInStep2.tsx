@@ -1,3 +1,4 @@
+import axios from 'axios';
 import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { BiCheck, BiEdit } from "react-icons/bi";
@@ -5,8 +6,6 @@ import Cliploader from "@/components/ui/Cliploader";
 import { verifyOTP, requestOTP } from "@/services/auth.service";
 import { useUser } from "@/context/UserContext";
 import { useFeedback } from "@/context/FeedbackContext";
-import { AxiosError } from "axios";
-
 type Props = {
   email: string;
   verifying: boolean;
@@ -92,9 +91,14 @@ const SignInStep2: React.FC<Props> = ({
       showSuccess(`You are signed in as ${user.username}`);
       navigate("/");
     } catch (err) {
-      const error = err as AxiosError<{ message: string }>;
-      showError(error.response?.data?.message ?? "OTP verification failed. Please try again.");
-    } finally {
+        if (axios.isAxiosError(err) && err.response) {
+          showError(err.response.data.message || "Backend operation failed.");
+        } else if (err instanceof Error) {
+          showError(err.message);
+        } else {
+          showError("An unexpected error occurred.");
+        }
+      } finally {
       setVerifying(false);
     }
   };
@@ -117,9 +121,14 @@ const SignInStep2: React.FC<Props> = ({
         setResendText("Resend OTP");
       }, 60000);
     } catch (err) {
-      const error = err as AxiosError<{ message: string }>;
-      showError(error.response?.data?.message ?? "Failed to resend OTP. Please try again.");
-    } finally {
+        if (axios.isAxiosError(err) && err.response) {
+          showError(err.response.data.message || "Backend operation failed.");
+        } else if (err instanceof Error) {
+          showError(err.message);
+        } else {
+          showError("An unexpected error occurred.");
+        }
+      } finally {
       setResending(false);
     }
   };

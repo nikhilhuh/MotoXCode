@@ -1,7 +1,6 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
 
-// ─── TypeScript Interface ─────────────────────────────────────────────────────
-
+// TypeScript Interface
 export interface IValueDocument extends Document {
   title: string;
   description: string;
@@ -9,8 +8,7 @@ export interface IValueDocument extends Document {
   image: string;
 }
 
-// ─── Mongoose Schema ──────────────────────────────────────────────────────────
-
+// Mongoose Schema
 const valueSchema = new Schema<IValueDocument>(
   {
     title: {
@@ -41,8 +39,7 @@ const valueSchema = new Schema<IValueDocument>(
   }
 );
 
-// ─── Model ────────────────────────────────────────────────────────────────────
-
+// Model
 export const ValueModel: Model<IValueDocument> = mongoose.model<IValueDocument>(
   "Value",
   valueSchema

@@ -11,25 +11,18 @@ import type { Event } from "../types/event";
 import type { ContactInfoItem } from "../types/contactInfo";
 import type { PageHero } from "./cms.service";
 
-// ─── Fallback Data Compilation ────────────────────────────────────────────────
-//
-// Centralized local fallback dataset. Every value is strongly typed against
-// the application's existing interfaces. Used when the backend API is
-// unreachable (network errors, timeouts, 5xx). Local image paths reference
-// files in public/assets/images/.
-//
-// ───────────────────────────────────────────────────────────────────────────────
+// Fallback Data Compilation
+// Centralized local fallback dataset. Every value is strongly typed against the application's existing interfaces. Used when the backend API is unreachable (network errors, timeouts, 5xx). Local image paths reference files in public/assets/images/.
 
-// ─── Socials ──────────────────────────────────────────────────────────────────
-
+// Socials
 const socials: Social[] = [
   { _id: "social1", label: "Instagram", link: "#" },
   { _id: "social2", label: "YouTube", link: "#" },
 ];
 
-// ─── Home ─────────────────────────────────────────────────────────────────────
-
+// Home
 const homeHero: PageHero = {
+  _id: "homeHero",
   page: "home",
   image: "/assets/images/home/homeHero.png",
 };
@@ -41,6 +34,7 @@ const homeStats: Stat[] = [
     suffix: "+",
     label: "Active Members",
     image: "/assets/images/home/members.png",
+    isFloat: false,
   },
   {
     _id: "stat2",
@@ -48,14 +42,15 @@ const homeStats: Stat[] = [
     suffix: "+",
     label: "Rides Completed",
     image: "/assets/images/home/rides.png",
+    isFloat: false,
   },
   {
     _id: "stat3",
     target: 1.2,
     suffix: "L+",
     label: "Collective KMs",
-    isFloat: true,
     image: "/assets/images/home/collective.png",
+    isFloat: true,
   },
   {
     _id: "stat4",
@@ -63,6 +58,7 @@ const homeStats: Stat[] = [
     suffix: "+",
     label: "States Covered",
     image: "/assets/images/home/states.png",
+    isFloat: false,
   },
 ];
 
@@ -180,9 +176,9 @@ const homeGallery: GalleryImage[] = [
   { _id: "gallery6", src: "/assets/images/gallery/gallery6.jpg", title: "Golden Hour Viewpoint", page: "home" },
 ];
 
-// ─── About ────────────────────────────────────────────────────────────────────
-
+// About
 const aboutHero: PageHero = {
+  _id: "aboutHero",
   page: "about",
   image: "/assets/images/about/aboutHero.png",
 };
@@ -213,14 +209,14 @@ const aboutRidingCode: RidingCode[] = [
   { _id: "riding5", rule: "Earn Your Stripes", detail: "Trust in this community is built through shared miles, not talk. Actions define the rider." },
 ];
 
-// ─── Crew ─────────────────────────────────────────────────────────────────────
-
+// Crew
 const crewHero: PageHero = {
+  _id: "crewHero",
   page: "crew",
   image: "/assets/images/crew/crewHero.png",
 };
 
-const crewMembers: Member[] = [
+const mvpMembers: Member[] = [
   {
     username: "arjunmehta",
     name: "Arjun Mehta",
@@ -271,9 +267,60 @@ const crewMembers: Member[] = [
   },
 ];
 
-// ─── Rides ────────────────────────────────────────────────────────────────────
+const normalMembers: Member[] = [
+  {
+    username: "arjunmehta",
+    name: "Arjun Mehta",
+    headline: "Founder & Ride Leader",
+    avatar: "/assets/images/crew/crew1.jpg",
+    years: 7,
+    location: "Mumbai, Maharashtra",
+  },
+  {
+    username: "priyanair",
+    name: "Priya Nair",
+    headline: "Route Architect",
+    avatar: "/assets/images/crew/crew2.jpg",
+    years: 5,
+    location: "Pune, Maharashtra",
+  },
+  {
+    username: "rajansharma",
+    name: "Rajan Sharma",
+    headline: "Mechanic & Crew Chief",
+    avatar: "/assets/images/crew/crew3.jpg",
+    years: 8,
+    location: "Delhi, NCR",
+  },
+  {
+    username: "kavyareddy",
+    name: "Kavya Reddy",
+    headline: "Content & Visual Lead",
+    avatar: "/assets/images/crew/crew4.jpg",
+    years: 3,
+    location: "Hyderabad, Telangana",
+  },
+  {
+    username: "devkrishnan",
+    name: "Dev Krishnan",
+    headline: "Safety Officer",
+    avatar: "/assets/images/crew/crew5.jpg",
+    years: 6,
+    location: "Bengaluru, Karnataka",
+  },
+  {
+    username: "zarakhan",
+    name: "Zara Khan",
+    headline: "Events Coordinator",
+    avatar: "/assets/images/crew/crew6.jpg",
+    years: 4,
+    location: "Jaipur, Rajasthan",
+  },
+];
 
+// Rides
 const ridesHero: PageHero = {
+  _id: "ridesHero",
   page: "rides",
   image: "/assets/images/rides/ridesHero.png",
 };
@@ -365,9 +412,9 @@ const ridesGallery: GalleryImage[] = [
   { _id: "gallery6", src: "/assets/images/gallery/gallery6.jpg", title: "Golden Hour Viewpoint", page: "rides" },
 ];
 
-// ─── Events ───────────────────────────────────────────────────────────────────
-
+// Events
 const eventsHero: PageHero = {
+  _id: "eventsHero",
   page: "events",
   image: "/assets/images/events/eventsHero.png",
 };
@@ -389,9 +436,9 @@ const eventsGallery: GalleryImage[] = [
   { _id: "gallery6", src: "/assets/images/gallery/gallery6.jpg", title: "Golden Hour Viewpoint", page: "events" },
 ];
 
-// ─── Contact ──────────────────────────────────────────────────────────────────
-
+// Contact
 const contactHero: PageHero = {
+  _id: "contactHero",
   page: "contact",
   image: "/assets/images/contact/contactHero.png",
 };
@@ -405,9 +452,9 @@ const contactInfo: ContactInfoItem[] = [
   { _id: "contact6", label: "Website", value: "www.motoxcode.in", type: "website" },
 ];
 
-// ─── Join ─────────────────────────────────────────────────────────────────────
-
+// Join
 const joinHero: PageHero = {
+  _id: "joinHero",
   page: "join",
   image: "/assets/images/join/joinHero.png",
 };
@@ -421,8 +468,7 @@ const joinGallery: GalleryImage[] = [
   { _id: "gallery6", src: "/assets/images/gallery/gallery6.jpg", title: "Golden Hour Viewpoint", page: "join" },
 ];
 
-// ─── Exported Compilation Object ──────────────────────────────────────────────
-
+// Exported Compilation Object
 export const fallbackData = {
   socials,
   home: {
@@ -441,7 +487,8 @@ export const fallbackData = {
   },
   crew: {
     hero: crewHero,
-    members: crewMembers,
+    mvpMembers: mvpMembers,
+    normalMembers: normalMembers,
   },
   rides: {
     hero: ridesHero,

@@ -1,7 +1,6 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
 
-// ─── TypeScript Interface ─────────────────────────────────────────────────────
-
+// TypeScript Interface
 export type PageHeroPage =
   | "home"
   | "about"
@@ -16,8 +15,7 @@ export interface IPageHero extends Document {
   image: string;
 }
 
-// ─── Mongoose Schema ──────────────────────────────────────────────────────────
-
+// Mongoose Schema
 const pageHeroSchema = new Schema<IPageHero>(
   {
     page: {
@@ -46,18 +44,14 @@ const pageHeroSchema = new Schema<IPageHero>(
   },
   {
     collection: "page_heros",
-    // Expose virtual 'id' (string) alongside '_id' for seamless alignment
-    // with frontend components that consume { id: string } shaped objects.
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
-    // Suppress the __v field — not needed for a simple key/value config document.
     versionKey: false,
-  }
+  },
 );
 
-// ─── Model ────────────────────────────────────────────────────────────────────
-
+// Model
 export const PageHeroModel: Model<IPageHero> = mongoose.model<IPageHero>(
   "PageHero",
-  pageHeroSchema
+  pageHeroSchema,
 );

@@ -532,7 +532,9 @@ export async function linkGoogleAccount(
     const existingOtherUser = await Member.findOne({
       email: googlePayload.email,
       _id: { $ne: req.user._id },
-    }).select("_id").lean();
+    })
+      .select("_id")
+      .lean();
 
     if (existingOtherUser) {
       throw new AppError(

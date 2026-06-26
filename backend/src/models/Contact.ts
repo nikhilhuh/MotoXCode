@@ -1,18 +1,15 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
 
-// ─── TypeScript Interface ─────────────────────────────────────────────────────
-
+// TypeScript Interface
 export interface IContactDocument extends Document {
   name: string;
   email: string;
   subject?: string;
   message: string;
-  createdAt: Date;
-  updatedAt: Date;
+  status: "pending" | "completed";
 }
 
-// ─── Mongoose Schema ──────────────────────────────────────────────────────────
-
+// Mongoose Schema
 const contactSchema = new Schema<IContactDocument>(
   {
     name: {
@@ -37,18 +34,22 @@ const contactSchema = new Schema<IContactDocument>(
       required: [true, "message is required"],
       trim: true,
     },
+    status: {
+      type: String,
+      required: [true, "status is required"],
+      trim: true,
+      enum: ["pending", "completed"],
+      default: "pending",
+    },
   },
   {
     collection: "contact_requests",
-    timestamps: true, // Adds createdAt and updatedAt automatically
+    timestamps: true,
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
-  }
+  },
 );
 
-// ─── Model ────────────────────────────────────────────────────────────────────
-
-export const ContactModel: Model<IContactDocument> = mongoose.model<IContactDocument>(
-  "Contact",
-  contactSchema
-);
+// Model
+export const ContactModel: Model<IContactDocument> =
+  mongoose.model<IContactDocument>("Contact", contactSchema);

@@ -1,14 +1,12 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
 
-// ─── TypeScript Interface ─────────────────────────────────────────────────────
-
+// TypeScript Interface
 export interface IRidingCodeDocument extends Document {
   rule: string;
   detail: string;
 }
 
-// ─── Mongoose Schema ──────────────────────────────────────────────────────────
-
+// Mongoose Schema
 const ridingCodeSchema = new Schema<IRidingCodeDocument>(
   {
     rule: {
@@ -30,7 +28,6 @@ const ridingCodeSchema = new Schema<IRidingCodeDocument>(
   }
 );
 
-// ─── Model ────────────────────────────────────────────────────────────────────
-
+// Model
 export const RidingCodeModel: Model<IRidingCodeDocument> =
   mongoose.model<IRidingCodeDocument>("RidingCode", ridingCodeSchema);

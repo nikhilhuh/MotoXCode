@@ -1,22 +1,17 @@
 import { Request, Response, NextFunction } from "express";
-import {
-  PageHeroModel,
-  IPageHero,
-  Member,
-} from "../models";
+import { PageHeroModel, IPageHero, Member } from "../models";
 
-// ─── Response Shapes ──────────────────────────────────────────────────────────
-
+// Response Shapes
 interface CrewDataResponse {
   success: true;
   data: {
     hero: IPageHero | null;
-    members: any[];
+    mvpMembers: any[];
+    normalMembers: any[];
   };
 }
 
-// ─── Controller ───────────────────────────────────────────────────────────────
-
+// Controller
 /**
  * CrewController — serves member rosters and squad allocations.
  */
@@ -28,27 +23,27 @@ export class CrewController {
   async getCrewData(
     _req: Request,
     res: Response<CrewDataResponse>,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> {
     try {
       const [hero, rawMembers] = await Promise.all([
         PageHeroModel.findOne({ page: "crew" }).lean<IPageHero | null>(),
-        Member.find({}).select("username avatar name headline location years role").lean(),
+        Member.find({})
+          .select("-_id username avatar name headline location years role")
+          .lean(),
       ]);
 
-      const members = rawMembers.map(m => ({
-        username: m.username,
-        avatar: m.avatar,
-        name: m.name,
-        headline: m.headline,
-        location: m.location,
-        years: m.years,
-        role: m.role,
-      }));
+      const mvpMembers = rawMembers
+        .filter((m) => m.role === "admin" || m.role === "crew")
+        .map(({ role, ...member }) => member);
+
+      const normalMembers = rawMembers
+        .filter((m) => m.role !== "admin" && m.role !== "crew")
+        .map(({ role, ...member }) => member);
 
       const body: CrewDataResponse = {
         success: true,
-        data: { hero, members },
+        data: { hero, mvpMembers, normalMembers },
       };
       res.status(200).json(body);
     } catch (err) {

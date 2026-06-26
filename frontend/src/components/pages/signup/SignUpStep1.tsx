@@ -1,9 +1,8 @@
+import axios from 'axios';
 import React, { useState } from "react";
 import Cliploader from "@/components/ui/Cliploader";
 import { registerSendOTP } from "@/services/auth.service";
 import { useFeedback } from "@/context/FeedbackContext";
-import { AxiosError } from "axios";
-
 // ─── Props ────────────────────────────────────────────────────────────────────
 
 interface SignUpStep1Props {
@@ -43,9 +42,14 @@ const SignUpStep1: React.FC<SignUpStep1Props> = ({ email, setEmail, onSuccess })
       showSuccess("OTP sent! Check your inbox.");
       onSuccess();
     } catch (err) {
-      const error = err as AxiosError<{ message: string }>;
-      showError(error.response?.data?.message ?? "Failed to send OTP. Please try again.");
-    } finally {
+        if (axios.isAxiosError(err) && err.response) {
+          showError(err.response.data.message || "Backend operation failed.");
+        } else if (err instanceof Error) {
+          showError(err.message);
+        } else {
+          showError("An unexpected error occurred.");
+        }
+      } finally {
       setLoading(false);
     }
   };

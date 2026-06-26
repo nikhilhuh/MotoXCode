@@ -4,25 +4,24 @@ import { fallbackData } from "./fallbackData";
 import type { Member } from "../types/member";
 import type { PageHero } from "./cms.service";
 
-// ─── API Response Payload ─────────────────────────────────────────────────────
-
+// API Response Payload
 interface CrewApiResponse {
   success: boolean;
   data: {
     hero: PageHero;
-    members: Member[];
+    mvpMembers: Member[];
+    normalMembers: Member[];
   };
 }
 
-// ─── Return Type ──────────────────────────────────────────────────────────────
-
+// Return Type
 interface CrewData {
   hero: PageHero;
-  members: Member[];
+  mvpMembers: Member[];
+  normalMembers: Member[];
 }
 
-// ─── Service ──────────────────────────────────────────────────────────────────
-
+// Service
 export const crewService = {
   async fetchCrewData(): Promise<CrewData> {
     try {

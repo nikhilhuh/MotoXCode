@@ -9,26 +9,20 @@ import { passwordResetRouter } from "./passwordReset.routes";
 import { profileRouter } from "./profile.routes";
 
 /**
- * Central API router barrel.
- *
+ * Central API router.
  * All sub-routers are mounted here and this router is attached to
  * '/api' in app.ts. Each sub-router owns a distinct resource domain.
  *
- * ─── Route Map ─────────────────────────────────────────────────────────────
- *
+ * Route Map
  *   /api/cms      → Static/dynamic text and core presentation assets
  *   /api/rides    → Community rides, tracking, events, and media streams
  *   /api/crew     → Member rosters and squad allocations
  *   /api/intake   → Secure form submission parsing listeners
  *   /api/auth     → Authentication ecosystem (password / OTP / Google)
- *
- * Legacy:
- *   /api/test     → Demo route (remove when replaced)
  */
 const apiRouter = Router();
 
-// ─── Resource Routes ──────────────────────────────────────────────────────────
-
+// Resource Routes
 apiRouter.use("/", cmsRouter);
 apiRouter.use("/", rideRouter);
 apiRouter.use("/", eventRouter);
@@ -36,12 +30,10 @@ apiRouter.use("/", crewRouter);
 apiRouter.use("/", intakeRouter);
 apiRouter.use("/profiles", profileRouter);
 
-// ─── Auth Routes ──────────────────────────────────────────────────────────────
-
+// Authentication Routes
 apiRouter.use("/auth", authRouter);
 
-// ─── Password Reset Routes (Flat) ─────────────────────────────────────────────
-
+// Password Reset Routes
 apiRouter.use("/", passwordResetRouter);
 
 export { apiRouter };

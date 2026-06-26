@@ -1,3 +1,4 @@
+import axios from 'axios';
 import React, { useEffect, useState } from "react";
 import { useSearchParams, useNavigate, Link } from "react-router-dom";
 import { verifyResetToken, resetPassword } from "@/services/auth.service";
@@ -5,8 +6,6 @@ import { useFeedback } from "@/context/FeedbackContext";
 import Cliploader from "@/components/ui/Cliploader";
 import PasswordRequirements from "@/components/ui/PasswordRequirements";
 import SignInImg from "/assets/images/signin/signin.png";
-import { AxiosError } from "axios";
-
 const ResetPassword: React.FC = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -36,10 +35,14 @@ const ResetPassword: React.FC = () => {
         await verifyResetToken(email, token);
         setIsTokenValid(true);
       } catch (err) {
-        const errorResponse = err as AxiosError<{ message: string }>;
-        showError(errorResponse.response?.data?.message ?? "Invalid or expired reset token.");
-        setIsTokenValid(false);
-      } finally {
+          if (axios.isAxiosError(err) && err.response) {
+            showError(err.response.data.message || "Backend operation failed.");
+          } else if (err instanceof Error) {
+            showError(err.message);
+          } else {
+            showError("An unexpected error occurred.");
+          }
+        } finally {
         setVerifying(false);
       }
     };
@@ -77,9 +80,14 @@ const ResetPassword: React.FC = () => {
       showSuccess(response.data.message);
       navigate("/signin");
     } catch (err) {
-      const errorResponse = err as AxiosError<{ message: string }>;
-      showError(errorResponse.response?.data?.message ?? "Failed to reset password.");
-    } finally {
+        if (axios.isAxiosError(err) && err.response) {
+          showError(err.response.data.message || "Backend operation failed.");
+        } else if (err instanceof Error) {
+          showError(err.message);
+        } else {
+          showError("An unexpected error occurred.");
+        }
+      } finally {
       setSubmitting(false);
     }
   };

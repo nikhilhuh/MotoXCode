@@ -4,6 +4,7 @@ import { profileService } from "../../../services/profile.service";
 import type { Profile as ProfileType } from "../../../types/profile";
 import { useFeedback } from "../../../context/FeedbackContext";
 import Cliploader from "@/components/ui/Cliploader";
+import axios from "axios";
 
 interface OperationsDeskProps {
   profile: ProfileType | null;
@@ -29,9 +30,14 @@ export default function OperationsDesk({ profile, setProfile }: OperationsDeskPr
       setProfile((prev) => prev ? { ...prev, strikes: res.strikes } : prev);
       showSuccess(`Strike issued. Current count: ${res.strikes}`);
     } catch (err: unknown) {
-      const message = (err as { response?: { data?: { message?: string } } }).response?.data?.message;
-      showError(message || "Failed to issue strike.");
-    } finally {
+        if (axios.isAxiosError(err) && err.response) {
+          showError(err.response.data.message || "Failed to issue strike.");
+        } else if (err instanceof Error) {
+          showError(err.message);
+        } else {
+          showError("An unexpected error occurred.");
+        }
+      } finally {
       setIsSubmitting(false);
     }
   };
@@ -44,9 +50,14 @@ export default function OperationsDesk({ profile, setProfile }: OperationsDeskPr
       setProfile((prev) => prev ? { ...prev, strikes: res.strikes } : prev);
       showSuccess(action === "reset" ? "Strike record cleared." : `Strike reduced. Current count: ${res.strikes}`);
     } catch (err: unknown) {
-      const message = (err as { response?: { data?: { message?: string } } }).response?.data?.message;
-      showError(message || "Failed to reduce strike.");
-    } finally {
+        if (axios.isAxiosError(err) && err.response) {
+          showError(err.response.data.message || "Failed to reduce strike.");
+        } else if (err instanceof Error) {
+          showError(err.message);
+        } else {
+          showError("An unexpected error occurred.");
+        }
+      } finally {
       setIsSubmitting(false);
     }
   };
@@ -59,9 +70,14 @@ export default function OperationsDesk({ profile, setProfile }: OperationsDeskPr
       setProfile((prev) => prev ? { ...prev, role: res.role, strikes: res.strikes } : prev);
       showSuccess(`Role updated to '${res.role}' successfully.`);
     } catch (err: unknown) {
-      const message = (err as { response?: { data?: { message?: string } } }).response?.data?.message;
-      showError(message || "Failed to update role.");
-    } finally {
+        if (axios.isAxiosError(err) && err.response) {
+          showError(err.response.data.message || "Failed to update role.");
+        } else if (err instanceof Error) {
+          showError(err.message);
+        } else {
+          showError("An unexpected error occurred.");
+        }
+      } finally {
       setIsSubmitting(false);
     }
   };

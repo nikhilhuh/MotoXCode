@@ -1,7 +1,6 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
 
-// ─── TypeScript Interface ─────────────────────────────────────────────────────
-
+// TypeScript Interface
 export type RouteType = "Inter-state" | "Inter-city" | "Intra-city";
 
 export interface IRideDocument extends Document {
@@ -20,10 +19,10 @@ export interface IRideDocument extends Document {
   description: string;
   duration: string;
   past: boolean;
+  riders: mongoose.Types.ObjectId[];
 }
 
-// ─── Mongoose Schema ──────────────────────────────────────────────────────────
-
+// Mongoose Schema
 const rideSchema = new Schema<IRideDocument>(
   {
     title: {
@@ -90,18 +89,22 @@ const rideSchema = new Schema<IRideDocument>(
       type: Boolean,
       default: false,
     },
+    riders: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Member",
+        default: [],
+      },
+    ],
   },
   {
     collection: "rides",
-    // Expose virtual 'id' (string) alongside '_id' for seamless alignment
-    // with frontend interfaces that use { id: string } instead of { _id: ObjectId }.
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
   }
 );
 
-// ─── Model ────────────────────────────────────────────────────────────────────
-
+// Model
 export const RideModel: Model<IRideDocument> = mongoose.model<IRideDocument>(
   "Ride",
   rideSchema

@@ -1,10 +1,9 @@
+import axios from 'axios';
 import React, { useRef, useState } from "react";
 import { BiCheck, BiEdit } from "react-icons/bi";
 import Cliploader from "@/components/ui/Cliploader";
 import { registerVerifyOTP, registerSendOTP } from "@/services/auth.service";
 import { useFeedback } from "@/context/FeedbackContext";
-import { AxiosError } from "axios";
-
 // ─── Props ────────────────────────────────────────────────────────────────────
 
 interface SignUpStep2Props {
@@ -92,9 +91,14 @@ const SignUpStep2: React.FC<SignUpStep2Props> = ({ email, onSuccess, onBack }) =
       showSuccess("Email verified! Set up your profile.");
       onSuccess(verifiedToken);
     } catch (err) {
-      const error = err as AxiosError<{ message: string }>;
-      showError(error.response?.data?.message ?? "OTP verification failed. Please try again.");
-    } finally {
+        if (axios.isAxiosError(err) && err.response) {
+          showError(err.response.data.message || "Backend operation failed.");
+        } else if (err instanceof Error) {
+          showError(err.message);
+        } else {
+          showError("An unexpected error occurred.");
+        }
+      } finally {
       setVerifying(false);
     }
   };
@@ -117,9 +121,14 @@ const SignUpStep2: React.FC<SignUpStep2Props> = ({ email, onSuccess, onBack }) =
         setResendLabel("Resend Code");
       }, 60_000);
     } catch (err) {
-      const error = err as AxiosError<{ message: string }>;
-      showError(error.response?.data?.message ?? "Failed to resend code. Please try again.");
-    } finally {
+        if (axios.isAxiosError(err) && err.response) {
+          showError(err.response.data.message || "Backend operation failed.");
+        } else if (err instanceof Error) {
+          showError(err.message);
+        } else {
+          showError("An unexpected error occurred.");
+        }
+      } finally {
       setResending(false);
     }
   };

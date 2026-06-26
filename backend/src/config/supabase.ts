@@ -3,9 +3,8 @@ import { env } from "./env.config";
 
 /**
  * Server-side Supabase admin client.
- *
  * Uses the service_role key — bypasses Row Level Security (RLS).
- * This client is strictly for server-side operations (file/image bucket
+ * Strictly for server-side operations (file/image bucket
  * management, admin queries). Never expose this key to the frontend.
  */
 const supabase: SupabaseClient = createClient(
@@ -18,7 +17,7 @@ const supabase: SupabaseClient = createClient(
       persistSession: false,
       autoRefreshToken: false,
     },
-  }
+  },
 );
 
 /**
@@ -40,7 +39,7 @@ export async function verifySupabaseConnection(): Promise<void> {
     console.error(`❌ Supabase connection failed: ${message}`);
     console.error(
       "   → Check that SUPABASE_SERVICE_ROLE_KEY is the service_role key (not anon) from:\n" +
-      "     Supabase Dashboard → Project Settings → API → service_role (secret)"
+        "     Supabase Dashboard → Project Settings → API → service_role (secret)",
     );
     process.exit(1);
   }

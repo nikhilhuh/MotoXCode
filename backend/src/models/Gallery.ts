@@ -1,7 +1,6 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
 
-// ─── TypeScript Interface ─────────────────────────────────────────────────────
-
+// TypeScript Interface
 export type GalleryPageType = "home" | "rides" | "events" | "join";
 
 export interface IGalleryDocument extends Document {
@@ -10,8 +9,7 @@ export interface IGalleryDocument extends Document {
   page: GalleryPageType;
 }
 
-// ─── Mongoose Schema ──────────────────────────────────────────────────────────
-
+// Mongoose Schema
 const gallerySchema = new Schema<IGalleryDocument>(
   {
     src: {
@@ -39,8 +37,7 @@ const gallerySchema = new Schema<IGalleryDocument>(
   }
 );
 
-// ─── Model ────────────────────────────────────────────────────────────────────
-
+// Model
 export const GalleryModel: Model<IGalleryDocument> = mongoose.model<IGalleryDocument>(
   "Gallery",
   gallerySchema

@@ -1,15 +1,13 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
 
-// ─── TypeScript Interface ─────────────────────────────────────────────────────
-
+// TypeScript Interface
 export interface IContactInfoDocument extends Document {
   label: string;
   value: string;
   type: string;
 }
 
-// ─── Mongoose Schema ──────────────────────────────────────────────────────────
-
+// Mongoose Schema
 const contactInfoSchema = new Schema<IContactInfoDocument>(
   {
     label: {
@@ -33,10 +31,9 @@ const contactInfoSchema = new Schema<IContactInfoDocument>(
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
     versionKey: false,
-  }
+  },
 );
 
-// ─── Model ────────────────────────────────────────────────────────────────────
-
+// Model
 export const ContactInfoModel: Model<IContactInfoDocument> =
   mongoose.model<IContactInfoDocument>("ContactInfo", contactInfoSchema);

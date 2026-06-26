@@ -6,6 +6,7 @@ import { registerSendOTP } from "../../../services/auth.service";
 import { profileService } from "../../../services/profile.service";
 import { useFeedback } from "@/context/FeedbackContext";
 import { useUser } from "@/context/UserContext";
+import axios from "axios";
 
 interface EmailEditModalProps {
   onClose: () => void;
@@ -42,8 +43,14 @@ export default function EmailEditModal({ onClose, username }: EmailEditModalProp
       showSuccess("OTP sent to your new email address.");
       setStep(2);
     } catch (err: any) {
-      showError(err.response?.data?.message || "Failed to send OTP. This email might already be taken.");
-    } finally {
+        if (axios.isAxiosError(err) && err.response) {
+          showError(err.response.data.message || "Failed to send OTP. This email might already be taken.");
+        } else if (err instanceof Error) {
+          showError(err.message);
+        } else {
+          showError("An unexpected error occurred.");
+        }
+      } finally {
       setLoading(false);
     }
   };
@@ -62,8 +69,14 @@ export default function EmailEditModal({ onClose, username }: EmailEditModalProp
       setUserDetails(prev => prev ? { ...prev, email: newEmail.trim().toLowerCase() } : prev);
       onClose();
     } catch (err: any) {
-      showError(err.response?.data?.message || "Failed to change email. Please try again.");
-    } finally {
+        if (axios.isAxiosError(err) && err.response) {
+          showError(err.response.data.message || "Failed to change email. Please try again.");
+        } else if (err instanceof Error) {
+          showError(err.message);
+        } else {
+          showError("An unexpected error occurred.");
+        }
+      } finally {
       setLoading(false);
     }
   };

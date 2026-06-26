@@ -7,6 +7,7 @@ import { cmsService } from "@/services";
 import type { PageHero } from "@/services/cms.service";
 import Cliploader from "@/components/ui/Cliploader";
 import { compressImage } from "@/services/imageCompression.service";
+import axios from "axios";
 
 interface JoinHeroEditData {
   image: string | File;
@@ -75,20 +76,26 @@ export default function JoinHero({ JoinHeroBg, onUpdate }: JoinHeroProps) {
       const result = await cmsService.updatePageHeroCMSData(formData);
       if (result.success) {
         showSuccess("Join hero background updated successfully!");
-        const resultData = result.data as { image?: string } | undefined;
+        const resultData = result.data as { _id?: string, image?: string } | undefined;
         if (resultData?.image) {
           setField({ image: resultData.image });
-          onUpdate?.({ page: "join", image: resultData.image });
+          onUpdate?.({ _id: resultData?._id || "joinHero", page: "join", image: resultData.image });
         } else {
-          onUpdate?.({ page: "join", image: resolvedBg });
+          onUpdate?.({ _id: resultData?._id || "joinHero", page: "join", image: resolvedBg });
         }
         finishEditing();
       } else {
         showError(result.message || "Failed to update hero background.");
       }
     } catch (error: unknown) {
-      showError(error instanceof Error ? error.message : "Failed to update hero background.");
-    } finally {
+        if (axios.isAxiosError(error) && error.response) {
+          showError(error.response.data.message || "Failed to update hero background.");
+        } else if (error instanceof Error) {
+          showError(error.message);
+        } else {
+          showError("An unexpected error occurred.");
+        }
+      } finally {
       setIsSaving(false);
     }
   }

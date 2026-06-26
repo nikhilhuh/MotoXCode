@@ -20,6 +20,7 @@ import {
   FaTrash,
   FaPlus,
 } from "react-icons/fa6";
+import axios from "axios";
 
 const SOCIAL_OPTIONS = [
   "Instagram",
@@ -142,8 +143,14 @@ export default function Footer({ socials, onUpdateSocials }: FooterProps) {
         showError(res.message || "Failed to update socials");
       }
     } catch (err: any) {
-      showError(err.response?.data?.message || "Error updating socials");
-    } finally {
+        if (axios.isAxiosError(err) && err.response) {
+          showError(err.response.data.message || "Error updating socials");
+        } else if (err instanceof Error) {
+          showError(err.message);
+        } else {
+          showError("An unexpected error occurred.");
+        }
+      } finally {
       setIsSaving(false);
     }
   };

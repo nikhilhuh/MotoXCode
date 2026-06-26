@@ -8,11 +8,10 @@ import { useAdminEditable } from "@/hooks/useAdminEditable";
 import { cmsService } from "@/services";
 import type { PageHero } from "@/services/cms.service";
 import Cliploader from "@/components/ui/Cliploader";
+import axios from "axios";
 
-// ─── Types ────────────────────────────────────────────────────────────────────
-
+// Types
 interface HeroEditData {
-  /** Server image URL (read mode) or a compressed File (edit mode pending save). */
   image: string | File;
 }
 
@@ -21,8 +20,7 @@ interface HeroProp {
   onUpdate?: (updatedHero: PageHero) => void;
 }
 
-// ─── Animation Variants ───────────────────────────────────────────────────────
-
+// Animation Variants
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
@@ -43,8 +41,7 @@ const itemVariants = {
   },
 };
 
-// ─── Component ────────────────────────────────────────────────────────────────
-
+// Component
 export default function Hero({ HeroBg, onUpdate }: HeroProp) {
   const heroRef = useRef<HTMLDivElement>(null);
   const { userDetails, isInitialized } = useUser();
@@ -99,7 +96,7 @@ export default function Hero({ HeroBg, onUpdate }: HeroProp) {
       if (result.success) {
         showSuccess("Hero background image updated successfully!");
         
-        const resultData = result.data as { image?: string } | undefined;
+        const resultData = result.data as { _id?: string, image?: string } | undefined;
         
         if (resultData && resultData.image) {
           setField({ image: resultData.image });
@@ -108,17 +105,22 @@ export default function Hero({ HeroBg, onUpdate }: HeroProp) {
         
         // Update local hydrated page state with the fresh public URL returned from server response
         if (resultData && resultData.image && onUpdate) {
-          onUpdate({ page: "home", image: resultData.image });
+          onUpdate({ _id: resultData?._id || "homeHero", page: "home", image: resultData.image });
         } else if (onUpdate) {
-          onUpdate({ page: "home", image: resolvedBg });
+          onUpdate({_id: resultData?._id || "homeHero", page: "home", image: resolvedBg });
         }
       } else {
         showError(result.message || "Failed to update hero background.");
       }
     } catch (error: any) {
-      console.error("[CMS Frontend Error Handlers]:", error);
-      showError(error.response?.data?.message || error.message || "Failed to update hero background.");
-    } finally {
+        if (axios.isAxiosError(error) && error.response) {
+          showError(error.response.data.message || "Failed to update hero background.");
+        } else if (error instanceof Error) {
+          showError(error.message);
+        } else {
+          showError("An unexpected error occurred.");
+        }
+      } finally {
       setIsSaving(false);
     }
   }

@@ -1,15 +1,13 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
 
-// ─── TypeScript Interface ─────────────────────────────────────────────────────
-
+// TypeScript Interface
 export interface ITimelineDocument extends Document {
   year: string;
   location: string;
   event: string;
 }
 
-// ─── Mongoose Schema ──────────────────────────────────────────────────────────
-
+// Mongoose Schema
 const timelineSchema = new Schema<ITimelineDocument>(
   {
     year: {
@@ -36,7 +34,6 @@ const timelineSchema = new Schema<ITimelineDocument>(
   }
 );
 
-// ─── Model ────────────────────────────────────────────────────────────────────
-
+// Model
 export const TimelineModel: Model<ITimelineDocument> =
   mongoose.model<ITimelineDocument>("Timeline", timelineSchema);

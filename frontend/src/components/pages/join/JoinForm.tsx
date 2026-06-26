@@ -4,6 +4,7 @@ import { Membership } from "@/types/membership";
 import { intakeService } from "@/services";
 import { useFeedback } from "@/context/FeedbackContext";
 import Cliploader from "@/components/ui/Cliploader";
+import axios from "axios";
 
 const experienceLevels = [
   "< 1 year",
@@ -116,9 +117,14 @@ export default function JoinForm() {
       showSuccess("Application submitted! We'll review it and get back to you within 7 days.");
       setSubmitted(true);
     } catch (err) {
-      console.error("Failed to submit form:", err);
-      showError("Failed to submit application. Please try again later.");
-    } finally {
+        if (axios.isAxiosError(err) && err.response) {
+          showError(err.response.data.message || "Backend operation failed.");
+        } else if (err instanceof Error) {
+          showError(err.message);
+        } else {
+          showError("An unexpected error occurred.");
+        }
+      } finally {
       setIsSubmitting(false);
     }
   }

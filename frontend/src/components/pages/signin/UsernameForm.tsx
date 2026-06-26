@@ -1,3 +1,4 @@
+import axios from 'axios';
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { SignInUser } from "@/types/signInUser";
@@ -5,8 +6,6 @@ import Cliploader from "@/components/ui/Cliploader";
 import { loginWithPassword } from "@/services/auth.service";
 import { useUser } from "@/context/UserContext";
 import { useFeedback } from "@/context/FeedbackContext";
-import { AxiosError } from "axios";
-
 interface UsernameFormProps {
   onForgotPassword?: () => void;
 }
@@ -66,9 +65,14 @@ const UsernameForm: React.FC<UsernameFormProps> = ({ onForgotPassword }) => {
       showSuccess(`You are signed in as ${user.username}`);
       navigate("/");
     } catch (err) {
-      const error = err as AxiosError<{ message: string }>;
-      showError(error.response?.data?.message ?? "Sign in failed. Please try again.");
-    } finally {
+        if (axios.isAxiosError(err) && err.response) {
+          showError(err.response.data.message || "Backend operation failed.");
+        } else if (err instanceof Error) {
+          showError(err.message);
+        } else {
+          showError("An unexpected error occurred.");
+        }
+      } finally {
       setLoading(false);
     }
   };

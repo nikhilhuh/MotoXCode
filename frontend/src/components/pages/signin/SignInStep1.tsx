@@ -1,10 +1,9 @@
+import axios from 'axios';
 import React, { useState } from "react";
 import mailImg from "/assets/images/signin/mail.svg";
 import Cliploader from "@/components/ui/Cliploader";
 import { requestOTP } from "@/services/auth.service";
 import { useFeedback } from "@/context/FeedbackContext";
-import { AxiosError } from "axios";
-
 type Props = {
   email: string;
   setEmail: React.Dispatch<React.SetStateAction<string>>;
@@ -47,9 +46,14 @@ const SignInStep1: React.FC<Props> = ({
       showSuccess("An OTP has been sent to your email.");
       setStep(2);
     } catch (err) {
-      const error = err as AxiosError<{ message: string }>;
-      showError(error.response?.data?.message ?? "Failed to send OTP. Please try again.");
-    } finally {
+        if (axios.isAxiosError(err) && err.response) {
+          showError(err.response.data.message || "Backend operation failed.");
+        } else if (err instanceof Error) {
+          showError(err.message);
+        } else {
+          showError("An unexpected error occurred.");
+        }
+      } finally {
       setVerifying(false);
     }
   };

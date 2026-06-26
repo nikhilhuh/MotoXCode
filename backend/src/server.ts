@@ -6,21 +6,18 @@ import { env } from "./config/env.config";
 import { connectDB, disconnectDB } from "./config/db";
 import { verifySupabaseConnection } from "./config/supabase";
 
-// ─── Server Instance ──────────────────────────────────────────────────────────
-
+// Server Instance
 const server = http.createServer(app);
 
-// ─── Graceful Shutdown ────────────────────────────────────────────────────────
-
+// Graceful Shutdown
 /**
  * Performs an orderly shutdown of all server resources.
  * Closes the HTTP server first (stops accepting new connections),
  * then disconnects from MongoDB to avoid hanging async operations.
- *
  * @param signal - The OS signal that triggered the shutdown (for logging)
  */
 async function gracefulShutdown(signal: string): Promise<void> {
-  console.log(`\n⚠️  ${signal} received. Shutting down gracefully...`);
+  console.log(`\n⚠️ ${signal} received. Shutting down gracefully...`);
 
   // 1. Stop accepting new HTTP connections
   server.close(async () => {
@@ -41,11 +38,10 @@ async function gracefulShutdown(signal: string): Promise<void> {
   setTimeout(() => {
     console.error("⏱️  Graceful shutdown timed out. Forcing exit.");
     process.exit(1);
-  }, 10_000);
+  }, 10000);
 }
 
-// ─── Process Safety Nets ──────────────────────────────────────────────────────
-
+// Process Safety Nets
 process.on("unhandledRejection", (reason: unknown) => {
   console.error("❌ Unhandled Promise Rejection:", reason);
   // Exit — let the process manager restart cleanly
@@ -57,8 +53,7 @@ process.on("uncaughtException", (err: Error) => {
   process.exit(1);
 });
 
-// ─── Bootstrap ────────────────────────────────────────────────────────────────
-
+// Bootstrap
 async function main(): Promise<void> {
   // 1. Connect to MongoDB — exits process on failure
   await connectDB();

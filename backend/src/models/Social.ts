@@ -1,14 +1,12 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
 
-// ─── TypeScript Interface ─────────────────────────────────────────────────────
-
+// TypeScript Interface
 export interface ISocialDocument extends Document {
   label: string;
   link: string;
 }
 
-// ─── Mongoose Schema ──────────────────────────────────────────────────────────
-
+// Mongoose Schema
 const socialSchema = new Schema<ISocialDocument>(
   {
     label: {
@@ -30,8 +28,7 @@ const socialSchema = new Schema<ISocialDocument>(
   }
 );
 
-// ─── Model ────────────────────────────────────────────────────────────────────
-
+// Model
 export const SocialModel: Model<ISocialDocument> = mongoose.model<ISocialDocument>(
   "Social",
   socialSchema

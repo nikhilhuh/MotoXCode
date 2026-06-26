@@ -17,5 +17,7 @@ export interface Ride {
   description: string;
   duration: string;
   past: boolean;
+  isJoined?: boolean;
+  riders?: Array<{ username: string }>;
 }
 

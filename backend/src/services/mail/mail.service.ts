@@ -40,7 +40,7 @@ class MailServiceFacade {
 
       console.log(`[MAIL] Sent Successfully to ${options.to}`);
     } catch (err) {
-      console.error("[MAIL] Failed:", err);
+      console.error("[MAIL] Sending Failed: ", err);
     }
   }
 }

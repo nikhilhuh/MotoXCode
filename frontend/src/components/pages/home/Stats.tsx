@@ -7,6 +7,7 @@ import { useFeedback } from "@/context/FeedbackContext";
 import { compressImage } from "@/services/imageCompression.service";
 import { cmsService } from "@/services";
 import Cliploader from "@/components/ui/Cliploader";
+import axios from "axios";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -17,9 +18,7 @@ interface StatEditRow {
   target: number;
   isFloat: boolean;
   image: string;
-  /** Holds a pending compressed File when the admin picks a new image. */
   pendingImageFile?: File;
-  /** ObjectURL for immediate preview rendering. */
   previewImageUrl?: string;
 }
 
@@ -146,9 +145,14 @@ export default function Stats({ statsData, onStatsUpdate }: StatsProps) {
         showError(result.message || "Failed to save data");
       }
     } catch (err: any) {
-      console.error("[Stats CMS Error]:", err);
-      showError(err.response?.data?.message || err.message || "Failed to update stats.");
-    } finally {
+        if (axios.isAxiosError(err) && err.response) {
+          showError(err.response.data.message || "Failed to update stats.");
+        } else if (err instanceof Error) {
+          showError(err.message);
+        } else {
+          showError("An unexpected error occurred.");
+        }
+      } finally {
       setIsSaving(false);
     }
   }

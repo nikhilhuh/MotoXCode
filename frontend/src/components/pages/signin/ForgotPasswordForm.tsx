@@ -1,9 +1,8 @@
+import axios from 'axios';
 import React, { useState } from "react";
 import Cliploader from "@/components/ui/Cliploader";
 import { forgotPassword } from "@/services/auth.service";
 import { useFeedback } from "@/context/FeedbackContext";
-import { AxiosError } from "axios";
-
 interface ForgotPasswordFormProps {
   onCancel: () => void;
 }
@@ -31,9 +30,14 @@ const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = ({ onCancel }) => 
       showSuccess(response.data.message);
       onCancel(); // Go back to login
     } catch (err) {
-      const errorResponse = err as AxiosError<{ message: string }>;
-      showError(errorResponse.response?.data?.message ?? "Failed to request password reset.");
-    } finally {
+        if (axios.isAxiosError(err) && err.response) {
+          showError(err.response.data.message || "Backend operation failed.");
+        } else if (err instanceof Error) {
+          showError(err.message);
+        } else {
+          showError("An unexpected error occurred.");
+        }
+      } finally {
       setLoading(false);
     }
   };

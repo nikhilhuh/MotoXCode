@@ -38,8 +38,8 @@ export default function Home() {
    * after a successful save so the live page reflects persisted changes
    * without a full re-fetch.
    */
-  const handleHeroUpdate = useCallback((updatedHero: PageHero) => {
-    setHomeData((prev) => (prev ? { ...prev, hero: updatedHero } : prev));
+  const handleHeroUpdate = useCallback((updatedHero: Partial<PageHero>) => {
+    setHomeData((prev) => (prev ? { ...prev, hero: { ...prev.hero, ...updatedHero } } : prev));
   }, []);
 
   const handleStatsUpdate = useCallback((updatedStats: Stat[]) => {

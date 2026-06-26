@@ -10,6 +10,7 @@ import { FaPencil, FaTrash, FaPlus } from "react-icons/fa6";
 import Cliploader from "./Cliploader";
 import ConfirmModal from "./ConfirmModal";
 import PromptModal from "./PromptModal";
+import axios from "axios";
 
 interface GalleryPreviewProps {
   galleryPreviewImages: GalleryImage[];
@@ -150,8 +151,14 @@ export default function GalleryPreview({
       }
       setIsEditing(false);
     } catch (err: any) {
-      showError(err.response?.data?.message || "Failed to save gallery changes.");
-    } finally {
+        if (axios.isAxiosError(err) && err.response) {
+          showError(err.response.data.message || "Failed to save gallery changes.");
+        } else if (err instanceof Error) {
+          showError(err.message);
+        } else {
+          showError("An unexpected error occurred.");
+        }
+      } finally {
       setIsSaving(false);
     }
   }

@@ -59,7 +59,7 @@ export function generateMembershipApplicationTemplate(
     </div>`;
 
   return {
-    subject: `New Membership Application — ${name} (${bike})`,
+    subject: `New Membership Request from ${name}`,
     text: [
       `New membership application received on MotoXCode`,
       ``,

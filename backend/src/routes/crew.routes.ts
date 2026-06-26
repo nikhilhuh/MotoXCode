@@ -4,7 +4,6 @@ import { crewController } from "../controllers/crew.controller";
 /**
  * Crew resource routes.
  * Mounted at: /api
- *
  * Member rosters and squad allocations.
  */
 const crewRouter = Router();

@@ -7,6 +7,7 @@ import { useFeedback } from "@/context/FeedbackContext";
 import { cmsService } from "@/services";
 import ConfirmModal from "@/components/ui/ConfirmModal";
 import Cliploader from "@/components/ui/Cliploader";
+import axios from "axios";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -178,10 +179,14 @@ export default function AboutJourney({
         showError(result.message || "Failed to update timeline.");
       }
     } catch (error: unknown) {
-      showError(
-        error instanceof Error ? error.message : "Failed to update timeline.",
-      );
-    } finally {
+        if (axios.isAxiosError(error) && error.response) {
+          showError(error.response.data.message || "Failed to update timeline.");
+        } else if (error instanceof Error) {
+          showError(error.message);
+        } else {
+          showError("An unexpected error occurred.");
+        }
+      } finally {
       setIsSaving(false);
     }
   }

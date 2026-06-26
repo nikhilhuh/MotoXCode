@@ -1,7 +1,6 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
 
-// ─── TypeScript Interface ─────────────────────────────────────────────────────
-
+// TypeScript Interface
 export interface IStatDocument extends Document {
   target: number;
   suffix: string;
@@ -10,8 +9,7 @@ export interface IStatDocument extends Document {
   isFloat: boolean;
 }
 
-// ─── Mongoose Schema ──────────────────────────────────────────────────────────
-
+// Mongoose Schema
 const statSchema = new Schema<IStatDocument>(
   {
     target: {
@@ -45,8 +43,7 @@ const statSchema = new Schema<IStatDocument>(
   }
 );
 
-// ─── Model ────────────────────────────────────────────────────────────────────
-
+// Model
 export const StatModel: Model<IStatDocument> = mongoose.model<IStatDocument>(
   "Stat",
   statSchema

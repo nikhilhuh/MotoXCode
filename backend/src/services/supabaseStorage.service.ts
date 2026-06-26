@@ -14,7 +14,7 @@ export class SupabaseStorageService {
     bucketName: string,
     destinationPath: string,
     fileBuffer: Buffer,
-    contentType: string
+    contentType: string,
   ): Promise<string> {
     try {
       const { error } = await this.supabase.storage
@@ -33,7 +33,9 @@ export class SupabaseStorageService {
         .getPublicUrl(destinationPath);
 
       if (!publicUrlData || !publicUrlData.publicUrl) {
-        throw new Error(`Failed to retrieve public URL for path: ${destinationPath}`);
+        throw new Error(
+          `Failed to retrieve public URL for path: ${destinationPath}`,
+        );
       }
 
       return publicUrlData.publicUrl;
@@ -48,7 +50,7 @@ export class SupabaseStorageService {
    */
   public async deleteFileFromBucket(
     bucketName: string,
-    fileName: string
+    fileName: string,
   ): Promise<void> {
     try {
       const { error } = await this.supabase.storage
@@ -69,7 +71,9 @@ export class SupabaseStorageService {
    */
   public async clearBucketCompletely(bucketName: string): Promise<void> {
     try {
-      console.log(`🧹 Clearing all files from Supabase bucket: ${bucketName}...`);
+      console.log(
+        `🧹 Clearing all files from Supabase bucket: ${bucketName}...`,
+      );
       const { data: fileList, error: listError } = await this.supabase.storage
         .from(bucketName)
         .list();
@@ -84,7 +88,9 @@ export class SupabaseStorageService {
       }
 
       const filesToDelete = fileList.map((file) => file.name);
-      console.log(`   [Clear Bucket] Found ${filesToDelete.length} files to delete. Removing...`);
+      console.log(
+        `   [Clear Bucket] Found ${filesToDelete.length} files to delete. Removing...`,
+      );
 
       const { error: deleteError } = await this.supabase.storage
         .from(bucketName)

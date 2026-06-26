@@ -11,15 +11,14 @@ import type { Philosophy } from "../types/philosophy";
 import type { Timeline } from "../types/timeline";
 import type { RidingCode } from "../types/ridingCode";
 
-// ─── PageHero Shape ───────────────────────────────────────────────────────────
-
+// PageHero Shape
 export interface PageHero {
+  _id: string;
   page: string;
   image: string;
 }
 
-// ─── API Response Payloads ────────────────────────────────────────────────────
-
+// API Response Payloads
 interface SocialsApiResponse {
   success: boolean;
   data: Social[];
@@ -73,8 +72,7 @@ interface CmsMutationResponse {
   data?: unknown;
 }
 
-// ─── Service ──────────────────────────────────────────────────────────────────
-
+// Service
 export const cmsService = {
   async fetchSocials(): Promise<Social[]> {
     try {

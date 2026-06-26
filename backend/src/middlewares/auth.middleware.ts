@@ -63,6 +63,49 @@ export async function requireAuth(
 }
 
 /**
+ * Optional Auth interceptor
+ * Decodes the token if present to inject req.user, but does not throw if absent.
+ */
+export async function optionalAuth(
+  req: AuthenticatedRequest,
+  _res: Response,
+  next: NextFunction,
+): Promise<void> {
+  try {
+    let token: string | undefined;
+
+    if (
+      req.headers.authorization &&
+      req.headers.authorization.startsWith("Bearer ")
+    ) {
+      token = req.headers.authorization.split(" ")[1];
+    }
+
+    if (!token) {
+      return next();
+    }
+
+    const decoded = verifyToken(token);
+    const currentUser = await Member.findById(decoded.sub).select(
+      "_id username role",
+    );
+    
+    if (currentUser) {
+      req.user = {
+        _id: String(currentUser._id),
+        username: currentUser.username,
+        role: currentUser.role,
+      };
+    }
+    
+    next();
+  } catch (err) {
+    // If token is invalid, we can just proceed as unauthenticated
+    next();
+  }
+}
+
+/**
  * Administrative gate interceptor — must be mounted after requireAuth.
  *
  * Validates that the authenticated session belongs to a user with the
@@ -79,6 +122,27 @@ export async function verifyAdminGate(
       success: false,
       message:
         "Access Denied: Administrative privileges required to perform this transaction.",
+    });
+    return;
+  }
+  next();
+}
+
+/**
+ * Elevated operational privilege gate — must be mounted after requireAuth.
+ *
+ * Accepts both "admin" and "crew" roles. All other roles are immediately
+ * rejected with 403 so no privileged ride mutation logic is ever reached.
+ */
+export async function verifyAdminOrCrewGate(
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
+  if (!req.user || (req.user.role !== "admin" && req.user.role !== "crew")) {
+    res.status(403).json({
+      success: false,
+      message: "Unauthorized. Elevated operational privileges required.",
     });
     return;
   }

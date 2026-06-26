@@ -35,18 +35,13 @@ export default function Crew() {
     return <CrewSkeleton />;
   }
 
-  const crewMembers = crewData.members.filter(
-    (m) => m.role === "crew" || m.role === "admin",
-  );
-  const riderMembers = crewData.members.filter((m) => m.role === "rider");
-
   return (
     <>
       <CrewHero CrewHeroBg={crewData.hero.image} onUpdate={handleHeroUpdate} />
-      {crewMembers.length > 0 && (
-        <CrewGrid crew={crewMembers} />
+      {crewData.mvpMembers.length > 0 && (
+        <CrewGrid crew={crewData.mvpMembers} />
       )}
-      {riderMembers.length > 0 && <RiderGrid riders={riderMembers} />}
+      {crewData.normalMembers.length > 0 && <RiderGrid riders={crewData.normalMembers} />}
       <CrewCTA />
     </>
   );

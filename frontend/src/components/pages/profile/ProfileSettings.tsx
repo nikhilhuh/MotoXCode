@@ -7,6 +7,7 @@ import GoogleLoginButton from "../../auth/GoogleLoginButton";
 import { FcGoogle } from "react-icons/fc";
 import EmailEditModal from "./EmailEditModal";
 import Cliploader from "@/components/ui/Cliploader";
+import axios from "axios";
 
 export default function ProfileSettings() {
   const { userDetails, setUserDetails } = useUser();
@@ -26,8 +27,14 @@ export default function ProfileSettings() {
       setUserDetails({ ...userDetails, googleConnected: false });
       showSuccess(res.data.message);
     } catch (err: any) {
-      showError(err.response?.data?.message || "Failed to unlink Google account. Please try again.");
-    } finally {
+        if (axios.isAxiosError(err) && err.response) {
+          showError(err.response.data.message || "Failed to unlink Google account. Please try again.");
+        } else if (err instanceof Error) {
+          showError(err.message);
+        } else {
+          showError("An unexpected error occurred.");
+        }
+      } finally {
       setUnlinkingGoogle(false);
     }
   };
@@ -38,8 +45,14 @@ export default function ProfileSettings() {
       await forgotPassword(userDetails.email);
       showSuccess("Password reset link sent to your email address.");
     } catch (err: any) {
-      showError(err.response?.data?.message || "Failed to send reset link. Please try again.");
-    } finally {
+        if (axios.isAxiosError(err) && err.response) {
+          showError(err.response.data.message || "Failed to send reset link. Please try again.");
+        } else if (err instanceof Error) {
+          showError(err.message);
+        } else {
+          showError("An unexpected error occurred.");
+        }
+      } finally {
       setResettingPassword(false);
     }
   };

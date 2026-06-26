@@ -8,15 +8,12 @@ import {
   GalleryModel,
   IGalleryDocument,
   ContactModel,
-  IContactDocument,
   MembershipModel,
-  IMembershipDocument,
 } from "../models";
 import { MailService } from "../services/mail/mail.service";
 import { env } from "../config/env.config";
 
-// ─── Zod Validation Contracts ─────────────────────────────────────────────────
-
+// Zod Validation Contracts
 /**
  * Strict Zod schema for Contact form submissions.
  * Mirrors the Contact Mongoose schema fields exactly.
@@ -24,7 +21,7 @@ import { env } from "../config/env.config";
 export const ContactSubmissionSchema = z.object({
   name: z.string().min(1, "name is required").trim(),
   email: z.string().email("valid email is required").trim().toLowerCase(),
-  subject: z.string().trim().optional().or(z.literal("")), // optional — no * in the UI
+  subject: z.string().trim().optional().or(z.literal("")),
   message: z.string().min(1, "message is required").trim(),
 });
 
@@ -51,8 +48,7 @@ export const JoinSubmissionSchema = z.object({
 
 export type JoinSubmissionInput = z.infer<typeof JoinSubmissionSchema>;
 
-// ─── Response Shapes ──────────────────────────────────────────────────────────
-
+// Response Shapes
 interface ContactPageDataResponse {
   success: true;
   data: {
@@ -72,23 +68,19 @@ interface JoinPageDataResponse {
 interface ContactCreatedResponse {
   success: true;
   message: string;
-  data: IContactDocument;
 }
 
 interface JoinCreatedResponse {
   success: true;
   message: string;
-  data: IMembershipDocument;
 }
 
 interface ValidationErrorResponse {
   success: false;
-  statusCode: 400;
   message: string;
 }
 
-// ─── Controller ───────────────────────────────────────────────────────────────
-
+// Controller
 /**
  * IntakeController — handles secure form submission parsing
  * and page data for contact/join flows.
@@ -101,7 +93,7 @@ export class IntakeController {
   async getContactPageData(
     _req: Request,
     res: Response<ContactPageDataResponse>,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> {
     try {
       const [hero, contactInfo] = await Promise.all([
@@ -120,18 +112,20 @@ export class IntakeController {
   }
 
   /**
-   * GET /api/intake/join
+   * GET /api/join
    * Concurrently fetches the join page hero and join gallery.
    */
   async getJoinPageData(
     _req: Request,
     res: Response<JoinPageDataResponse>,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> {
     try {
       const [hero, gallery] = await Promise.all([
         PageHeroModel.findOne({ page: "join" }).lean<IPageHero | null>(),
-        GalleryModel.find({ page: "join" }).lean<IGalleryDocument[]>(),
+        GalleryModel.find({ page: "join" })
+          .select("-__v")
+          .lean<IGalleryDocument[]>(),
       ]);
 
       const body: JoinPageDataResponse = {
@@ -145,36 +139,41 @@ export class IntakeController {
   }
 
   /**
-   * POST /api/intake/contact
+   * POST /api/contact
    * Validates req.body against ContactSubmissionSchema, then creates
    * a new Contact document. Returns HTTP 201.
    */
   async handleContactSubmission(
     req: Request,
     res: Response<ContactCreatedResponse | ValidationErrorResponse>,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> {
     try {
       const parsed = ContactSubmissionSchema.safeParse(req.body);
 
       if (!parsed.success) {
-        const messages = parsed.error.errors
-          .map((e) => {
-            const field = e.path.length > 0 ? `${e.path.join(".")}: ` : "";
-            return `${field}${e.message}`;
-          })
-          .join("; ");
+        // for development - to show what is submitted wrong (which validation failed)
+        // const messages = parsed.error.errors
+        //   .map((e) => {
+        //     const field = e.path.length > 0 ? `${e.path.join(".")}: ` : "";
+        //     return `${field}${e.message}`;
+        //   })
+        //   .join("; ");
+        //   console.log(messages);
 
         const errorBody: ValidationErrorResponse = {
           success: false,
-          statusCode: 400,
-          message: `Validation failed — ${messages}`,
+          message: `Invalid contact request submitted.`,
         };
         res.status(400).json(errorBody);
         return;
       }
 
-      const contact: IContactDocument = await ContactModel.create(parsed.data);
+      // save the request in database with pending status
+      await ContactModel.create({
+        ...parsed.data,
+        status: "pending",
+      });
 
       // Fire-and-forget: forward inquiry to the configured receiver inbox.
       // Any mail failure is logged internally and never surfaces to the client.
@@ -200,7 +199,6 @@ export class IntakeController {
       const body: ContactCreatedResponse = {
         success: true,
         message: "Contact request submitted successfully",
-        data: contact,
       };
       res.status(201).json(body);
     } catch (err) {
@@ -209,36 +207,38 @@ export class IntakeController {
   }
 
   /**
-   * POST /api/intake/join
+   * POST /api/join
    * Validates req.body against JoinSubmissionSchema, defaults status
    * to 'pending', and records a new Membership document. Returns HTTP 201.
    */
   async handleJoinSubmission(
     req: Request,
     res: Response<JoinCreatedResponse | ValidationErrorResponse>,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> {
     try {
       const parsed = JoinSubmissionSchema.safeParse(req.body);
 
       if (!parsed.success) {
-        const messages = parsed.error.errors
-          .map((e) => {
-            const field = e.path.length > 0 ? `${e.path.join(".")}: ` : "";
-            return `${field}${e.message}`;
-          })
-          .join("; ");
+        // for development - to show what is submitted wrong (which validation failed)
+        // const messages = parsed.error.errors
+        //   .map((e) => {
+        //     const field = e.path.length > 0 ? `${e.path.join(".")}: ` : "";
+        //     return `${field}${e.message}`;
+        //   })
+        //   .join("; ");
+        //   console.log(messages);
 
         const errorBody: ValidationErrorResponse = {
           success: false,
-          statusCode: 400,
-          message: `Validation failed — ${messages}`,
+          message: `Invalid membership request submitted.`,
         };
         res.status(400).json(errorBody);
         return;
       }
 
-      const membership: IMembershipDocument = await MembershipModel.create({
+      // save the request in database with pending status
+      await MembershipModel.create({
         ...parsed.data,
         status: "pending",
       });
@@ -271,7 +271,6 @@ export class IntakeController {
       const body: JoinCreatedResponse = {
         success: true,
         message: "Membership application submitted successfully",
-        data: membership,
       };
       res.status(201).json(body);
     } catch (err) {

@@ -1,3 +1,4 @@
+import axios from 'axios';
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Cliploader from "@/components/ui/Cliploader";
@@ -5,8 +6,6 @@ import PasswordRequirements from "@/components/ui/PasswordRequirements";
 import { checkUsernameAvailability, registerComplete } from "@/services/auth.service";
 import { useUser } from "@/context/UserContext";
 import { useFeedback } from "@/context/FeedbackContext";
-import { AxiosError } from "axios";
-
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 type UsernameStatus = "idle" | "checking" | "available" | "taken" | "invalid";
@@ -171,10 +170,15 @@ const SignUpStep3: React.FC<SignUpStep3Props> = ({ email, verifiedToken }) => {
 
       showSuccess(`Welcome to MotoXCode ${user.username}`);
       navigate("/");
-    } catch (err) {
-      const error = err as AxiosError<{ message: string }>;
-      showError(error.response?.data?.message ?? "Registration failed. Please try again.");
-    } finally {
+    } catch (err: unknown) {
+        if (axios.isAxiosError(err) && err.response) {
+          showError(err.response.data.message || "Backend operation failed.");
+        } else if (err instanceof Error) {
+          showError(err.message);
+        } else {
+          showError("An unexpected error occurred.");
+        }
+      } finally {
       setLoading(false);
     }
   };
