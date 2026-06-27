@@ -1,5 +1,5 @@
-import { Link } from 'react-router-dom';
-import { Member } from '@/types/member';
+import { Link } from "react-router-dom";
+import { Member } from "@/types/member";
 
 interface RiderCardProps {
   member: Member;
@@ -23,7 +23,7 @@ export default function RiderCard({ member }: RiderCardProps) {
             className="size-14 md:size-16 rounded-full object-cover border border-white/10 group-hover:border-[var(--color-accent)]/50 transition-all duration-500 group-hover:scale-110"
           />
         </div>
-        
+
         <div className="flex flex-col min-w-0 flex-1 group-hover:translate-x-1 transition-transform duration-500">
           <h3 className="font-heading font-black text-lg md:text-xl text-[var(--color-primary)] group-hover:text-white transition-colors duration-300 truncate">
             {member.name || member.username}
@@ -44,23 +44,43 @@ export default function RiderCard({ member }: RiderCardProps) {
         <div className="flex items-center gap-6 md:gap-8 shrink-0">
           {member.years !== undefined && (
             <div className="flex flex-col md:items-end w-12 md:w-16 shrink-0 text-left md:text-right">
-              <span className="font-heading font-black text-base md:text-lg text-[var(--color-accent)] truncate w-full">{member.years}</span>
-              <span className="font-accent text-[9px] md:text-[10px] uppercase tracking-wider text-white/40 truncate w-full">Years</span>
+              <span className="font-heading font-black text-base md:text-lg text-[var(--color-accent)] truncate w-full">
+                {member.years}
+              </span>
+              <span className="font-accent text-[9px] md:text-[10px] uppercase tracking-wider text-white/40 truncate w-full">
+                Years
+              </span>
             </div>
           )}
-          
+
           {member.location && (
             <div className="flex flex-col md:items-end w-24 md:w-32 shrink-0 text-left md:text-right">
-              <span className="font-heading font-black text-base md:text-lg text-white/90 truncate w-full">{member.location}</span>
-              <span className="font-accent text-[9px] md:text-[10px] uppercase tracking-wider text-white/40 truncate w-full">Location</span>
+              <span className="font-heading font-black text-base md:text-lg text-white/90 truncate w-full">
+                {member.location}
+              </span>
+              <span className="font-accent text-[9px] md:text-[10px] uppercase tracking-wider text-white/40 truncate w-full">
+                Location
+              </span>
             </div>
           )}
         </div>
 
         {/* Circular CTA Button */}
         <div className="shrink-0 size-8 md:size-10 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-[var(--color-accent)] group-hover:text-black transition-all duration-300 text-white/50 group-hover:shadow-[0_0_15px_rgba(var(--color-accent-rgb),0.5)]">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="group-hover:translate-x-0.5 transition-transform duration-300">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M12 5l7 7-7 7" />
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            className="group-hover:translate-x-0.5 transition-transform duration-300"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M5 12h14M12 5l7 7-7 7"
+            />
           </svg>
         </div>
       </div>

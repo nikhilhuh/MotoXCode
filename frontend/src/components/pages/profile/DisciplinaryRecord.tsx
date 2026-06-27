@@ -5,7 +5,9 @@ interface DisciplinaryRecordProps {
   profile: ProfileType | null;
 }
 
-export default function DisciplinaryRecord({ profile }: DisciplinaryRecordProps) {
+export default function DisciplinaryRecord({
+  profile,
+}: DisciplinaryRecordProps) {
   const count = profile?.strikes ?? 0;
 
   return (

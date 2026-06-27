@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from 'react'
-import { motion, useInView, animate } from 'framer-motion'
+import { useEffect, useRef, useState } from "react";
+import { motion, useInView, animate } from "framer-motion";
 
 interface StatCardProps {
   target: number;
@@ -10,7 +10,14 @@ interface StatCardProps {
   index: number;
 }
 
-export const StatCard: React.FC<StatCardProps> = ({ target, suffix, label, image, isFloat, index }) => {
+export const StatCard: React.FC<StatCardProps> = ({
+  target,
+  suffix,
+  label,
+  image,
+  isFloat,
+  index,
+}) => {
   const [value, setValue] = useState<number>(0);
   const cardRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(cardRef, { once: true, margin: "-50px" });
@@ -23,28 +30,37 @@ export const StatCard: React.FC<StatCardProps> = ({ target, suffix, label, image
         ease: [0.22, 1, 0.36, 1] as const, // Equivalent to power3.out
         onUpdate: (val) => {
           setValue(isFloat ? Number(val.toFixed(1)) : Math.floor(val));
-        }
+        },
       });
       return controls.stop;
     }
   }, [isInView, target, isFloat, index]);
 
   return (
-    <motion.div 
-      ref={cardRef} 
+    <motion.div
+      ref={cardRef}
       initial={{ opacity: 0, y: 30 }}
       animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-      transition={{ duration: 0.8, delay: index * 0.1, ease: [0.22, 1, 0.36, 1] as const }}
+      transition={{
+        duration: 0.8,
+        delay: index * 0.1,
+        ease: [0.22, 1, 0.36, 1] as const,
+      }}
       className="relative flex flex-col overflow-hidden rounded-[2rem] bg-[var(--color-surface)]/20 backdrop-blur-xl border border-[var(--color-border)]/50 shadow-[0_8px_32px_rgba(0,0,0,0.2)] hover:bg-[var(--color-surface)]/40 hover:border-[var(--color-accent)]/50 hover:-translate-y-2 hover:shadow-[0_16px_48px_rgba(0,0,0,0.4)] transition-all duration-500 group"
     >
       <div className="w-full overflow-hidden relative border-b border-[var(--color-border)]/50">
         <div className="absolute inset-0 bg-gradient-to-t from-[var(--color-bg)] to-transparent z-10 opacity-60 mix-blend-multiply transition-opacity duration-500 group-hover:opacity-40"></div>
-        <img src={image} alt={label} className="size-full object-cover transform group-hover:scale-110 transition-transform duration-700 ease-out aspect-1" />
+        <img
+          src={image}
+          alt={label}
+          className="size-full object-cover transform group-hover:scale-110 transition-transform duration-700 ease-out aspect-1"
+        />
       </div>
 
       <div className="flex flex-col items-center sm:items-start p-6 lg:p-8 relative z-20">
         <div className="font-[var(--font-heading)] font-black text-[clamp(3rem,5vw,4rem)] text-[var(--color-primary)] mb-1 leading-none tracking-tight drop-shadow-md">
-          {value}{suffix}
+          {value}
+          {suffix}
         </div>
         <div className="font-[var(--font-sub)] text-xs lg:text-sm font-bold tracking-[0.15em] text-[var(--color-accent)] uppercase">
           {label}

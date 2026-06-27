@@ -5,8 +5,7 @@ import type { Event } from "../types/event";
 import type { GalleryImage } from "../types/galleryImage";
 import type { PageHero } from "./cms.service";
 
-// ─── API Response Payload ─────────────────────────────────────────────────────
-
+// API Response Payload
 interface EventsApiResponse {
   success: boolean;
   data: {
@@ -16,16 +15,14 @@ interface EventsApiResponse {
   };
 }
 
-// ─── Return Type ──────────────────────────────────────────────────────────────
-
+// Return Type
 interface EventsPageData {
   hero: PageHero;
   events: Event[];
   galleryPreview: GalleryImage[];
 }
 
-// ─── Service ──────────────────────────────────────────────────────────────────
-
+// Service
 export const eventsService = {
   async fetchEventsPageData(): Promise<EventsPageData> {
     try {

@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from "axios";
 import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { BiCheck, BiEdit } from "react-icons/bi";
@@ -32,7 +32,7 @@ const SignInStep2: React.FC<Props> = ({
 
   const handleOtpChange = (
     e: React.ChangeEvent<HTMLInputElement>,
-    index: number
+    index: number,
   ) => {
     const value = e.target.value.replace(/\D/g, ""); // only digits
     if (otpError) setOtpError("");
@@ -50,7 +50,7 @@ const SignInStep2: React.FC<Props> = ({
 
   const handleOtpKeyDown = (
     e: React.KeyboardEvent<HTMLInputElement>,
-    index: number
+    index: number,
   ) => {
     if (otpError) setOtpError("");
     if (e.key === "Backspace") {
@@ -91,14 +91,14 @@ const SignInStep2: React.FC<Props> = ({
       showSuccess(`You are signed in as ${user.username}`);
       navigate("/");
     } catch (err) {
-        if (axios.isAxiosError(err) && err.response) {
-          showError(err.response.data.message || "Backend operation failed.");
-        } else if (err instanceof Error) {
-          showError(err.message);
-        } else {
-          showError("An unexpected error occurred.");
-        }
-      } finally {
+      if (axios.isAxiosError(err) && err.response) {
+        showError(err.response.data.message || "Backend operation failed.");
+      } else if (err instanceof Error) {
+        showError(err.message);
+      } else {
+        showError("An unexpected error occurred.");
+      }
+    } finally {
       setVerifying(false);
     }
   };
@@ -121,20 +121,24 @@ const SignInStep2: React.FC<Props> = ({
         setResendText("Resend OTP");
       }, 60000);
     } catch (err) {
-        if (axios.isAxiosError(err) && err.response) {
-          showError(err.response.data.message || "Backend operation failed.");
-        } else if (err instanceof Error) {
-          showError(err.message);
-        } else {
-          showError("An unexpected error occurred.");
-        }
-      } finally {
+      if (axios.isAxiosError(err) && err.response) {
+        showError(err.response.data.message || "Backend operation failed.");
+      } else if (err instanceof Error) {
+        showError(err.message);
+      } else {
+        showError("An unexpected error occurred.");
+      }
+    } finally {
       setResending(false);
     }
   };
 
   return (
-    <form onSubmit={handleOtpSubmit} noValidate className="w-full flex flex-col gap-5 justify-center">
+    <form
+      onSubmit={handleOtpSubmit}
+      noValidate
+      className="w-full flex flex-col gap-5 justify-center"
+    >
       <div className="flex flex-col gap-2">
         <p className="text-xs lg:text-sm text-center font-[var(--font-body)] text-[var(--color-text-secondary)] w-full justify-center flex flex-wrap gap-1">
           Enter the 6-digit OTP sent to
@@ -162,7 +166,9 @@ const SignInStep2: React.FC<Props> = ({
               autoComplete="one-time-code"
               aria-label={`OTP Digit ${index + 1}`}
               key={index}
-              ref={(el) => { inputRefs.current[index] = el; }}
+              ref={(el) => {
+                inputRefs.current[index] = el;
+              }}
               type="text"
               inputMode="numeric"
               maxLength={1}
@@ -191,7 +197,9 @@ const SignInStep2: React.FC<Props> = ({
           onClick={handleResendOTP}
           title="Resend otp"
           className={`outline-none font-bold w-max text-xs lg:text-sm transition-colors duration-300 ${
-            !resent ? "cursor-pointer text-[var(--color-highlight)] hover:underline underline-offset-4 decoration-2" : "text-[var(--color-primary)]"
+            !resent
+              ? "cursor-pointer text-[var(--color-highlight)] hover:underline underline-offset-4 decoration-2"
+              : "text-[var(--color-primary)]"
           }`}
         >
           {resending ? (

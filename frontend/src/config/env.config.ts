@@ -6,7 +6,9 @@ import { z } from "zod";
  */
 const envSchema = z.object({
   VITE_API_URL: z.string().url().default("http://localhost:4000/api"),
-  VITE_GOOGLE_CLIENT_ID: z.string().min(1, "Google Client ID is strictly required"),
+  VITE_GOOGLE_CLIENT_ID: z
+    .string()
+    .min(1, "Google Client ID is strictly required"),
 });
 
 // Extract typed values from import.meta.env

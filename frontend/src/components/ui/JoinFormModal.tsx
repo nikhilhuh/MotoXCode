@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { createPortal } from 'react-dom';
+import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 
 export interface TargetDetails {
   _id: string;
@@ -7,7 +7,7 @@ export interface TargetDetails {
   date: string;
   time?: string;
   location: string;
-  type: 'ride' | 'event';
+  type: "ride" | "event";
 }
 
 interface JoinFormModalProps {
@@ -40,14 +40,18 @@ const experienceLevels = [
   "10+ years",
 ];
 
-export default function JoinFormModal({ isOpen, onClose, target }: JoinFormModalProps) {
+export default function JoinFormModal({
+  isOpen,
+  onClose,
+  target,
+}: JoinFormModalProps) {
   const [formData, setFormData] = useState<FormData>({
-    fullName: '',
-    phone: '',
-    bikeModel: '',
-    ridingToEvent: 'yes',
-    experienceLevel: '', // empty default for selection
-    notes: '',
+    fullName: "",
+    phone: "",
+    bikeModel: "",
+    ridingToEvent: "yes",
+    experienceLevel: "", // empty default for selection
+    notes: "",
   });
 
   const [errors, setErrors] = useState<FormErrors>({});
@@ -59,29 +63,31 @@ export default function JoinFormModal({ isOpen, onClose, target }: JoinFormModal
   // Lock body scroll when modal is open
   useEffect(() => {
     if (isOpen) {
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = '';
+      document.body.style.overflow = "";
     }
     return () => {
-      document.body.style.overflow = '';
+      document.body.style.overflow = "";
     };
   }, [isOpen]);
 
   if (!isOpen) return null;
 
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
   ) => {
     const { name, value } = e.target;
     // Extract base field name from prefixed name: "join-ride-123-fullName" -> "fullName"
-    const baseName = name.split('-').pop() as keyof FormData;
+    const baseName = name.split("-").pop() as keyof FormData;
 
     setFormData((prev) => {
       const updated = { ...prev, [baseName]: value };
       // If switching riding to event to no, clear bikeModel
-      if (baseName === 'ridingToEvent' && value === 'no') {
-        updated.bikeModel = '';
+      if (baseName === "ridingToEvent" && value === "no") {
+        updated.bikeModel = "";
       }
       return updated;
     });
@@ -96,31 +102,31 @@ export default function JoinFormModal({ isOpen, onClose, target }: JoinFormModal
 
     // Full Name validation
     if (!formData.fullName.trim()) {
-      newErrors.fullName = 'Full Name is required';
+      newErrors.fullName = "Full Name is required";
     } else if (formData.fullName.trim().length < 2) {
-      newErrors.fullName = 'Name must be at least 2 characters';
+      newErrors.fullName = "Name must be at least 2 characters";
     }
 
     // Phone validation
     if (!formData.phone.trim()) {
-      newErrors.phone = 'Phone number is required';
+      newErrors.phone = "Phone number is required";
     } else if (!phoneRegex.test(formData.phone)) {
-      newErrors.phone = 'Please enter a valid phone number';
+      newErrors.phone = "Please enter a valid phone number";
     }
 
     // Target specific validation
-    if (target.type === 'ride') {
+    if (target.type === "ride") {
       if (!formData.bikeModel.trim()) {
-        newErrors.bikeModel = 'Motorcycle make & model is required';
+        newErrors.bikeModel = "Motorcycle make & model is required";
       }
       if (!formData.experienceLevel) {
-        newErrors.experienceLevel = 'Please select your riding experience';
+        newErrors.experienceLevel = "Please select your riding experience";
       }
     } else {
       // Event: Only require bikeModel if they are riding to the event
-      if (formData.ridingToEvent === 'yes') {
+      if (formData.ridingToEvent === "yes") {
         if (!formData.bikeModel.trim()) {
-          newErrors.bikeModel = 'Please specify which bike you are riding';
+          newErrors.bikeModel = "Please specify which bike you are riding";
         }
       }
     }
@@ -139,8 +145,8 @@ export default function JoinFormModal({ isOpen, onClose, target }: JoinFormModal
     setTimeout(() => {
       setIsSubmitting(false);
       setIsSuccess(true);
-      
-      console.log('Registration submitted:', {
+
+      console.log("Registration submitted:", {
         target,
         user: formData,
         timestamp: new Date().toISOString(),
@@ -151,12 +157,12 @@ export default function JoinFormModal({ isOpen, onClose, target }: JoinFormModal
   const handleResetAndClose = () => {
     setIsSuccess(false);
     setFormData({
-      fullName: '',
-      phone: '',
-      bikeModel: '',
-      ridingToEvent: 'yes',
-      experienceLevel: '',
-      notes: '',
+      fullName: "",
+      phone: "",
+      bikeModel: "",
+      ridingToEvent: "yes",
+      experienceLevel: "",
+      notes: "",
     });
     setErrors({});
     onClose();
@@ -166,10 +172,13 @@ export default function JoinFormModal({ isOpen, onClose, target }: JoinFormModal
     <div
       role="presentation"
       className="fixed inset-0 z-[110] flex items-center justify-center p-4 sm:p-6 md:p-10"
-      style={{ background: 'rgba(2, 6, 23, 0.85)', backdropFilter: 'blur(8px)' }}
+      style={{
+        background: "rgba(2, 6, 23, 0.85)",
+        backdropFilter: "blur(8px)",
+      }}
       onClick={handleResetAndClose}
       onKeyDown={(e) => {
-        if (e.key === 'Escape') handleResetAndClose();
+        if (e.key === "Escape") handleResetAndClose();
       }}
     >
       <div
@@ -186,7 +195,14 @@ export default function JoinFormModal({ isOpen, onClose, target }: JoinFormModal
           className="absolute top-5 right-5 z-20 size-8 flex items-center justify-center rounded-full bg-black/40 border border-white/10 text-[var(--color-text-secondary)] hover:text-white hover:bg-[var(--color-highlight)] transition-all cursor-pointer"
           onClick={handleResetAndClose}
         >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+          >
             <path d="M18 6L6 18M6 6l12 12" />
           </svg>
         </button>
@@ -196,7 +212,14 @@ export default function JoinFormModal({ isOpen, onClose, target }: JoinFormModal
           <div className="flex-1 overflow-y-auto p-8 flex flex-col items-center justify-center text-center gap-6 my-auto min-h-[350px]">
             {/* Animated Checkmark Circle */}
             <div className="relative size-16 rounded-full flex items-center justify-center mx-auto bg-[var(--color-primary)]/10 text-[var(--color-primary)] border border-[var(--color-primary)]/20 shadow-[0_0_20px_rgba(248,250,252,0.15)] animate-pulse">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <svg
+                width="28"
+                height="28"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
                 <path d="M20 6 9 17l-5-5" />
               </svg>
             </div>
@@ -206,7 +229,9 @@ export default function JoinFormModal({ isOpen, onClose, target }: JoinFormModal
                 Registration Received
               </h2>
               <p className="font-[var(--font-body)] text-sm text-[var(--color-text-secondary)] max-w-sm mx-auto">
-                Thank you, {formData.fullName}. Successfully registered for <span className="text-white font-semibold">{target.title}</span>. We've recorded your details.
+                Thank you, {formData.fullName}. Successfully registered for{" "}
+                <span className="text-white font-semibold">{target.title}</span>
+                . We've recorded your details.
               </p>
             </div>
 
@@ -229,10 +254,17 @@ export default function JoinFormModal({ isOpen, onClose, target }: JoinFormModal
               <h3 className="font-[var(--font-heading)] font-black text-2xl sm:text-3xl text-white leading-tight mb-2">
                 {target.title}
               </h3>
-              
+
               <div className="flex flex-wrap gap-x-5 gap-y-1.5 text-xs text-[var(--color-text-secondary)] font-[var(--font-accent)] font-medium">
                 <span className="flex items-center gap-1.5">
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg
+                    width="13"
+                    height="13"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
                     <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
                     <line x1="16" y1="2" x2="16" y2="6" />
                     <line x1="8" y1="2" x2="8" y2="6" />
@@ -242,7 +274,14 @@ export default function JoinFormModal({ isOpen, onClose, target }: JoinFormModal
                 </span>
                 {target.time && (
                   <span className="flex items-center gap-1.5">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <svg
+                      width="13"
+                      height="13"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    >
                       <circle cx="12" cy="12" r="10" />
                       <polyline points="12 6 12 12 16 14" />
                     </svg>
@@ -250,7 +289,14 @@ export default function JoinFormModal({ isOpen, onClose, target }: JoinFormModal
                   </span>
                 )}
                 <span className="flex items-center gap-1.5">
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg
+                    width="13"
+                    height="13"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
                     <path d="M12 2a8 8 0 0 0-8 8c0 5.25 8 12 8 12s8-6.75 8-12a8 8 0 0 0-8-8z" />
                     <circle cx="12" cy="10" r="3" />
                   </svg>
@@ -260,8 +306,10 @@ export default function JoinFormModal({ isOpen, onClose, target }: JoinFormModal
             </div>
 
             {/* Scrollable Form Body */}
-            <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 space-y-6">
-              
+            <form
+              onSubmit={handleSubmit}
+              className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 space-y-6"
+            >
               {/* Form Input fields */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 {/* Full Name */}
@@ -280,11 +328,13 @@ export default function JoinFormModal({ isOpen, onClose, target }: JoinFormModal
                     value={formData.fullName}
                     onChange={handleInputChange}
                     autoComplete="name"
-                    className={`w-full bg-[var(--color-surface)]/50 border ${errors.fullName ? 'border-red-500' : 'border-[var(--color-border)]'} rounded-lg py-3.5 px-5 text-[var(--color-text-primary)] font-[var(--font-body)] text-[0.9375rem] transition-all duration-300 outline-none placeholder:text-[var(--color-text-secondary)] placeholder:opacity-50 focus:border-[var(--color-primary)] focus:bg-[var(--color-surface)] focus:shadow-[0_0_15px_rgba(248,250,252,0.05)]`}
+                    className={`w-full bg-[var(--color-surface)]/50 border ${errors.fullName ? "border-red-500" : "border-[var(--color-border)]"} rounded-lg py-3.5 px-5 text-[var(--color-text-primary)] font-[var(--font-body)] text-[0.9375rem] transition-all duration-300 outline-none placeholder:text-[var(--color-text-secondary)] placeholder:opacity-50 focus:border-[var(--color-primary)] focus:bg-[var(--color-surface)] focus:shadow-[0_0_15px_rgba(248,250,252,0.05)]`}
                     placeholder="Your name"
                   />
                   {errors.fullName && (
-                    <span className="text-[10px] text-red-400 block font-medium mt-1.5">{errors.fullName}</span>
+                    <span className="text-[10px] text-red-400 block font-medium mt-1.5">
+                      {errors.fullName}
+                    </span>
                   )}
                 </div>
 
@@ -304,17 +354,19 @@ export default function JoinFormModal({ isOpen, onClose, target }: JoinFormModal
                     value={formData.phone}
                     onChange={handleInputChange}
                     autoComplete="tel"
-                    className={`w-full bg-[var(--color-surface)]/50 border ${errors.phone ? 'border-red-500' : 'border-[var(--color-border)]'} rounded-lg py-3.5 px-5 text-[var(--color-text-primary)] font-[var(--font-body)] text-[0.9375rem] transition-all duration-300 outline-none placeholder:text-[var(--color-text-secondary)] placeholder:opacity-50 focus:border-[var(--color-primary)] focus:bg-[var(--color-surface)] focus:shadow-[0_0_15px_rgba(248,250,252,0.05)]`}
+                    className={`w-full bg-[var(--color-surface)]/50 border ${errors.phone ? "border-red-500" : "border-[var(--color-border)]"} rounded-lg py-3.5 px-5 text-[var(--color-text-primary)] font-[var(--font-body)] text-[0.9375rem] transition-all duration-300 outline-none placeholder:text-[var(--color-text-secondary)] placeholder:opacity-50 focus:border-[var(--color-primary)] focus:bg-[var(--color-surface)] focus:shadow-[0_0_15px_rgba(248,250,252,0.05)]`}
                     placeholder="+91 XXXXX XXXXX"
                   />
                   {errors.phone && (
-                    <span className="text-[10px] text-red-400 block font-medium mt-1.5">{errors.phone}</span>
+                    <span className="text-[10px] text-red-400 block font-medium mt-1.5">
+                      {errors.phone}
+                    </span>
                   )}
                 </div>
               </div>
 
               {/* Dynamic details section */}
-              {target.type === 'ride' ? (
+              {target.type === "ride" ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                   {/* Bike model */}
                   <div>
@@ -332,11 +384,13 @@ export default function JoinFormModal({ isOpen, onClose, target }: JoinFormModal
                       value={formData.bikeModel}
                       onChange={handleInputChange}
                       autoComplete="off"
-                      className={`w-full bg-[var(--color-surface)]/50 border ${errors.bikeModel ? 'border-red-500' : 'border-[var(--color-border)]'} rounded-lg py-3.5 px-5 text-[var(--color-text-primary)] font-[var(--font-body)] text-[0.9375rem] transition-all duration-300 outline-none placeholder:text-[var(--color-text-secondary)] placeholder:opacity-50 focus:border-[var(--color-primary)] focus:bg-[var(--color-surface)] focus:shadow-[0_0_15px_rgba(248,250,252,0.05)]`}
+                      className={`w-full bg-[var(--color-surface)]/50 border ${errors.bikeModel ? "border-red-500" : "border-[var(--color-border)]"} rounded-lg py-3.5 px-5 text-[var(--color-text-primary)] font-[var(--font-body)] text-[0.9375rem] transition-all duration-300 outline-none placeholder:text-[var(--color-text-secondary)] placeholder:opacity-50 focus:border-[var(--color-primary)] focus:bg-[var(--color-surface)] focus:shadow-[0_0_15px_rgba(248,250,252,0.05)]`}
                       placeholder="Make, model, year"
                     />
                     {errors.bikeModel && (
-                      <span className="text-[10px] text-red-400 block font-medium mt-1.5">{errors.bikeModel}</span>
+                      <span className="text-[10px] text-red-400 block font-medium mt-1.5">
+                        {errors.bikeModel}
+                      </span>
                     )}
                   </div>
 
@@ -356,9 +410,13 @@ export default function JoinFormModal({ isOpen, onClose, target }: JoinFormModal
                         value={formData.experienceLevel}
                         onChange={handleInputChange}
                         autoComplete="off"
-                        className={`w-full bg-[var(--color-surface)]/50 border ${errors.experienceLevel ? 'border-red-500' : 'border-[var(--color-border)]'} rounded-lg py-3.5 px-5 text-[var(--color-text-primary)] font-[var(--font-body)] text-[0.9375rem] transition-all duration-300 outline-none focus:border-[var(--color-primary)] focus:bg-[var(--color-surface)] focus:shadow-[0_0_15px_rgba(248,250,252,0.05)] appearance-none cursor-pointer`}
+                        className={`w-full bg-[var(--color-surface)]/50 border ${errors.experienceLevel ? "border-red-500" : "border-[var(--color-border)]"} rounded-lg py-3.5 px-5 text-[var(--color-text-primary)] font-[var(--font-body)] text-[0.9375rem] transition-all duration-300 outline-none focus:border-[var(--color-primary)] focus:bg-[var(--color-surface)] focus:shadow-[0_0_15px_rgba(248,250,252,0.05)] appearance-none cursor-pointer`}
                       >
-                        <option value="" disabled className="bg-[var(--color-surface)]">
+                        <option
+                          value=""
+                          disabled
+                          className="bg-[var(--color-surface)]"
+                        >
                           Select experience
                         </option>
                         {experienceLevels.map((lvl) => (
@@ -385,7 +443,9 @@ export default function JoinFormModal({ isOpen, onClose, target }: JoinFormModal
                       </div>
                     </div>
                     {errors.experienceLevel && (
-                      <span className="text-[10px] text-red-400 block font-medium mt-1.5">{errors.experienceLevel}</span>
+                      <span className="text-[10px] text-red-400 block font-medium mt-1.5">
+                        {errors.experienceLevel}
+                      </span>
                     )}
                   </div>
                 </div>
@@ -411,8 +471,18 @@ export default function JoinFormModal({ isOpen, onClose, target }: JoinFormModal
                           autoComplete="off"
                           className="w-full bg-[var(--color-surface)]/50 border border-[var(--color-border)] rounded-lg py-3.5 px-5 text-[var(--color-text-primary)] font-[var(--font-body)] text-[0.9375rem] transition-all duration-300 outline-none focus:border-[var(--color-primary)] focus:bg-[var(--color-surface)] focus:shadow-[0_0_15px_rgba(248,250,252,0.05)] appearance-none cursor-pointer"
                         >
-                          <option value="yes" className="bg-[var(--color-surface)]">Yes, I'm riding there</option>
-                          <option value="no" className="bg-[var(--color-surface)]">No, arriving by other transport</option>
+                          <option
+                            value="yes"
+                            className="bg-[var(--color-surface)]"
+                          >
+                            Yes, I'm riding there
+                          </option>
+                          <option
+                            value="no"
+                            className="bg-[var(--color-surface)]"
+                          >
+                            No, arriving by other transport
+                          </option>
                         </select>
                         <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-[var(--color-text-secondary)]">
                           <svg
@@ -430,7 +500,7 @@ export default function JoinFormModal({ isOpen, onClose, target }: JoinFormModal
                     </div>
 
                     {/* Bike model (conditional on Riding to Event) */}
-                    {formData.ridingToEvent === 'yes' && (
+                    {formData.ridingToEvent === "yes" && (
                       <div>
                         <label
                           htmlFor={`${uniqueIdPrefix}-bikeModel`}
@@ -446,11 +516,13 @@ export default function JoinFormModal({ isOpen, onClose, target }: JoinFormModal
                           value={formData.bikeModel}
                           onChange={handleInputChange}
                           autoComplete="off"
-                          className={`w-full bg-[var(--color-surface)]/50 border ${errors.bikeModel ? 'border-red-500' : 'border-[var(--color-border)]'} rounded-lg py-3.5 px-5 text-[var(--color-text-primary)] font-[var(--font-body)] text-[0.9375rem] transition-all duration-300 outline-none placeholder:text-[var(--color-text-secondary)] placeholder:opacity-50 focus:border-[var(--color-primary)] focus:bg-[var(--color-surface)] focus:shadow-[0_0_15px_rgba(248,250,252,0.05)]`}
+                          className={`w-full bg-[var(--color-surface)]/50 border ${errors.bikeModel ? "border-red-500" : "border-[var(--color-border)]"} rounded-lg py-3.5 px-5 text-[var(--color-text-primary)] font-[var(--font-body)] text-[0.9375rem] transition-all duration-300 outline-none placeholder:text-[var(--color-text-secondary)] placeholder:opacity-50 focus:border-[var(--color-primary)] focus:bg-[var(--color-surface)] focus:shadow-[0_0_15px_rgba(248,250,252,0.05)]`}
                           placeholder="Make, model, year"
                         />
                         {errors.bikeModel && (
-                          <span className="text-[10px] text-red-400 block font-medium mt-1.5">{errors.bikeModel}</span>
+                          <span className="text-[10px] text-red-400 block font-medium mt-1.5">
+                            {errors.bikeModel}
+                          </span>
                         )}
                       </div>
                     )}
@@ -495,9 +567,24 @@ export default function JoinFormModal({ isOpen, onClose, target }: JoinFormModal
                 >
                   {isSubmitting ? (
                     <span className="flex items-center gap-2 justify-center">
-                      <svg className="animate-spin size-4 text-black" viewBox="0 0 24 24" fill="none">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                      <svg
+                        className="animate-spin size-4 text-black"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        />
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                        />
                       </svg>
                       Verifying…
                     </span>
@@ -524,6 +611,6 @@ export default function JoinFormModal({ isOpen, onClose, target }: JoinFormModal
         )}
       </div>
     </div>,
-    document.body
+    document.body,
   );
 }

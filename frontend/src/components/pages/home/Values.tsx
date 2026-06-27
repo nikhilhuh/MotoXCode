@@ -8,8 +8,7 @@ import { compressImage } from "@/services/imageCompression.service";
 import { cmsService } from "@/services";
 import axios from "axios";
 
-// ─── Types ────────────────────────────────────────────────────────────────────
-
+// Types
 interface ValueEditRow {
   _id: string;
   title: string;
@@ -27,8 +26,7 @@ interface ValuesProps {
   onValuesUpdate?: (updatedValues: Value[]) => void;
 }
 
-// ─── Animation Variants ───────────────────────────────────────────────────────
-
+// Animation Variants
 const headerVariants = {
   hidden: { opacity: 0, y: 40 },
   visible: {
@@ -51,8 +49,7 @@ const itemVariants = {
   }),
 };
 
-// ─── Component ────────────────────────────────────────────────────────────────
-
+// Component
 export default function Values({ valuesData, onValuesUpdate }: ValuesProps) {
   const { userDetails } = useUser();
   const { showSuccess, showError } = useFeedback();
@@ -80,8 +77,7 @@ export default function Values({ valuesData, onValuesUpdate }: ValuesProps) {
     return false;
   }, [editRows, valuesData]);
 
-  // ─── Start / Cancel ─────────────────────────────────────────────────────────
-
+  // Start / Cancel
   function startEditing(): void {
     setEditRows(
       valuesData.map((v) => ({
@@ -90,7 +86,7 @@ export default function Values({ valuesData, onValuesUpdate }: ValuesProps) {
         description: v.description,
         tag: v.tag,
         image: v.image,
-      }))
+      })),
     );
     setIsEditing(true);
   }
@@ -101,11 +97,10 @@ export default function Values({ valuesData, onValuesUpdate }: ValuesProps) {
     setIsSaving(false);
   }
 
-  // ─── Field Mutation ─────────────────────────────────────────────────────────
-
+  // Field Mutation
   function updateRow(id: string, patch: Partial<ValueEditRow>): void {
     setEditRows((prev) =>
-      prev.map((row) => (row._id === id ? { ...row, ...patch } : row))
+      prev.map((row) => (row._id === id ? { ...row, ...patch } : row)),
     );
   }
 
@@ -122,29 +117,34 @@ export default function Values({ valuesData, onValuesUpdate }: ValuesProps) {
     }
   }
 
-  // ─── Save Handler ───────────────────────────────────────────────────────────
-
+  // Save Handler
   async function handleSave(): Promise<void> {
     setIsSaving(true);
     try {
       const formData = new FormData();
-      
-      const valuesPayload = editRows.map(row => ({
+
+      const valuesPayload = editRows.map((row) => ({
         id: row._id,
         title: row.title,
         description: row.description,
-        tag: row.tag
+        tag: row.tag,
       }));
-      
+
       formData.append("values", JSON.stringify(valuesPayload));
 
-      editRows.forEach(row => {
+      editRows.forEach((row) => {
         if (row.pendingImageFile) {
-          formData.append(`image_${row._id}`, row.pendingImageFile, row.pendingImageFile.name);
+          formData.append(
+            `image_${row._id}`,
+            row.pendingImageFile,
+            row.pendingImageFile.name,
+          );
         }
       });
 
-      console.log("[Values CMS] Dispatching unified bulk update patch request to service layer.");
+      console.log(
+        "[Values CMS] Dispatching unified bulk update patch request to service layer.",
+      );
       const result = await cmsService.updateHomeCMSData("value", formData);
 
       if (result.success) {
@@ -164,22 +164,23 @@ export default function Values({ valuesData, onValuesUpdate }: ValuesProps) {
         showError(result.message || "Failed to save data");
       }
     } catch (err: any) {
-        if (axios.isAxiosError(err) && err.response) {
-          showError(err.response.data.message || "Failed to update values.");
-        } else if (err instanceof Error) {
-          showError(err.message);
-        } else {
-          showError("An unexpected error occurred.");
-        }
-      } finally {
+      if (axios.isAxiosError(err) && err.response) {
+        showError(err.response.data.message || "Failed to update values.");
+      } else if (err instanceof Error) {
+        showError(err.message);
+      } else {
+        showError("An unexpected error occurred.");
+      }
+    } finally {
       setIsSaving(false);
     }
   }
 
-  // ─── Render ─────────────────────────────────────────────────────────────────
-
+  // Render
   return (
-    <section className={`${isAdmin? "py-16" : "py-12"}  g:py-22 bg-gradient-to-b from-[var(--color-section)] via-[var(--color-bg)] to-[var(--color-surface)] relative overflow-hidden`}>
+    <section
+      className={`${isAdmin ? "py-16" : "py-12"}  g:py-22 bg-gradient-to-b from-[var(--color-section)] via-[var(--color-bg)] to-[var(--color-surface)] relative overflow-hidden`}
+    >
       {/* Decorative Blur Backgrounds */}
       <div className="absolute top-[10%] right-[5%] w-[40%] h-[40%] bg-[var(--color-primary)]/5 rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute bottom-[10%] left-[5%] w-[30%] h-[50%] bg-[var(--color-accent)]/5 rounded-full blur-[120px] pointer-events-none" />
@@ -197,7 +198,6 @@ export default function Values({ valuesData, onValuesUpdate }: ValuesProps) {
       )}
 
       <div className="max-w-7xl mx-auto px-6 lg:px-12 w-full relative z-10">
-
         {/* ── Section Header ── */}
         <motion.div
           initial="hidden"
@@ -205,7 +205,9 @@ export default function Values({ valuesData, onValuesUpdate }: ValuesProps) {
           viewport={{ once: true, margin: "-100px" }}
           className="mb-12 lg:mb-22 text-center max-w-4xl mx-auto"
         >
-          <motion.h2 variants={headerVariants} className="section-heading">THE MOTOXCODE WAY</motion.h2>
+          <motion.h2 variants={headerVariants} className="section-heading">
+            THE MOTOXCODE WAY
+          </motion.h2>
           <motion.p variants={headerVariants} className="section-subheading">
             We don't just share a passion for motorcycles. We share a code.
           </motion.p>
@@ -287,7 +289,10 @@ export default function Values({ valuesData, onValuesUpdate }: ValuesProps) {
 
                   {/* Tag */}
                   <div className="flex flex-col gap-1">
-                    <label htmlFor={`value-tag-${row._id}`} className="text-[var(--color-text-secondary)] text-xs uppercase tracking-wider cursor-pointer">
+                    <label
+                      htmlFor={`value-tag-${row._id}`}
+                      className="text-[var(--color-text-secondary)] text-xs uppercase tracking-wider cursor-pointer"
+                    >
                       Tag
                     </label>
                     <input
@@ -296,14 +301,19 @@ export default function Values({ valuesData, onValuesUpdate }: ValuesProps) {
                       autoComplete="off"
                       type="text"
                       value={row.tag}
-                      onChange={(e) => updateRow(row._id, { tag: e.target.value })}
+                      onChange={(e) =>
+                        updateRow(row._id, { tag: e.target.value })
+                      }
                       className="bg-[var(--color-bg)]/60 border border-[var(--color-border)] text-[var(--color-text-primary)] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[var(--color-primary)] transition-colors"
                     />
                   </div>
 
                   {/* Title */}
                   <div className="flex flex-col gap-1">
-                    <label htmlFor={`value-title-${row._id}`} className="text-[var(--color-text-secondary)] text-xs uppercase tracking-wider cursor-pointer">
+                    <label
+                      htmlFor={`value-title-${row._id}`}
+                      className="text-[var(--color-text-secondary)] text-xs uppercase tracking-wider cursor-pointer"
+                    >
                       Title
                     </label>
                     <input
@@ -312,14 +322,19 @@ export default function Values({ valuesData, onValuesUpdate }: ValuesProps) {
                       autoComplete="off"
                       type="text"
                       value={row.title}
-                      onChange={(e) => updateRow(row._id, { title: e.target.value })}
+                      onChange={(e) =>
+                        updateRow(row._id, { title: e.target.value })
+                      }
                       className="bg-[var(--color-bg)]/60 border border-[var(--color-border)] text-[var(--color-text-primary)] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[var(--color-primary)] transition-colors"
                     />
                   </div>
 
                   {/* Description */}
                   <div className="flex flex-col gap-1">
-                    <label htmlFor={`value-desc-${row._id}`} className="text-[var(--color-text-secondary)] text-xs uppercase tracking-wider cursor-pointer">
+                    <label
+                      htmlFor={`value-desc-${row._id}`}
+                      className="text-[var(--color-text-secondary)] text-xs uppercase tracking-wider cursor-pointer"
+                    >
                       Description
                     </label>
                     <textarea
@@ -328,7 +343,9 @@ export default function Values({ valuesData, onValuesUpdate }: ValuesProps) {
                       autoComplete="off"
                       value={row.description}
                       rows={4}
-                      onChange={(e) => updateRow(row._id, { description: e.target.value })}
+                      onChange={(e) =>
+                        updateRow(row._id, { description: e.target.value })
+                      }
                       className="bg-[var(--color-bg)]/60 border border-[var(--color-border)] text-[var(--color-text-primary)] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[var(--color-primary)] transition-colors resize-none leading-relaxed"
                     />
                   </div>
@@ -344,7 +361,10 @@ export default function Values({ valuesData, onValuesUpdate }: ValuesProps) {
                     />
                     <label className="absolute inset-0 flex items-center justify-center bg-black/20 hover:bg-black/40 transition-colors cursor-pointer group/img">
                       <div className="flex items-center gap-2 px-4 py-2 bg-[var(--color-surface)]/90 rounded-full border border-[var(--color-border)]">
-                        <FaPencil size={14} className="text-[var(--color-primary)]" />
+                        <FaPencil
+                          size={14}
+                          className="text-[var(--color-primary)]"
+                        />
                         <span className="text-[var(--color-primary)] text-xs font-semibold">
                           Change Image
                         </span>

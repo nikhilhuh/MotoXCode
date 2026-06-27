@@ -1,19 +1,22 @@
-import axios from 'axios';
+import axios from "axios";
 import React, { useState } from "react";
 import Cliploader from "@/components/ui/Cliploader";
 import { registerSendOTP } from "@/services/auth.service";
 import { useFeedback } from "@/context/FeedbackContext";
-// ─── Props ────────────────────────────────────────────────────────────────────
 
+// Props
 interface SignUpStep1Props {
   email: string;
   setEmail: React.Dispatch<React.SetStateAction<string>>;
   onSuccess: () => void;
 }
 
-// ─── Component ────────────────────────────────────────────────────────────────
-
-const SignUpStep1: React.FC<SignUpStep1Props> = ({ email, setEmail, onSuccess }) => {
+// Component
+const SignUpStep1: React.FC<SignUpStep1Props> = ({
+  email,
+  setEmail,
+  onSuccess,
+}) => {
   const { showError, showSuccess } = useFeedback();
   const [loading, setLoading] = useState<boolean>(false);
   const [emailError, setEmailError] = useState<string>("");
@@ -42,20 +45,24 @@ const SignUpStep1: React.FC<SignUpStep1Props> = ({ email, setEmail, onSuccess })
       showSuccess("OTP sent! Check your inbox.");
       onSuccess();
     } catch (err) {
-        if (axios.isAxiosError(err) && err.response) {
-          showError(err.response.data.message || "Backend operation failed.");
-        } else if (err instanceof Error) {
-          showError(err.message);
-        } else {
-          showError("An unexpected error occurred.");
-        }
-      } finally {
+      if (axios.isAxiosError(err) && err.response) {
+        showError(err.response.data.message || "Backend operation failed.");
+      } else if (err instanceof Error) {
+        showError(err.message);
+      } else {
+        showError("An unexpected error occurred.");
+      }
+    } finally {
       setLoading(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} noValidate className="w-full flex flex-col gap-5">
+    <form
+      onSubmit={handleSubmit}
+      noValidate
+      className="w-full flex flex-col gap-5"
+    >
       {/* Step indicator */}
       <div className="flex flex-col gap-1">
         <p className="font-[var(--font-sub)] text-[var(--color-accent)] text-[11px] sm:text-xs font-bold tracking-[0.25em] uppercase">
@@ -111,7 +118,11 @@ const SignUpStep1: React.FC<SignUpStep1Props> = ({ email, setEmail, onSuccess })
         disabled={loading}
         className="btn-primary px-6 py-3 text-sm"
       >
-        {loading ? <Cliploader size={20} color="currentColor" /> : "Send Verification Code"}
+        {loading ? (
+          <Cliploader size={20} color="currentColor" />
+        ) : (
+          "Send Verification Code"
+        )}
       </button>
     </form>
   );

@@ -31,10 +31,10 @@ const containerVariants = {
 
 const itemVariants = {
   hidden: { opacity: 0, y: 30 },
-  visible: { 
-    opacity: 1, 
-    y: 0, 
-    transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] as const } 
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] as const },
   },
 };
 
@@ -67,7 +67,8 @@ export default function JoinHero({ JoinHeroBg, onUpdate }: JoinHeroProps) {
   async function handleSave(): Promise<void> {
     setIsSaving(true);
     try {
-      const selectedFile = editData.image instanceof File ? editData.image : null;
+      const selectedFile =
+        editData.image instanceof File ? editData.image : null;
       if (!selectedFile) throw new Error("No compressed file binary found.");
       const { file: compressedFile } = await compressImage(selectedFile);
       const formData = new FormData();
@@ -76,26 +77,38 @@ export default function JoinHero({ JoinHeroBg, onUpdate }: JoinHeroProps) {
       const result = await cmsService.updatePageHeroCMSData(formData);
       if (result.success) {
         showSuccess("Join hero background updated successfully!");
-        const resultData = result.data as { _id?: string, image?: string } | undefined;
+        const resultData = result.data as
+          | { _id?: string; image?: string }
+          | undefined;
         if (resultData?.image) {
           setField({ image: resultData.image });
-          onUpdate?.({ _id: resultData?._id || "joinHero", page: "join", image: resultData.image });
+          onUpdate?.({
+            _id: resultData?._id || "joinHero",
+            page: "join",
+            image: resultData.image,
+          });
         } else {
-          onUpdate?.({ _id: resultData?._id || "joinHero", page: "join", image: resolvedBg });
+          onUpdate?.({
+            _id: resultData?._id || "joinHero",
+            page: "join",
+            image: resolvedBg,
+          });
         }
         finishEditing();
       } else {
         showError(result.message || "Failed to update hero background.");
       }
     } catch (error: unknown) {
-        if (axios.isAxiosError(error) && error.response) {
-          showError(error.response.data.message || "Failed to update hero background.");
-        } else if (error instanceof Error) {
-          showError(error.message);
-        } else {
-          showError("An unexpected error occurred.");
-        }
-      } finally {
+      if (axios.isAxiosError(error) && error.response) {
+        showError(
+          error.response.data.message || "Failed to update hero background.",
+        );
+      } else if (error instanceof Error) {
+        showError(error.message);
+      } else {
+        showError("An unexpected error occurred.");
+      }
+    } finally {
       setIsSaving(false);
     }
   }
@@ -116,7 +129,6 @@ export default function JoinHero({ JoinHeroBg, onUpdate }: JoinHeroProps) {
             "linear-gradient(to bottom, rgba(2,6,23,0.95) 0%, rgba(2,6,23,0.4) 40%, rgba(2,6,23,0.4) 60%, rgba(2,6,23,1) 100%)",
         }}
       />
-
 
       {/* ── Floating Admin Edit Button ── */}
       {isAdmin && !isEditing && (
@@ -180,8 +192,8 @@ export default function JoinHero({ JoinHeroBg, onUpdate }: JoinHeroProps) {
         </div>
       )}
 
-      <motion.div 
-        className="relative z-10 w-full" 
+      <motion.div
+        className="relative z-10 w-full"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
@@ -210,14 +222,23 @@ export default function JoinHero({ JoinHeroBg, onUpdate }: JoinHeroProps) {
           >
             Earn Your
             <br />
-            <span className="text-[var(--color-accent)]">Place in the Pack</span>
+            <span className="text-[var(--color-accent)]">
+              Place in the Pack
+            </span>
           </motion.h1>
 
-          <motion.p variants={itemVariants} className="font-[var(--font-body)] font-medium max-w-2xl mx-auto text-sm md:text-base lg:text-xl text-[var(--color-text-primary)] opacity-90 leading-relaxed mb-10">
-            MotoXCode membership isn't automatic. Tell us who you are, what you ride, and why the road calls you. We'll take it from there.
+          <motion.p
+            variants={itemVariants}
+            className="font-[var(--font-body)] font-medium max-w-2xl mx-auto text-sm md:text-base lg:text-xl text-[var(--color-text-primary)] opacity-90 leading-relaxed mb-10"
+          >
+            MotoXCode membership isn't automatic. Tell us who you are, what you
+            ride, and why the road calls you. We'll take it from there.
           </motion.p>
 
-          <motion.div variants={itemVariants} className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 w-full max-w-[16rem] sm:max-w-none mx-auto">
+          <motion.div
+            variants={itemVariants}
+            className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 w-full max-w-[16rem] sm:max-w-none mx-auto"
+          >
             <a
               href="#join-form"
               className="btn-primary w-full sm:w-auto px-8 py-4 text-sm lg:text-base"
@@ -228,7 +249,7 @@ export default function JoinHero({ JoinHeroBg, onUpdate }: JoinHeroProps) {
         </div>
       </motion.div>
 
-      <motion.div 
+      <motion.div
         variants={itemVariants}
         initial="hidden"
         animate="visible"

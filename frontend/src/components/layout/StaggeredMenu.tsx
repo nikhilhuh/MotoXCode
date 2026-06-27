@@ -134,14 +134,14 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
         showError(res.message || "Failed to update socials");
       }
     } catch (err: any) {
-        if (axios.isAxiosError(err) && err.response) {
-          showError(err.response.data.message || "Error updating socials");
-        } else if (err instanceof Error) {
-          showError(err.message);
-        } else {
-          showError("An unexpected error occurred.");
-        }
-      } finally {
+      if (axios.isAxiosError(err) && err.response) {
+        showError(err.response.data.message || "Error updating socials");
+      } else if (err instanceof Error) {
+        showError(err.message);
+      } else {
+        showError("An unexpected error occurred.");
+      }
+    } finally {
       setIsSaving(false);
     }
   };
@@ -955,7 +955,11 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
                                   type="text"
                                   value={s.link}
                                   onChange={(e) =>
-                                    handleSocialChange(idx, "link", e.target.value)
+                                    handleSocialChange(
+                                      idx,
+                                      "link",
+                                      e.target.value,
+                                    )
                                   }
                                   placeholder="URL"
                                   className="w-full bg-[var(--color-bg)]/80 border border-[var(--color-border)] text-[var(--color-text-primary)] rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[var(--color-primary)] transition-colors min-w-0"
@@ -1002,9 +1006,12 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
                         >
                           {isSaving ? (
                             <span className="flex gap-1 items-center justify-center">
-                              <Cliploader size={12} color="var(--color-bg)" /> Saving..
+                              <Cliploader size={12} color="var(--color-bg)" />{" "}
+                              Saving..
                             </span>
-                          ) : "Save"}
+                          ) : (
+                            "Save"
+                          )}
                         </button>
                       </div>
                     </div>

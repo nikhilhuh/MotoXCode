@@ -34,7 +34,7 @@ export default function Join() {
 
   const handleGalleryUpdate = useCallback((updatedGallery: GalleryImage[]) => {
     setJoinData((prev) =>
-      prev ? { ...prev, galleryPreview: updatedGallery } : prev
+      prev ? { ...prev, galleryPreview: updatedGallery } : prev,
     );
   }, []);
 

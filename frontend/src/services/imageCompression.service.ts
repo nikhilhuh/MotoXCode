@@ -1,7 +1,6 @@
 import imageCompression from "browser-image-compression";
 
-// ─── Compression Settings ─────────────────────────────────────────────────────
-
+// Compression Settings
 /**
  * Enforced compression profile for all CMS media uploads.
  * Processing is delegated to a Web Worker to keep the UI thread unblocked.
@@ -12,7 +11,7 @@ const COMPRESSION_OPTIONS: Parameters<typeof imageCompression>[1] = {
   useWebWorker: true,
 };
 
-// ─── Output Shape ─────────────────────────────────────────────────────────────
+// Output Shape
 
 export interface CompressedImageResult {
   /** Compressed File object ready for FormData shipment. */
@@ -21,7 +20,7 @@ export interface CompressedImageResult {
   previewUrl: string;
 }
 
-// ─── Service ──────────────────────────────────────────────────────────────────
+// Service
 
 /**
  * Compresses a raw browser File using the enforced CMS settings.

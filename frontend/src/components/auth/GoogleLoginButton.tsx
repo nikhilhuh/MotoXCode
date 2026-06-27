@@ -51,14 +51,14 @@ const GoogleLoginButton: React.FC<GoogleLoginButtonProps> = ({
         navigate("/");
       }
     } catch (err: any) {
-        if (axios.isAxiosError(err) && err.response) {
-          showError(err.response.data.message || "Backend operation failed.");
-        } else if (err instanceof Error) {
-          showError(err.message);
-        } else {
-          showError("An unexpected error occurred.");
-        }
+      if (axios.isAxiosError(err) && err.response) {
+        showError(err.response.data.message || "Backend operation failed.");
+      } else if (err instanceof Error) {
+        showError(err.message);
+      } else {
+        showError("An unexpected error occurred.");
       }
+    }
   };
 
   const login = useGoogleLogin({

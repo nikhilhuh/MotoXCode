@@ -79,8 +79,7 @@ cmsRouter.delete(
   cmsController.deleteGalleryImage.bind(cmsController)
 );
 
-// ─── Expanded CMS Mutation Routes (protected) ─────────────────────────────────
-
+// Expanded CMS Mutation Routes (protected)
 // PATCH /api/cms/hero — swap the hero backdrop for any page (about/crew/rides/events/contact/join)
 cmsRouter.patch(
   "/cms/hero",

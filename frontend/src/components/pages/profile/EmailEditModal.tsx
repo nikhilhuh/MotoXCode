@@ -13,21 +13,24 @@ interface EmailEditModalProps {
   username: string;
 }
 
-export default function EmailEditModal({ onClose, username }: EmailEditModalProps) {
+export default function EmailEditModal({
+  onClose,
+  username,
+}: EmailEditModalProps) {
   const [step, setStep] = useState<1 | 2>(1);
   const [newEmail, setNewEmail] = useState<string>("");
   const [otp, setOtp] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
-  
+
   const { showError, showSuccess } = useFeedback();
   const { setUserDetails } = useUser();
 
   useEffect(() => {
-    document.body.style.overflow = 'hidden';
-    document.documentElement.style.overflow = 'hidden';
+    document.body.style.overflow = "hidden";
+    document.documentElement.style.overflow = "hidden";
     return () => {
-      document.body.style.overflow = '';
-      document.documentElement.style.overflow = '';
+      document.body.style.overflow = "";
+      document.documentElement.style.overflow = "";
     };
   }, []);
 
@@ -43,14 +46,17 @@ export default function EmailEditModal({ onClose, username }: EmailEditModalProp
       showSuccess("OTP sent to your new email address.");
       setStep(2);
     } catch (err: any) {
-        if (axios.isAxiosError(err) && err.response) {
-          showError(err.response.data.message || "Failed to send OTP. This email might already be taken.");
-        } else if (err instanceof Error) {
-          showError(err.message);
-        } else {
-          showError("An unexpected error occurred.");
-        }
-      } finally {
+      if (axios.isAxiosError(err) && err.response) {
+        showError(
+          err.response.data.message ||
+            "Failed to send OTP. This email might already be taken.",
+        );
+      } else if (err instanceof Error) {
+        showError(err.message);
+      } else {
+        showError("An unexpected error occurred.");
+      }
+    } finally {
       setLoading(false);
     }
   };
@@ -63,41 +69,52 @@ export default function EmailEditModal({ onClose, username }: EmailEditModalProp
     }
     setLoading(true);
     try {
-      await profileService.changeEmail(username, newEmail.trim().toLowerCase(), otp);
+      await profileService.changeEmail(
+        username,
+        newEmail.trim().toLowerCase(),
+        otp,
+      );
       showSuccess("Email updated successfully!");
       // Update global user context with new email
-      setUserDetails(prev => prev ? { ...prev, email: newEmail.trim().toLowerCase() } : prev);
+      setUserDetails((prev) =>
+        prev ? { ...prev, email: newEmail.trim().toLowerCase() } : prev,
+      );
       onClose();
     } catch (err: any) {
-        if (axios.isAxiosError(err) && err.response) {
-          showError(err.response.data.message || "Failed to change email. Please try again.");
-        } else if (err instanceof Error) {
-          showError(err.message);
-        } else {
-          showError("An unexpected error occurred.");
-        }
-      } finally {
+      if (axios.isAxiosError(err) && err.response) {
+        showError(
+          err.response.data.message ||
+            "Failed to change email. Please try again.",
+        );
+      } else if (err instanceof Error) {
+        showError(err.message);
+      } else {
+        showError("An unexpected error occurred.");
+      }
+    } finally {
       setLoading(false);
     }
   };
 
   if (typeof document === "undefined") return null;
 
-  const inputClass = "w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 text-white font-body focus:outline-none focus:border-[var(--color-highlight)] focus:ring-1 focus:ring-[var(--color-highlight)]/50 transition-all duration-300 placeholder:text-white/20";
-  const labelClass = "block text-[11px] font-accent tracking-[0.15em] text-white/50 uppercase ml-1";
+  const inputClass =
+    "w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 text-white font-body focus:outline-none focus:border-[var(--color-highlight)] focus:ring-1 focus:ring-[var(--color-highlight)]/50 transition-all duration-300 placeholder:text-white/20";
+  const labelClass =
+    "block text-[11px] font-accent tracking-[0.15em] text-white/50 uppercase ml-1";
 
   return createPortal(
     <AnimatePresence>
       <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6">
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           onClick={!loading ? onClose : undefined}
           className="absolute inset-0 bg-black/70 backdrop-blur-sm"
         />
-        
-        <motion.div 
+
+        <motion.div
           initial={{ opacity: 0, scale: 0.95, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 20 }}
@@ -111,16 +128,29 @@ export default function EmailEditModal({ onClose, username }: EmailEditModalProp
                 Change Email
               </h2>
               <p className="text-white/50 text-sm mt-1.5 font-body">
-                {step === 1 ? "Enter your new email address." : "Check your email for the OTP."}
+                {step === 1
+                  ? "Enter your new email address."
+                  : "Check your email for the OTP."}
               </p>
             </div>
-            <button 
+            <button
               onClick={onClose}
               disabled={loading}
               className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white/50 hover:text-white hover:bg-white/10 hover:rotate-90 transition-all duration-300 disabled:opacity-50 disabled:hover:rotate-0 hover:cursor-pointer disabled:cursor-not-allowed shrink-0 ml-4"
               aria-label="Close"
             >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M18 6L6 18M6 6l12 12" />
+              </svg>
             </button>
           </div>
 
@@ -129,24 +159,26 @@ export default function EmailEditModal({ onClose, username }: EmailEditModalProp
             {step === 1 ? (
               <form onSubmit={handleSendOtp} className="flex flex-col gap-6">
                 <div className="flex flex-col gap-2">
-                  <label htmlFor="newEmail" className={labelClass}>New Email Address</label>
+                  <label htmlFor="newEmail" className={labelClass}>
+                    New Email Address
+                  </label>
                   <input
                     id="newEmail"
                     name="newEmail"
-                    type="email" 
-                    value={newEmail} 
-                    onChange={(e) => setNewEmail(e.target.value)} 
-                    className={inputClass} 
-                    placeholder="new@example.com" 
-                    required 
+                    type="email"
+                    value={newEmail}
+                    onChange={(e) => setNewEmail(e.target.value)}
+                    className={inputClass}
+                    placeholder="new@example.com"
+                    required
                     autoFocus
                     autoComplete="email"
                   />
                 </div>
-                
-                <button 
-                  type="submit" 
-                  disabled={loading || !newEmail.trim()} 
+
+                <button
+                  type="submit"
+                  disabled={loading || !newEmail.trim()}
                   className="btn-primary text-black w-full py-3.5 rounded-2xl font-bold tracking-wide flex items-center justify-center gap-2 transition-all shadow-[0_0_20px_var(--color-accent)] hover:shadow-[0_0_30px_var(--color-accent)] disabled:opacity-70 disabled:cursor-not-allowed hover:cursor-pointer"
                 >
                   {loading ? (
@@ -160,28 +192,33 @@ export default function EmailEditModal({ onClose, username }: EmailEditModalProp
                 </button>
               </form>
             ) : (
-              <form onSubmit={handleVerifyAndChange} className="flex flex-col gap-6">
+              <form
+                onSubmit={handleVerifyAndChange}
+                className="flex flex-col gap-6"
+              >
                 <div className="flex flex-col gap-2">
-                  <label htmlFor="otp" className={labelClass}>6-Digit OTP</label>
+                  <label htmlFor="otp" className={labelClass}>
+                    6-Digit OTP
+                  </label>
                   <input
                     id="otp"
                     name="otp"
-                    type="text" 
-                    value={otp} 
-                    onChange={(e) => setOtp(e.target.value)} 
-                    className={`${inputClass} tracking-[0.5em] text-center text-lg`} 
-                    placeholder="------" 
+                    type="text"
+                    value={otp}
+                    onChange={(e) => setOtp(e.target.value)}
+                    className={`${inputClass} tracking-[0.5em] text-center text-lg`}
+                    placeholder="------"
                     maxLength={6}
-                    required 
+                    required
                     autoFocus
                     autoComplete="one-time-code"
                   />
                 </div>
-                
+
                 <div className="flex flex-col gap-3">
-                  <button 
-                    type="submit" 
-                    disabled={loading || otp.length !== 6} 
+                  <button
+                    type="submit"
+                    disabled={loading || otp.length !== 6}
                     className="btn-primary text-black w-full py-3.5 rounded-2xl font-bold tracking-wide flex items-center justify-center gap-2 transition-all shadow-[0_0_20px_var(--color-accent)] hover:shadow-[0_0_30px_var(--color-accent)] disabled:opacity-70 disabled:cursor-not-allowed hover:cursor-pointer"
                   >
                     {loading ? (
@@ -193,7 +230,7 @@ export default function EmailEditModal({ onClose, username }: EmailEditModalProp
                       "Verify & Change Email"
                     )}
                   </button>
-                  <button 
+                  <button
                     type="button"
                     onClick={() => setStep(1)}
                     disabled={loading}
@@ -208,6 +245,6 @@ export default function EmailEditModal({ onClose, username }: EmailEditModalProp
         </motion.div>
       </div>
     </AnimatePresence>,
-    document.body
+    document.body,
   );
 }

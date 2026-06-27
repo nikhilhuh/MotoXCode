@@ -10,7 +10,7 @@ import { useUser } from "@/context/UserContext";
 
 const SignIn: React.FC = () => {
   const [loginMethod, setLoginMethod] = useState<"password" | "otp" | "forgot">(
-    "password"
+    "password",
   );
   const [step, setStep] = useState<number>(1);
   const { userDetails } = useUser();
@@ -43,7 +43,13 @@ const SignIn: React.FC = () => {
           <div className="text-center mb-8 relative z-10">
             <div className="flex gap-3 items-center justify-center text-[var(--color-primary)]">
               <div className="size-8 md:size-10 bg-[var(--color-primary)] rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="black" className="md:w-5 md:h-5">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 16 16"
+                  fill="black"
+                  className="md:w-5 md:h-5"
+                >
                   <path
                     d="M2 12L8 4L14 12H2Z"
                     fill="var(--color-bg)"
@@ -60,8 +66,6 @@ const SignIn: React.FC = () => {
           {/* Form Container */}
           <div className="flex flex-col flex-1 items-center justify-center relative z-10">
             <div className="flex flex-col justify-center gap-6 lg:text-lg w-[90vw] md:w-[70vw] lg:w-[40vw] xl:w-[30vw]">
-              
-              
               {userDetails ? (
                 <AlreadySignedIn />
               ) : (
@@ -69,9 +73,13 @@ const SignIn: React.FC = () => {
                   {/* Dynamic Form Render */}
                   <div className="flex items-center w-full">
                     {loginMethod === "forgot" ? (
-                      <ForgotPasswordForm onCancel={() => setLoginMethod("password")} />
+                      <ForgotPasswordForm
+                        onCancel={() => setLoginMethod("password")}
+                      />
                     ) : loginMethod === "password" ? (
-                      <UsernameForm onForgotPassword={() => setLoginMethod("forgot")} />
+                      <UsernameForm
+                        onForgotPassword={() => setLoginMethod("forgot")}
+                      />
                     ) : (
                       <OTPLogin step={step} setStep={setStep} />
                     )}
@@ -87,7 +95,10 @@ const SignIn: React.FC = () => {
                       </div>
 
                       {/* Secondary Actions */}
-                      <GoogleLoginButton key={`mxc-auth-signin-state-${false}`} isSignUp={false} />
+                      <GoogleLoginButton
+                        key={`mxc-auth-signin-state-${false}`}
+                        isSignUp={false}
+                      />
 
                       {loginMethod === "password" ? (
                         <button

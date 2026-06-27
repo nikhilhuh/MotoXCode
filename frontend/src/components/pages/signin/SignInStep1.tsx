@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from "axios";
 import React, { useState } from "react";
 import mailImg from "/assets/images/signin/mail.svg";
 import Cliploader from "@/components/ui/Cliploader";
@@ -10,7 +10,7 @@ type Props = {
   verifying: boolean;
   setVerifying: React.Dispatch<React.SetStateAction<boolean>>;
   setStep: React.Dispatch<React.SetStateAction<number>>;
-}
+};
 
 const SignInStep1: React.FC<Props> = ({
   email,
@@ -46,20 +46,24 @@ const SignInStep1: React.FC<Props> = ({
       showSuccess("An OTP has been sent to your email.");
       setStep(2);
     } catch (err) {
-        if (axios.isAxiosError(err) && err.response) {
-          showError(err.response.data.message || "Backend operation failed.");
-        } else if (err instanceof Error) {
-          showError(err.message);
-        } else {
-          showError("An unexpected error occurred.");
-        }
-      } finally {
+      if (axios.isAxiosError(err) && err.response) {
+        showError(err.response.data.message || "Backend operation failed.");
+      } else if (err instanceof Error) {
+        showError(err.message);
+      } else {
+        showError("An unexpected error occurred.");
+      }
+    } finally {
       setVerifying(false);
     }
   };
 
   return (
-    <form onSubmit={handleVerification} noValidate className="w-full flex flex-col">
+    <form
+      onSubmit={handleVerification}
+      noValidate
+      className="w-full flex flex-col"
+    >
       <img
         src={mailImg}
         alt="Mail"
@@ -70,7 +74,9 @@ const SignInStep1: React.FC<Props> = ({
         An OTP will be sent to the mail you provide below
       </p>
       <div className="relative mb-4">
-        <label htmlFor="email" className="sr-only">Email Address</label>
+        <label htmlFor="email" className="sr-only">
+          Email Address
+        </label>
         <input
           type="email"
           name="email"
@@ -86,7 +92,9 @@ const SignInStep1: React.FC<Props> = ({
             emailError ? "border-red-500/50" : "border-white/10"
           } rounded-xl py-3.5 px-10 text-[var(--color-primary)] font-[var(--font-body)] text-sm focus:outline-none focus:border-[var(--color-highlight)] focus:ring-1 focus:ring-[var(--color-highlight)]/50 transition-all duration-300 placeholder:text-[var(--color-text-secondary)]/50`}
         />
-        <div className="absolute top-1/2 left-3 transform -translate-y-1/2 text-[var(--color-text-secondary)]">📧</div>
+        <div className="absolute top-1/2 left-3 transform -translate-y-1/2 text-[var(--color-text-secondary)]">
+          📧
+        </div>
       </div>
       {emailError && (
         <p className="text-xs md:text-sm text-red-400 font-[var(--font-body)] mt-1 mb-4">
@@ -98,7 +106,11 @@ const SignInStep1: React.FC<Props> = ({
         disabled={verifying}
         className="btn-primary px-6 py-3 text-sm"
       >
-        {verifying ? <Cliploader size={20} color="currentColor" /> : "Verify Email"}
+        {verifying ? (
+          <Cliploader size={20} color="currentColor" />
+        ) : (
+          "Verify Email"
+        )}
       </button>
     </form>
   );

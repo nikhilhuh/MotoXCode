@@ -4,7 +4,9 @@ interface PasswordRequirementsProps {
   password: string;
 }
 
-const PasswordRequirements: React.FC<PasswordRequirementsProps> = ({ password }) => {
+const PasswordRequirements: React.FC<PasswordRequirementsProps> = ({
+  password,
+}) => {
   const requirements = [
     { label: "At least 8 characters", valid: password.length >= 8 },
     { label: "One uppercase letter", valid: /[A-Z]/.test(password) },
@@ -22,7 +24,9 @@ const PasswordRequirements: React.FC<PasswordRequirementsProps> = ({ password })
         <div key={i} className="flex items-center gap-2">
           <div
             className={`flex items-center justify-center size-3.5 rounded-full transition-colors duration-300 ${
-              req.valid ? "bg-green-500/20 text-green-400" : "bg-white/5 text-[var(--color-text-secondary)]"
+              req.valid
+                ? "bg-green-500/20 text-green-400"
+                : "bg-white/5 text-[var(--color-text-secondary)]"
             }`}
           >
             {req.valid ? (
@@ -41,7 +45,9 @@ const PasswordRequirements: React.FC<PasswordRequirementsProps> = ({ password })
           </div>
           <span
             className={`text-xs font-[var(--font-body)] transition-colors duration-300 ${
-              req.valid ? "text-green-400" : "text-[var(--color-text-secondary)]"
+              req.valid
+                ? "text-green-400"
+                : "text-[var(--color-text-secondary)]"
             }`}
           >
             {req.label}

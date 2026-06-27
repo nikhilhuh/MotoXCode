@@ -8,8 +8,7 @@ import { useFeedback } from "@/context/FeedbackContext";
 import Cliploader from "@/components/ui/Cliploader";
 import axios from "axios";
 
-// ─── Form State Schema ────────────────────────────────────────────────────────
-
+// Form State Schema
 interface RideFormState {
   title: string;
   locationFrom: string;
@@ -27,8 +26,7 @@ interface RideFormState {
   imagePreview: string;
 }
 
-// ─── Validation Error Schema ──────────────────────────────────────────────────
-
+// Validation Error Schema
 interface RideFormErrors {
   title?: string;
   locationFrom?: string;
@@ -43,8 +41,7 @@ interface RideFormErrors {
   image?: string;
 }
 
-// ─── Component Props ──────────────────────────────────────────────────────────
-
+// Component Props
 interface RideFormProps {
   /** If provided, the form operates in Edit mode pre-populated with this ride's data. */
   editRide?: Ride;
@@ -52,8 +49,7 @@ interface RideFormProps {
   onClose: () => void;
 }
 
-// ─── Route Type Metadata ──────────────────────────────────────────────────────
-
+// Route Type Metadata
 const ROUTE_TYPE_META: Record<
   Ride["routeType"],
   { label: string; hint: string; color: string }
@@ -75,12 +71,11 @@ const ROUTE_TYPE_META: Record<
   },
 };
 
-// ─── Validation Logic ─────────────────────────────────────────────────────────
-
+// Validation Logic
 function validateField(
   field: keyof RideFormErrors,
   value: string | number | boolean | File | null,
-  isEditMode: boolean
+  isEditMode: boolean,
 ): string | undefined {
   switch (field) {
     case "title":
@@ -96,7 +91,8 @@ function validateField(
         ? undefined
         : "Destination location is required.";
     case "date": {
-      if (typeof value !== "string" || value.trim() === "") return "Date is required.";
+      if (typeof value !== "string" || value.trim() === "")
+        return "Date is required.";
       const d = new Date(value);
       return isNaN(d.getTime()) ? "Enter a valid date." : undefined;
     }
@@ -127,7 +123,9 @@ function validateField(
         : "Duration is required (e.g. 2 days).";
     case "image":
       // In edit mode an existing image is acceptable; in create mode a new file is required
-      return !isEditMode && value === null ? "A banner image is required." : undefined;
+      return !isEditMode && value === null
+        ? "A banner image is required."
+        : undefined;
     default:
       return undefined;
   }
@@ -170,9 +168,12 @@ function buildInitialState(editRide?: Ride): RideFormState {
   };
 }
 
-// ─── Component ────────────────────────────────────────────────────────────────
-
-export default function RideForm({ editRide, onSuccess, onClose }: RideFormProps) {
+// Component
+export default function RideForm({
+  editRide,
+  onSuccess,
+  onClose,
+}: RideFormProps) {
   const isEditMode = Boolean(editRide);
   const { showSuccess, showError } = useFeedback();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -180,7 +181,9 @@ export default function RideForm({ editRide, onSuccess, onClose }: RideFormProps
   // Snapshot captured once on mount — used to detect whether anything changed.
   const initialStateRef = useRef<RideFormState>(buildInitialState(editRide));
 
-  const [form, setForm] = useState<RideFormState>(() => buildInitialState(editRide));
+  const [form, setForm] = useState<RideFormState>(() =>
+    buildInitialState(editRide),
+  );
   const [errors, setErrors] = useState<RideFormErrors>({});
   const [isSaving, setIsSaving] = useState<boolean>(false);
   const [isCompressing, setIsCompressing] = useState<boolean>(false);
@@ -188,7 +191,8 @@ export default function RideForm({ editRide, onSuccess, onClose }: RideFormProps
   // ── hasChanges — true when any field differs from the opening snapshot ───────
   // In create mode always true (validation gate is enough).
   // In edit mode the Save button stays disabled until a real change is detected.
-  const hasChanges: boolean = !isEditMode || (
+  const hasChanges: boolean =
+    !isEditMode ||
     form.title !== initialStateRef.current.title ||
     form.locationFrom !== initialStateRef.current.locationFrom ||
     form.locationTo !== initialStateRef.current.locationTo ||
@@ -201,10 +205,9 @@ export default function RideForm({ editRide, onSuccess, onClose }: RideFormProps
     form.description !== initialStateRef.current.description ||
     form.duration !== initialStateRef.current.duration ||
     form.past !== initialStateRef.current.past ||
-    form.imageFile !== null // a new image file was selected
-  );
+    form.imageFile !== null; // a new image file was selected
 
-  // ── Keyboard close ──────────────────────────────────────────────────────────
+  // Keyboard close
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
       if (e.key === "Escape" && !isSaving) onClose();
@@ -213,39 +216,58 @@ export default function RideForm({ editRide, onSuccess, onClose }: RideFormProps
     return () => window.removeEventListener("keydown", handleKey);
   }, [isSaving, onClose]);
 
-  // ── Cleanup object URLs on unmount ──────────────────────────────────────────
+  // Cleanup object URLs on unmount
   useEffect(() => {
     return () => {
       if (previewUrlRef.current) URL.revokeObjectURL(previewUrlRef.current);
     };
   }, []);
 
-  // ── Field change handler ────────────────────────────────────────────────────
+  // Field change handler
   const handleChange = useCallback(
     (field: keyof RideFormState, value: RideFormState[typeof field]) => {
       setForm((prev) => ({ ...prev, [field]: value }));
 
       // Validate the changed field immediately if it maps to an error key
       const errorKey = field as keyof RideFormErrors;
-      if (errorKey in { title: 1, locationFrom: 1, locationTo: 1, date: 1, distance: 1, routeType: 1, meetupTime: 1, meetupLocation: 1, description: 1, duration: 1 }) {
+      if (
+        errorKey in
+        {
+          title: 1,
+          locationFrom: 1,
+          locationTo: 1,
+          date: 1,
+          distance: 1,
+          routeType: 1,
+          meetupTime: 1,
+          meetupLocation: 1,
+          description: 1,
+          duration: 1,
+        }
+      ) {
         const err = validateField(errorKey, value as string, isEditMode);
         setErrors((prev) => ({ ...prev, [errorKey]: err }));
       }
     },
-    [isEditMode]
+    [isEditMode],
   );
 
-  // ── Image selection with compression ───────────────────────────────────────
-  const handleImageSelect = useCallback(async (file: File) => {
-    setIsCompressing(true);
-    try {
-      const { file: compressed, previewUrl } = await compressImage(file);
-      // Revoke the previous object URL to free memory
-      if (previewUrlRef.current) URL.revokeObjectURL(previewUrlRef.current);
-      previewUrlRef.current = previewUrl;
-      setForm((prev) => ({ ...prev, imageFile: compressed, imagePreview: previewUrl }));
-      setErrors((prev) => ({ ...prev, image: undefined }));
-    } catch (err: unknown) {
+  // Image selection with compression
+  const handleImageSelect = useCallback(
+    async (file: File) => {
+      setIsCompressing(true);
+      try {
+        const { file: compressed, previewUrl } = await compressImage(file);
+        // Revoke the previous object URL to free memory
+        if (previewUrlRef.current) URL.revokeObjectURL(previewUrlRef.current);
+        previewUrlRef.current = previewUrl;
+        setForm((prev) => ({
+          ...prev,
+          imageFile: compressed,
+          imagePreview: previewUrl,
+        }));
+        setErrors((prev) => ({ ...prev, image: undefined }));
+      } catch (err: unknown) {
         if (axios.isAxiosError(err) && err.response) {
           showError(err.response.data.message || "Backend operation failed.");
         } else if (err instanceof Error) {
@@ -254,11 +276,13 @@ export default function RideForm({ editRide, onSuccess, onClose }: RideFormProps
           showError("An unexpected error occurred.");
         }
       } finally {
-      setIsCompressing(false);
-    }
-  }, [showError]);
+        setIsCompressing(false);
+      }
+    },
+    [showError],
+  );
 
-  // ── Compute overall form validity ───────────────────────────────────────────
+  // Compute overall form validity
   const isFormValid = useCallback((): boolean => {
     const fields: Array<[keyof RideFormErrors, string | File | null]> = [
       ["title", form.title],
@@ -273,20 +297,30 @@ export default function RideForm({ editRide, onSuccess, onClose }: RideFormProps
       ["duration", form.duration],
       ["image", form.imageFile],
     ];
-    return fields.every(([key, val]) => validateField(key, val, isEditMode) === undefined);
+    return fields.every(
+      ([key, val]) => validateField(key, val, isEditMode) === undefined,
+    );
   }, [form, isEditMode]);
 
-  // ── Run full validation and surface errors on save attempt ─────────────────
+  // Run full validation and surface errors on save attempt
   const validateAll = useCallback((): boolean => {
     const newErrors: RideFormErrors = {
       title: validateField("title", form.title, isEditMode),
-      locationFrom: validateField("locationFrom", form.locationFrom, isEditMode),
+      locationFrom: validateField(
+        "locationFrom",
+        form.locationFrom,
+        isEditMode,
+      ),
       locationTo: validateField("locationTo", form.locationTo, isEditMode),
       date: validateField("date", form.date, isEditMode),
       distance: validateField("distance", form.distance, isEditMode),
       routeType: validateField("routeType", form.routeType, isEditMode),
       meetupTime: validateField("meetupTime", form.meetupTime, isEditMode),
-      meetupLocation: validateField("meetupLocation", form.meetupLocation, isEditMode),
+      meetupLocation: validateField(
+        "meetupLocation",
+        form.meetupLocation,
+        isEditMode,
+      ),
       description: validateField("description", form.description, isEditMode),
       duration: validateField("duration", form.duration, isEditMode),
       image: validateField("image", form.imageFile, isEditMode),
@@ -295,64 +329,79 @@ export default function RideForm({ editRide, onSuccess, onClose }: RideFormProps
     return Object.values(newErrors).every((e) => e === undefined);
   }, [form, isEditMode]);
 
-  // ── Submit handler ──────────────────────────────────────────────────────────
-  const handleSubmit = useCallback(async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!validateAll()) return;
+  // Submit handler
+  const handleSubmit = useCallback(
+    async (e: React.FormEvent) => {
+      e.preventDefault();
+      if (!validateAll()) return;
 
-    setIsSaving(true);
-    try {
-      const formData = new FormData();
-      formData.append("title", form.title.trim());
-      formData.append("locationFrom", form.locationFrom.trim());
-      formData.append("locationTo", form.locationTo.trim());
-      formData.append("date", form.date);
-      formData.append("distance", form.distance.trim());
-      formData.append("routeType", form.routeType);
-      formData.append("meetupTime", form.meetupTime.trim());
-      formData.append("meetupLocation", form.meetupLocation.trim());
-      formData.append("membersJoined", String(form.membersJoined));
-      formData.append("description", form.description.trim());
-      formData.append("duration", form.duration.trim());
-      formData.append("past", String(form.past));
+      setIsSaving(true);
+      try {
+        const formData = new FormData();
+        formData.append("title", form.title.trim());
+        formData.append("locationFrom", form.locationFrom.trim());
+        formData.append("locationTo", form.locationTo.trim());
+        formData.append("date", form.date);
+        formData.append("distance", form.distance.trim());
+        formData.append("routeType", form.routeType);
+        formData.append("meetupTime", form.meetupTime.trim());
+        formData.append("meetupLocation", form.meetupLocation.trim());
+        formData.append("membersJoined", String(form.membersJoined));
+        formData.append("description", form.description.trim());
+        formData.append("duration", form.duration.trim());
+        formData.append("past", String(form.past));
 
-      if (form.imageFile) {
-        formData.append("image", form.imageFile, form.imageFile.name);
-      }
+        if (form.imageFile) {
+          formData.append("image", form.imageFile, form.imageFile.name);
+        }
 
-      let savedRide: Ride;
-      if (isEditMode && editRide) {
-        savedRide = await ridesService.updateRide(editRide._id, formData);
-        showSuccess("Ride updated successfully!");
-      } else {
-        savedRide = await ridesService.createRide(formData);
-        showSuccess("Ride created successfully!");
-      }
+        let savedRide: Ride;
+        if (isEditMode && editRide) {
+          savedRide = await ridesService.updateRide(editRide._id, formData);
+          showSuccess("Ride updated successfully!");
+        } else {
+          savedRide = await ridesService.createRide(formData);
+          showSuccess("Ride created successfully!");
+        }
 
-      onSuccess(savedRide);
-      onClose();
-    } catch (err: unknown) {
+        onSuccess(savedRide);
+        onClose();
+      } catch (err: unknown) {
         if (axios.isAxiosError(err) && err.response) {
-          showError(err.response.data.message || "An error occurred. Please try again.");
+          showError(
+            err.response.data.message || "An error occurred. Please try again.",
+          );
         } else if (err instanceof Error) {
           showError(err.message);
         } else {
           showError("An unexpected error occurred.");
         }
       } finally {
-      setIsSaving(false);
-    }
-  }, [form, isEditMode, editRide, validateAll, onSuccess, onClose, showSuccess, showError]);
+        setIsSaving(false);
+      }
+    },
+    [
+      form,
+      isEditMode,
+      editRide,
+      validateAll,
+      onSuccess,
+      onClose,
+      showSuccess,
+      showError,
+    ],
+  );
 
   const routeMeta = ROUTE_TYPE_META[form.routeType];
 
-  // ─── Render ─────────────────────────────────────────────────────────────────
+  // Render
   // Image border: red-dashed in create mode when no image; muted when edit mode has existing image
-  const imageBorderCls = !isEditMode && !form.imagePreview
-    ? "border-2 border-dashed border-red-500/60"
-    : form.imagePreview
-      ? ""
-      : "border-2 border-dashed border-[var(--color-border)]/50";
+  const imageBorderCls =
+    !isEditMode && !form.imagePreview
+      ? "border-2 border-dashed border-red-500/60"
+      : form.imagePreview
+        ? ""
+        : "border-2 border-dashed border-[var(--color-border)]/50";
 
   const modalContent = (
     <div
@@ -370,7 +419,7 @@ export default function RideForm({ editRide, onSuccess, onClose }: RideFormProps
         className="relative w-full max-w-2xl max-h-[96vh] sm:max-h-[92vh] flex flex-col bg-[var(--color-section)] border border-[var(--color-border)]/50 rounded-2xl shadow-[0_40px_120px_rgba(0,0,0,0.8)] overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* ── In-flight overlay ───────────────────────────────────────────── */}
+        {/* In-flight overlay */}
         {isSaving && (
           <div className="absolute inset-0 z-50 flex flex-col items-center justify-center rounded-2xl backdrop-blur-sm bg-black/40">
             <Cliploader size={40} color="#f8fafc" />
@@ -380,7 +429,7 @@ export default function RideForm({ editRide, onSuccess, onClose }: RideFormProps
           </div>
         )}
 
-        {/* ── Header ─────────────────────────────────────────────────────── */}
+        {/* Header */}
         <div className="flex items-center justify-between px-6 py-5 border-b border-[var(--color-border)]/40 flex-shrink-0">
           <div>
             <p className="text-xs md:text-sm font-mono uppercase tracking-[0.2em] text-[var(--color-text-secondary)] mb-1">
@@ -404,11 +453,14 @@ export default function RideForm({ editRide, onSuccess, onClose }: RideFormProps
           </button>
         </div>
 
-        {/* ── Image Banner Preview ───────────────────────────────────────── */}
+        {/* Image Banner Preview */}
         <div
           className={`relative h-30 md:h-40 flex-shrink-0 bg-[var(--color-surface)] cursor-pointer group overflow-hidden ${imageBorderCls}`}
           onClick={() => !isSaving && fileInputRef.current?.click()}
-          onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") fileInputRef.current?.click(); }}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ")
+              fileInputRef.current?.click();
+          }}
           role="button"
           tabIndex={0}
           aria-label="Select banner image"
@@ -434,7 +486,9 @@ export default function RideForm({ editRide, onSuccess, onClose }: RideFormProps
                   ) : (
                     <>
                       <FaImage size={24} />
-                      <span className="text-xs font-semibold tracking-wide">Change Image</span>
+                      <span className="text-xs font-semibold tracking-wide">
+                        Change Image
+                      </span>
                     </>
                   )}
                 </div>
@@ -478,14 +532,19 @@ export default function RideForm({ editRide, onSuccess, onClose }: RideFormProps
           }}
         />
 
-        {/* ── Scrollable Form Body ───────────────────────────────────────── */}
+        {/* Scrollable Form Body */}
         <form
           id="ride-form"
           onSubmit={handleSubmit}
           className="flex-1 overflow-y-auto px-4 md:px-6 py-6 flex flex-col gap-5"
         >
           {/* Title */}
-          <FormField htmlFor="ride-title" label="Ride Title" error={errors.title} required>
+          <FormField
+            htmlFor="ride-title"
+            label="Ride Title"
+            error={errors.title}
+            required
+          >
             <input
               id="ride-title"
               name="rideTitle"
@@ -501,7 +560,13 @@ export default function RideForm({ editRide, onSuccess, onClose }: RideFormProps
           {/* Route Type — uses buttons, no text input, label is decorative */}
           <FormField label="Route Type" error={errors.routeType} required>
             <div className="flex flex-wrap gap-2">
-              {(["Inter-state", "Inter-city", "Intra-city"] as Ride["routeType"][]).map((rt) => (
+              {(
+                [
+                  "Inter-state",
+                  "Inter-city",
+                  "Intra-city",
+                ] as Ride["routeType"][]
+              ).map((rt) => (
                 <button
                   key={rt}
                   type="button"
@@ -517,14 +582,21 @@ export default function RideForm({ editRide, onSuccess, onClose }: RideFormProps
               ))}
             </div>
             {/* Dynamic route type hint */}
-            <p className={`text-[0.7rem] mt-1.5 font-[var(--font-accent)] ${routeMeta.color} opacity-80`}>
+            <p
+              className={`text-[0.7rem] mt-1.5 font-[var(--font-accent)] ${routeMeta.color} opacity-80`}
+            >
               {routeMeta.hint}
             </p>
           </FormField>
 
           {/* Location From / To */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <FormField htmlFor="ride-location-from" label="From" error={errors.locationFrom} required>
+            <FormField
+              htmlFor="ride-location-from"
+              label="From"
+              error={errors.locationFrom}
+              required
+            >
               <input
                 id="ride-location-from"
                 name="rideLocationFrom"
@@ -536,7 +608,12 @@ export default function RideForm({ editRide, onSuccess, onClose }: RideFormProps
                 className={inputCls(errors.locationFrom)}
               />
             </FormField>
-            <FormField htmlFor="ride-location-to" label="To" error={errors.locationTo} required>
+            <FormField
+              htmlFor="ride-location-to"
+              label="To"
+              error={errors.locationTo}
+              required
+            >
               <input
                 id="ride-location-to"
                 name="rideLocationTo"
@@ -552,7 +629,12 @@ export default function RideForm({ editRide, onSuccess, onClose }: RideFormProps
 
           {/* Date / Duration */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <FormField htmlFor="ride-date" label="Ride Date" error={errors.date} required>
+            <FormField
+              htmlFor="ride-date"
+              label="Ride Date"
+              error={errors.date}
+              required
+            >
               <input
                 id="ride-date"
                 name="rideDate"
@@ -563,7 +645,12 @@ export default function RideForm({ editRide, onSuccess, onClose }: RideFormProps
                 className={inputCls(errors.date)}
               />
             </FormField>
-            <FormField htmlFor="ride-duration" label="Duration" error={errors.duration} required>
+            <FormField
+              htmlFor="ride-duration"
+              label="Duration"
+              error={errors.duration}
+              required
+            >
               <input
                 id="ride-duration"
                 name="rideDuration"
@@ -579,7 +666,12 @@ export default function RideForm({ editRide, onSuccess, onClose }: RideFormProps
 
           {/* Distance / Members Joined */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <FormField htmlFor="ride-distance" label="Distance" error={errors.distance} required>
+            <FormField
+              htmlFor="ride-distance"
+              label="Distance"
+              error={errors.distance}
+              required
+            >
               <input
                 id="ride-distance"
                 name="rideDistance"
@@ -612,7 +704,12 @@ export default function RideForm({ editRide, onSuccess, onClose }: RideFormProps
 
           {/* Meetup Time / Location */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <FormField htmlFor="ride-meetup-time" label="Meetup Time" error={errors.meetupTime} required>
+            <FormField
+              htmlFor="ride-meetup-time"
+              label="Meetup Time"
+              error={errors.meetupTime}
+              required
+            >
               <input
                 id="ride-meetup-time"
                 name="rideMeetupTime"
@@ -624,7 +721,12 @@ export default function RideForm({ editRide, onSuccess, onClose }: RideFormProps
                 className={inputCls(errors.meetupTime)}
               />
             </FormField>
-            <FormField htmlFor="ride-meetup-location" label="Meetup Location" error={errors.meetupLocation} required>
+            <FormField
+              htmlFor="ride-meetup-location"
+              label="Meetup Location"
+              error={errors.meetupLocation}
+              required
+            >
               <input
                 id="ride-meetup-location"
                 name="rideMeetupLocation"
@@ -639,7 +741,12 @@ export default function RideForm({ editRide, onSuccess, onClose }: RideFormProps
           </div>
 
           {/* Description */}
-          <FormField htmlFor="ride-description" label="Description" error={errors.description} required>
+          <FormField
+            htmlFor="ride-description"
+            label="Description"
+            error={errors.description}
+            required
+          >
             <textarea
               id="ride-description"
               name="rideDescription"
@@ -659,7 +766,9 @@ export default function RideForm({ editRide, onSuccess, onClose }: RideFormProps
               id="ride-past-toggle"
               onClick={() => setForm((prev) => ({ ...prev, past: !prev.past }))}
               className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-300 cursor-pointer ${
-                form.past ? "bg-[var(--color-highlight)]" : "bg-[var(--color-border)]"
+                form.past
+                  ? "bg-[var(--color-highlight)]"
+                  : "bg-[var(--color-border)]"
               }`}
               role="switch"
               aria-checked={form.past}
@@ -679,7 +788,7 @@ export default function RideForm({ editRide, onSuccess, onClose }: RideFormProps
           </div>
         </form>
 
-        {/* ── Footer Actions — mirrors GalleryPreview Save/Cancel ─────────── */}
+        {/* Footer Actions — mirrors GalleryPreview Save/Cancel */}
         <div className="flex gap-3 justify-end px-6 py-5 border-t border-[var(--color-border)]/40 flex-shrink-0">
           <button
             type="button"
@@ -692,20 +801,24 @@ export default function RideForm({ editRide, onSuccess, onClose }: RideFormProps
           <button
             type="submit"
             form="ride-form"
-            disabled={isSaving || isCompressing || !isFormValid() || !hasChanges}
+            disabled={
+              isSaving || isCompressing || !isFormValid() || !hasChanges
+            }
             className={`px-4 py-2 md:px-6 md:py-2.5 text-xs md:text-sm font-bold rounded-xl transition-all ${
               isSaving || isCompressing || !isFormValid() || !hasChanges
-                ? 'bg-[var(--color-primary)]/50 text-[var(--color-bg)]/70 cursor-not-allowed opacity-60'
-                : 'bg-[var(--color-primary)] text-[var(--color-bg)] hover:opacity-90 hover:cursor-pointer'
+                ? "bg-[var(--color-primary)]/50 text-[var(--color-bg)]/70 cursor-not-allowed opacity-60"
+                : "bg-[var(--color-primary)] text-[var(--color-bg)] hover:opacity-90 hover:cursor-pointer"
             }`}
           >
             {isSaving ? (
               <span className="flex gap-1 items-center justify-center">
                 <Cliploader size={12} color="var(--color-bg)" />
-                {isEditMode ? 'Saving..' : 'Creating..'}
+                {isEditMode ? "Saving.." : "Creating.."}
               </span>
+            ) : isEditMode ? (
+              "Save Changes"
             ) : (
-              isEditMode ? 'Save Changes' : 'Create Ride'
+              "Create Ride"
             )}
           </button>
         </div>
@@ -718,7 +831,7 @@ export default function RideForm({ editRide, onSuccess, onClose }: RideFormProps
     : null;
 }
 
-// ─── Sub-components ───────────────────────────────────────────────────────────
+// Sub-components
 
 function FormField({
   label,
@@ -741,19 +854,23 @@ function FormField({
           className="text-[0.7rem] font-semibold font-[var(--font-accent)] text-[var(--color-text-secondary)] uppercase tracking-[0.12em]"
         >
           {label}
-          {required && <span className="text-[var(--color-highlight)] ml-0.5">*</span>}
+          {required && (
+            <span className="text-[var(--color-highlight)] ml-0.5">*</span>
+          )}
         </label>
       ) : (
-        <span
-          className="text-[0.7rem] font-semibold font-[var(--font-accent)] text-[var(--color-text-secondary)] uppercase tracking-[0.12em]"
-        >
+        <span className="text-[0.7rem] font-semibold font-[var(--font-accent)] text-[var(--color-text-secondary)] uppercase tracking-[0.12em]">
           {label}
-          {required && <span className="text-[var(--color-highlight)] ml-0.5">*</span>}
+          {required && (
+            <span className="text-[var(--color-highlight)] ml-0.5">*</span>
+          )}
         </span>
       )}
       {children}
       {error && (
-        <p className="text-[0.68rem] text-red-400 font-[var(--font-accent)]">{error}</p>
+        <p className="text-[0.68rem] text-red-400 font-[var(--font-accent)]">
+          {error}
+        </p>
       )}
     </div>
   );

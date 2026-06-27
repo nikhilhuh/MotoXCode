@@ -8,8 +8,7 @@ import {
   IGalleryDocument,
 } from "../models";
 
-// ─── Response Shapes ──────────────────────────────────────────────────────────
-
+// Response Shapes
 interface EventsPageDataResponse {
   success: true;
   data: {
@@ -19,8 +18,7 @@ interface EventsPageDataResponse {
   };
 }
 
-// ─── Controller ───────────────────────────────────────────────────────────────
-
+// Controller
 /**
  * EventsController — serves event listings and associated gallery media.
  */

@@ -18,8 +18,7 @@ const upload = multer({
   limits: { fileSize: 5 * 1024 * 1024 }, // 5 MB limit
 });
 
-// ─── Read-only (public) ───────────────────────────────────────────────────────
-
+// Read-only (public)
 // GET /api/rides — aggregated rides page payload
 rideRouter.get(
   "/rides",
@@ -27,8 +26,7 @@ rideRouter.get(
   ridesController.getRidesPageData.bind(ridesController)
 );
 
-// ─── User Mutations (protected) ────────────────────────────────────────────────
-
+// User Mutations (protected)
 // POST /api/rides/:id/join — authenticated user joins a ride
 rideRouter.post(
   "/rides/:id/join",
@@ -43,8 +41,7 @@ rideRouter.post(
   ridesController.withdrawFromRide.bind(ridesController)
 );
 
-// ─── Admin / Crew Mutations (protected) ──────────────────────────────────────
-
+// Admin / Crew Mutations (protected)
 // POST /api/rides — create a new ride document with image
 rideRouter.post(
   "/rides",

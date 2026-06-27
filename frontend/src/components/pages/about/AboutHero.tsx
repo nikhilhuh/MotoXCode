@@ -9,8 +9,7 @@ import { compressImage } from "@/services/imageCompression.service";
 import Cliploader from "@/components/ui/Cliploader";
 import axios from "axios";
 
-// ─── Types ────────────────────────────────────────────────────────────────────
-
+// Types
 interface AboutHeroEditData {
   image: string | File;
 }
@@ -20,8 +19,7 @@ interface AboutHeroProps {
   onUpdate?: (updatedHero: PageHero) => void;
 }
 
-// ─── Animation Variants ───────────────────────────────────────────────────────
-
+// Animation Variants
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
@@ -35,15 +33,14 @@ const containerVariants = {
 
 const itemVariants = {
   hidden: { opacity: 0, y: 30 },
-  visible: { 
-    opacity: 1, 
-    y: 0, 
-    transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] as const } 
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] as const },
   },
 };
 
-// ─── Component ────────────────────────────────────────────────────────────────
-
+// Component
 export default function AboutHero({ AboutHeroBg, onUpdate }: AboutHeroProps) {
   const heroRef = useRef<HTMLDivElement>(null);
   const { showSuccess, showError } = useFeedback();
@@ -73,7 +70,8 @@ export default function AboutHero({ AboutHeroBg, onUpdate }: AboutHeroProps) {
   async function handleSave(): Promise<void> {
     setIsSaving(true);
     try {
-      const selectedFile = editData.image instanceof File ? editData.image : null;
+      const selectedFile =
+        editData.image instanceof File ? editData.image : null;
       if (!selectedFile) throw new Error("No file found to compress.");
 
       const { file: compressedFile } = await compressImage(selectedFile);
@@ -86,26 +84,38 @@ export default function AboutHero({ AboutHeroBg, onUpdate }: AboutHeroProps) {
 
       if (result.success) {
         showSuccess("About hero background updated successfully!");
-        const resultData = result.data as { _id?: string, image?: string } | undefined;
+        const resultData = result.data as
+          | { _id?: string; image?: string }
+          | undefined;
         if (resultData?.image) {
           setField({ image: resultData.image });
-          onUpdate?.({ _id: resultData?._id || "aboutHero", page: "about", image: resultData.image });
+          onUpdate?.({
+            _id: resultData?._id || "aboutHero",
+            page: "about",
+            image: resultData.image,
+          });
         } else {
-          onUpdate?.({ _id: resultData?._id || "aboutHero", page: "about", image: resolvedBg });
+          onUpdate?.({
+            _id: resultData?._id || "aboutHero",
+            page: "about",
+            image: resolvedBg,
+          });
         }
         finishEditing();
       } else {
         showError(result.message || "Failed to update hero background.");
       }
     } catch (error: unknown) {
-        if (axios.isAxiosError(error) && error.response) {
-          showError(error.response.data.message || "Failed to update hero background.");
-        } else if (error instanceof Error) {
-          showError(error.message);
-        } else {
-          showError("An unexpected error occurred.");
-        }
-      } finally {
+      if (axios.isAxiosError(error) && error.response) {
+        showError(
+          error.response.data.message || "Failed to update hero background.",
+        );
+      } else if (error instanceof Error) {
+        showError(error.message);
+      } else {
+        showError("An unexpected error occurred.");
+      }
+    } finally {
       setIsSaving(false);
     }
   }
@@ -190,8 +200,8 @@ export default function AboutHero({ AboutHeroBg, onUpdate }: AboutHeroProps) {
         </div>
       )}
 
-      <motion.div 
-        className="relative z-10 w-full" 
+      <motion.div
+        className="relative z-10 w-full"
         style={{ position: "relative" }}
         variants={containerVariants}
         initial="hidden"
@@ -219,16 +229,23 @@ export default function AboutHero({ AboutHeroBg, onUpdate }: AboutHeroProps) {
               uppercase
             "
           >
-            Built on Asphalt,<br />
+            Built on Asphalt,
+            <br />
             <span className="text-[var(--color-accent)]">Bonded by Grit</span>
           </motion.h1>
 
-          <motion.p variants={itemVariants} className="font-[var(--font-body)] font-medium max-w-2xl mx-auto text-sm md:text-base lg:text-xl text-[var(--color-text-primary)] opacity-90 leading-relaxed mb-10">
+          <motion.p
+            variants={itemVariants}
+            className="font-[var(--font-body)] font-medium max-w-2xl mx-auto text-sm md:text-base lg:text-xl text-[var(--color-text-primary)] opacity-90 leading-relaxed mb-10"
+          >
             MotoXCode was never supposed to be this big. It started as an
             obsession. It became a movement.
           </motion.p>
 
-          <motion.div variants={itemVariants} className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 w-full max-w-[16rem] sm:max-w-none mx-auto">
+          <motion.div
+            variants={itemVariants}
+            className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 w-full max-w-[16rem] sm:max-w-none mx-auto"
+          >
             <a
               href="#philosophy"
               className="btn-primary w-full sm:w-auto px-8 py-4 text-sm lg:text-base"
@@ -245,7 +262,7 @@ export default function AboutHero({ AboutHeroBg, onUpdate }: AboutHeroProps) {
         </div>
       </motion.div>
 
-      <motion.div 
+      <motion.div
         variants={itemVariants}
         initial="hidden"
         animate="visible"

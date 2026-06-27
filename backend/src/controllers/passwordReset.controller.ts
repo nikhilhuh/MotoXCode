@@ -8,8 +8,7 @@ import { MailService } from "../services/mail/mail.service";
 import { hashPassword } from "../services/auth.service";
 import { env } from "../config/env.config";
 
-// ─── Zod Schemas ─────────────────────────────────────────────────────────────
-
+// Zod Schemas
 const ForgotPasswordSchema = z.object({
   email: z.string().email("A valid email is required").trim().toLowerCase(),
 });
@@ -33,14 +32,12 @@ const ResetPasswordSchema = z.object({
     ),
 });
 
-// ─── Helpers ─────────────────────────────────────────────────────────────────
-
+// Helpers
 function hashToken(token: string): string {
   return crypto.createHash("sha256").update(token).digest("hex");
 }
 
-// ─── Controllers ─────────────────────────────────────────────────────────────
-
+// Controllers
 /**
  * POST /api/forgot-password
  */

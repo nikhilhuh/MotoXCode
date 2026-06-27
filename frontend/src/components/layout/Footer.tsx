@@ -31,7 +31,7 @@ const SOCIAL_OPTIONS = [
   "Twitter",
   "Discord",
   "LinkedIn",
-  "Other"
+  "Other",
 ];
 
 const getSocialIcon = (label: string) => {
@@ -64,7 +64,7 @@ const footerGroups = [
   {
     heading: "Explore",
     links: [
-      { to: "/", label: "Home"},
+      { to: "/", label: "Home" },
       { to: "/about", label: "About Us" },
       { to: "/crew", label: "Our Crew" },
     ],
@@ -98,7 +98,11 @@ export default function Footer({ socials, onUpdateSocials }: FooterProps) {
     setIsEditingSocials(true);
   };
 
-  const handleSocialChange = (index: number, field: keyof Social, value: string) => {
+  const handleSocialChange = (
+    index: number,
+    field: keyof Social,
+    value: string,
+  ) => {
     const newSocials = [...editSocials];
     newSocials[index] = { ...newSocials[index], [field]: value };
     setEditSocials(newSocials);
@@ -127,13 +131,13 @@ export default function Footer({ socials, onUpdateSocials }: FooterProps) {
     setIsSaving(true);
     try {
       const formData = new FormData();
-      const payload = editSocials.map(s => ({
+      const payload = editSocials.map((s) => ({
         id: s._id || "",
         label: s.label,
-        link: s.link
+        link: s.link,
       }));
       formData.append("socials", JSON.stringify(payload));
-      
+
       const res = await cmsService.updateHomeCMSData("socials", formData);
       if (res.success) {
         showSuccess("Socials updated!");
@@ -143,14 +147,14 @@ export default function Footer({ socials, onUpdateSocials }: FooterProps) {
         showError(res.message || "Failed to update socials");
       }
     } catch (err: any) {
-        if (axios.isAxiosError(err) && err.response) {
-          showError(err.response.data.message || "Error updating socials");
-        } else if (err instanceof Error) {
-          showError(err.message);
-        } else {
-          showError("An unexpected error occurred.");
-        }
-      } finally {
+      if (axios.isAxiosError(err) && err.response) {
+        showError(err.response.data.message || "Error updating socials");
+      } else if (err instanceof Error) {
+        showError(err.message);
+      } else {
+        showError("An unexpected error occurred.");
+      }
+    } finally {
       setIsSaving(false);
     }
   };
@@ -183,12 +187,18 @@ export default function Footer({ socials, onUpdateSocials }: FooterProps) {
             </Link>
 
             <p className="font-body text-sm leading-relaxed max-w-sm text-[var(--color-text-secondary)] mb-8">
-              A premium motorcycle community for
-              riders who take both the road and the craft seriously.
+              A premium motorcycle community for riders who take both the road
+              and the craft seriously.
             </p>
 
             {/* Social icons */}
-            <div className={isEditingSocials ? "flex flex-col w-full gap-3 relative" : "flex items-center gap-3 relative"}>
+            <div
+              className={
+                isEditingSocials
+                  ? "flex flex-col w-full gap-3 relative"
+                  : "flex items-center gap-3 relative"
+              }
+            >
               {isEditingSocials ? (
                 <div className="flex flex-col gap-3 w-full max-w-xl mt-4">
                   <p className="text-[var(--color-text-secondary)] text-xs font-mono uppercase tracking-widest mb-2">
@@ -196,8 +206,17 @@ export default function Footer({ socials, onUpdateSocials }: FooterProps) {
                   </p>
                   <div className="flex flex-col gap-4 w-full mt-2">
                     {editSocials.map((s, idx) => {
-                      const isOther = !SOCIAL_OPTIONS.slice(0, -1).some(opt => opt.toLowerCase() === s.label.toLowerCase().trim());
-                      const selectValue = isOther ? "Other" : SOCIAL_OPTIONS.find(opt => opt.toLowerCase() === s.label.toLowerCase().trim()) || "Globe";
+                      const isOther = !SOCIAL_OPTIONS.slice(0, -1).some(
+                        (opt) =>
+                          opt.toLowerCase() === s.label.toLowerCase().trim(),
+                      );
+                      const selectValue = isOther
+                        ? "Other"
+                        : SOCIAL_OPTIONS.find(
+                            (opt) =>
+                              opt.toLowerCase() ===
+                              s.label.toLowerCase().trim(),
+                          ) || "Globe";
                       return (
                         <div
                           key={idx}
@@ -220,13 +239,19 @@ export default function Footer({ socials, onUpdateSocials }: FooterProps) {
                                   if (e.target.value === "Other") {
                                     handleSocialChange(idx, "label", "");
                                   } else {
-                                    handleSocialChange(idx, "label", e.target.value);
+                                    handleSocialChange(
+                                      idx,
+                                      "label",
+                                      e.target.value,
+                                    );
                                   }
                                 }}
                                 className="w-full bg-[var(--color-bg)]/80 border border-[var(--color-border)] text-[var(--color-text-primary)] rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[var(--color-primary)] transition-colors"
                               >
-                                {SOCIAL_OPTIONS.map(opt => (
-                                  <option key={opt} value={opt}>{opt}</option>
+                                {SOCIAL_OPTIONS.map((opt) => (
+                                  <option key={opt} value={opt}>
+                                    {opt}
+                                  </option>
                                 ))}
                               </select>
                             </div>
@@ -244,7 +269,13 @@ export default function Footer({ socials, onUpdateSocials }: FooterProps) {
                                   autoComplete="off"
                                   type="text"
                                   value={s.label}
-                                  onChange={(e) => handleSocialChange(idx, "label", e.target.value)}
+                                  onChange={(e) =>
+                                    handleSocialChange(
+                                      idx,
+                                      "label",
+                                      e.target.value,
+                                    )
+                                  }
                                   placeholder="Custom Label"
                                   className="w-full bg-[var(--color-bg)]/80 border border-[var(--color-border)] text-[var(--color-text-primary)] rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[var(--color-primary)] transition-colors min-w-0"
                                 />
@@ -263,7 +294,13 @@ export default function Footer({ socials, onUpdateSocials }: FooterProps) {
                                 autoComplete="off"
                                 type="text"
                                 value={s.link}
-                                onChange={(e) => handleSocialChange(idx, "link", e.target.value)}
+                                onChange={(e) =>
+                                  handleSocialChange(
+                                    idx,
+                                    "link",
+                                    e.target.value,
+                                  )
+                                }
                                 placeholder="URL"
                                 className="w-full bg-[var(--color-bg)]/80 border border-[var(--color-border)] text-[var(--color-text-primary)] rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[var(--color-primary)] transition-colors min-w-0"
                               />
@@ -289,7 +326,7 @@ export default function Footer({ socials, onUpdateSocials }: FooterProps) {
                     >
                       <FaPlus size={12} /> Add New Social
                     </button>
-                    
+
                     <div className="flex gap-3 justify-end mt-2">
                       <button
                         onClick={() => setIsEditingSocials(false)}
@@ -309,9 +346,12 @@ export default function Footer({ socials, onUpdateSocials }: FooterProps) {
                       >
                         {isSaving ? (
                           <span className="flex gap-1 items-center justify-center">
-                            <Cliploader size={12} color="var(--color-bg)" /> Saving..
+                            <Cliploader size={12} color="var(--color-bg)" />{" "}
+                            Saving..
                           </span>
-                        ) : "Save"}
+                        ) : (
+                          "Save"
+                        )}
                       </button>
                     </div>
                   </div>
@@ -350,35 +390,51 @@ export default function Footer({ socials, onUpdateSocials }: FooterProps) {
           {footerGroups.map((group) => {
             const groupLinks = [...group.links];
             if (group.heading === "Explore" && isInitialized && userDetails) {
-              groupLinks.push({ to: `/profile/@${userDetails.username}`, label: "My Profile" });
+              groupLinks.push({
+                to: `/profile/@${userDetails.username}`,
+                label: "My Profile",
+              });
             }
 
             return (
-            <div key={group.heading}>
-              <h4 className="font-accent text-[0.65rem] font-bold tracking-[0.2em] text-[var(--color-text-secondary)] uppercase mb-5">
-                {group.heading}
-              </h4>
-              <ul className="flex flex-col gap-3">
-                {groupLinks
-                  .filter((link) => {
-                    if (link.to === "/join" && isInitialized && userDetails && userDetails.role !== "admin") return false;
-                    if (link.to === "/contact" && isInitialized && userDetails && userDetails.role !== "admin") return false;
-                    return true;
-                  })
-                  .map((link) => (
-                  <li key={link.to + link.label}>
-                    <Link
-                      to={link.to}
-                      className="font-body text-sm text-[var(--color-text-secondary)] hover:text-[var(--color-primary)] transition-colors duration-200 flex items-center gap-1.5 group"
-                    >
-                      <span className="w-0 group-hover:w-3 h-px bg-[var(--color-primary)] transition-all duration-300 overflow-hidden" />
-                      {link.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )})}
+              <div key={group.heading}>
+                <h4 className="font-accent text-[0.65rem] font-bold tracking-[0.2em] text-[var(--color-text-secondary)] uppercase mb-5">
+                  {group.heading}
+                </h4>
+                <ul className="flex flex-col gap-3">
+                  {groupLinks
+                    .filter((link) => {
+                      if (
+                        link.to === "/join" &&
+                        isInitialized &&
+                        userDetails &&
+                        userDetails.role !== "admin"
+                      )
+                        return false;
+                      if (
+                        link.to === "/contact" &&
+                        isInitialized &&
+                        userDetails &&
+                        userDetails.role !== "admin"
+                      )
+                        return false;
+                      return true;
+                    })
+                    .map((link) => (
+                      <li key={link.to + link.label}>
+                        <Link
+                          to={link.to}
+                          className="font-body text-sm text-[var(--color-text-secondary)] hover:text-[var(--color-primary)] transition-colors duration-200 flex items-center gap-1.5 group"
+                        >
+                          <span className="w-0 group-hover:w-3 h-px bg-[var(--color-primary)] transition-all duration-300 overflow-hidden" />
+                          {link.label}
+                        </Link>
+                      </li>
+                    ))}
+                </ul>
+              </div>
+            );
+          })}
         </div>
 
         {/* Divider */}
@@ -387,7 +443,8 @@ export default function Footer({ socials, onUpdateSocials }: FooterProps) {
         {/* Bottom bar */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-12">
           <p className="font-accent text-xs text-[var(--color-text-secondary)]/60">
-            © <span suppressHydrationWarning>{new Date().getFullYear()}</span> MotoXCode. All rights reserved.
+            © <span suppressHydrationWarning>{new Date().getFullYear()}</span>{" "}
+            MotoXCode. All rights reserved.
           </p>
           <div className="flex gap-6">
             <Link

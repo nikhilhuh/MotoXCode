@@ -2,8 +2,7 @@ import { Request, Response, NextFunction, RequestHandler } from "express";
 import { ZodSchema, ZodError } from "zod";
 import { AppError } from "./error.middleware";
 
-// ─── Validation Target ───────────────────────────────────────────────────────
-
+// Validation Target
 /**
  * The part of the request to validate against the Zod schema.
  * - 'body'   → req.body   (POST/PUT/PATCH payloads)
@@ -12,8 +11,7 @@ import { AppError } from "./error.middleware";
  */
 export type ValidationSource = "body" | "query" | "params";
 
-// ─── Middleware Factory ───────────────────────────────────────────────────────
-
+// Middleware Factory
 /**
  * Creates a reusable request validation middleware for a given Zod schema.
  *
@@ -57,8 +55,7 @@ export function validate<T>(
   };
 }
 
-// ─── Helpers ─────────────────────────────────────────────────────────────────
-
+// Helpers
 /**
  * Formats a ZodError into a human-readable validation message.
  * Groups multiple field errors into a single comma-separated string.

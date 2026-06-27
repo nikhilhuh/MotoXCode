@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from "axios";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { SignInUser } from "@/types/signInUser";
@@ -48,13 +48,22 @@ const UsernameForm: React.FC<UsernameFormProps> = ({ onForgotPassword }) => {
     if (loading) return;
 
     if (!credentials.username.trim())
-      return setFormError((prev) => ({ ...prev, username: "Please enter your username" }));
+      return setFormError((prev) => ({
+        ...prev,
+        username: "Please enter your username",
+      }));
     if (!credentials.password.trim())
-      return setFormError((prev) => ({ ...prev, password: "Please enter your password" }));
+      return setFormError((prev) => ({
+        ...prev,
+        password: "Please enter your password",
+      }));
 
     setLoading(true);
     try {
-      const response = await loginWithPassword(credentials.username, credentials.password);
+      const response = await loginWithPassword(
+        credentials.username,
+        credentials.password,
+      );
       const { user, token } = response.data;
 
       // Persist to context + localStorage with token attached
@@ -65,14 +74,14 @@ const UsernameForm: React.FC<UsernameFormProps> = ({ onForgotPassword }) => {
       showSuccess(`You are signed in as ${user.username}`);
       navigate("/");
     } catch (err) {
-        if (axios.isAxiosError(err) && err.response) {
-          showError(err.response.data.message || "Backend operation failed.");
-        } else if (err instanceof Error) {
-          showError(err.message);
-        } else {
-          showError("An unexpected error occurred.");
-        }
-      } finally {
+      if (axios.isAxiosError(err) && err.response) {
+        showError(err.response.data.message || "Backend operation failed.");
+      } else if (err instanceof Error) {
+        showError(err.message);
+      } else {
+        showError("An unexpected error occurred.");
+      }
+    } finally {
       setLoading(false);
     }
   };
@@ -84,7 +93,10 @@ const UsernameForm: React.FC<UsernameFormProps> = ({ onForgotPassword }) => {
     >
       {/* Username Field */}
       <div className="flex flex-col gap-2">
-        <label htmlFor="username" className="font-[var(--font-sub)] text-[var(--color-accent)] text-[11px] sm:text-xs font-bold tracking-[0.2em] uppercase pl-1 block">
+        <label
+          htmlFor="username"
+          className="font-[var(--font-sub)] text-[var(--color-accent)] text-[11px] sm:text-xs font-bold tracking-[0.2em] uppercase pl-1 block"
+        >
           Username or Email
         </label>
         <div className="relative">
@@ -113,7 +125,10 @@ const UsernameForm: React.FC<UsernameFormProps> = ({ onForgotPassword }) => {
 
       {/* Password Field */}
       <div className="flex flex-col gap-2">
-        <label htmlFor="password" className="font-[var(--font-sub)] text-[var(--color-accent)] text-[11px] sm:text-xs font-bold tracking-[0.2em] uppercase pl-1 block">
+        <label
+          htmlFor="password"
+          className="font-[var(--font-sub)] text-[var(--color-accent)] text-[11px] sm:text-xs font-bold tracking-[0.2em] uppercase pl-1 block"
+        >
           Password
         </label>
         <div className="relative">
@@ -165,11 +180,7 @@ const UsernameForm: React.FC<UsernameFormProps> = ({ onForgotPassword }) => {
         disabled={loading}
         className="btn-primary px-6 py-3 text-sm"
       >
-        {loading ? (
-          <Cliploader size={20} color="currentColor" />
-        ) : (
-          "Sign in"
-        )}
+        {loading ? <Cliploader size={20} color="currentColor" /> : "Sign in"}
       </button>
     </form>
   );

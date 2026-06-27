@@ -2,8 +2,7 @@ import { useState, useCallback, useEffect } from "react";
 import { useUser } from "@/context/UserContext";
 import { compressImage } from "@/services/imageCompression.service";
 
-// ─── Hook Return Shape ────────────────────────────────────────────────────────
-
+// Hook Return Shape
 export interface AdminEditableReturn<T> {
   /** True only when the authenticated user holds the "admin" role. */
   isAdmin: boolean;
@@ -45,16 +44,12 @@ export interface AdminEditableReturn<T> {
    *
    * Returns the compressed File so callers can capture it locally.
    */
-  handleImageChange: (
-    imageField: keyof T,
-    file: File
-  ) => Promise<File | null>;
+  handleImageChange: (imageField: keyof T, file: File) => Promise<File | null>;
   /** Manually flip the isSaving flag (used by section components). */
   setIsSaving: (saving: boolean) => void;
 }
 
-// ─── Hook ─────────────────────────────────────────────────────────────────────
-
+// Hook
 /**
  * useAdminEditable<T> — generic in-place CMS editing hook.
  *
@@ -99,7 +94,7 @@ export function useAdminEditable<T>(serverData: T): AdminEditableReturn<T> {
       setEditData(serverData);
       setPreviewData(serverData);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [serverDataHash, isEditing]);
 
   const setField = useCallback((patch: Partial<T>): void => {
@@ -128,7 +123,7 @@ export function useAdminEditable<T>(serverData: T): AdminEditableReturn<T> {
         return null;
       }
     },
-    []
+    [],
   );
 
   return {

@@ -15,7 +15,6 @@ export const ContactSkeleton: React.FC = () => {
       <section className="py-12 lg:py-22 relative overflow-hidden bg-gradient-to-b from-[var(--color-bg)] via-[var(--color-section)] to-black border-t border-[var(--color-border)]/20">
         <div className="max-w-7xl mx-auto px-6 lg:px-12 w-full relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-12 items-stretch">
-            
             {/* Info Card (2 Column) */}
             <div className="lg:col-span-2 bg-[var(--color-bg)]/40 border border-[var(--color-border)]/50 backdrop-blur-2xl p-6 lg:p-10 rounded-2xl shadow-xl flex flex-col justify-between">
               <div>

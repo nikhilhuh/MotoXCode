@@ -6,7 +6,9 @@ import { ContactSkeleton } from "../components/skeletons/ContactSkeleton";
 import type { PageHero } from "@/services/cms.service";
 import type { ContactInfoItem } from "@/types/contactInfo";
 
-type ContactPageData = Awaited<ReturnType<typeof intakeService.fetchContactPageData>>;
+type ContactPageData = Awaited<
+  ReturnType<typeof intakeService.fetchContactPageData>
+>;
 
 export default function Contact() {
   const [contactData, setContactData] = useState<ContactPageData | null>(null);
@@ -30,9 +32,14 @@ export default function Contact() {
     setContactData((prev) => (prev ? { ...prev, hero: updatedHero } : prev));
   }, []);
 
-  const handleContactInfoUpdate = useCallback((updatedItems: ContactInfoItem[]) => {
-    setContactData((prev) => (prev ? { ...prev, contactInfo: updatedItems } : prev));
-  }, []);
+  const handleContactInfoUpdate = useCallback(
+    (updatedItems: ContactInfoItem[]) => {
+      setContactData((prev) =>
+        prev ? { ...prev, contactInfo: updatedItems } : prev,
+      );
+    },
+    [],
+  );
 
   if (isLoading || !contactData) {
     return <ContactSkeleton />;
@@ -40,7 +47,10 @@ export default function Contact() {
 
   return (
     <>
-      <ContactHero ContactHeroBg={contactData.hero.image} onUpdate={handleHeroUpdate} />
+      <ContactHero
+        ContactHeroBg={contactData.hero.image}
+        onUpdate={handleHeroUpdate}
+      />
       <ContactForm
         contactInfo={contactData.contactInfo}
         onContactInfoUpdate={handleContactInfoUpdate}

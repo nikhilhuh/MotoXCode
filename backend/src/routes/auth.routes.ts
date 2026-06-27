@@ -14,8 +14,7 @@ import {
 } from "../controllers/auth.controller";
 import { requireAuth } from "../middlewares/auth.middleware";
 
-// ─── Auth Router ─────────────────────────────────────────────────────────────
-
+// Auth Router
 const authRouter = Router();
 
 /**
@@ -60,8 +59,7 @@ authRouter.post("/link-google", requireAuth as any, linkGoogleAccount as any);
  */
 authRouter.post("/unlink-google", requireAuth as any, unlinkGoogleAccount as any);
 
-// ─── Multi-Step Registration Routes ──────────────────────────────────────────
-
+// Multi-Step Registration Routes
 /**
  * POST /api/auth/register/send-otp
  * Step 1: Validate email, ensure uniqueness, generate OTP, and email it.

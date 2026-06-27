@@ -39,7 +39,7 @@ export const CrewSkeleton: React.FC = () => {
       <section className="py-12 lg:py-24 bg-[var(--color-bg)] relative overflow-hidden">
         <div className="max-w-5xl mx-auto px-6 lg:px-12 w-full relative z-10">
           <div className="w-64 h-12 rounded-lg shimmer-box mb-12 opacity-40 mx-auto" />
-          
+
           <div className="flex flex-col gap-4">
             {[...Array(4)].map((_, i) => (
               <div

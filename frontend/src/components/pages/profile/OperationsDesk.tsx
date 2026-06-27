@@ -11,10 +11,15 @@ interface OperationsDeskProps {
   setProfile: React.Dispatch<React.SetStateAction<ProfileType | null>>;
 }
 
-export default function OperationsDesk({ profile, setProfile }: OperationsDeskProps) {
+export default function OperationsDesk({
+  profile,
+  setProfile,
+}: OperationsDeskProps) {
   const { showSuccess, showError } = useFeedback();
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  const [selectedRole, setSelectedRole] = useState<"crew" | "admin" | "rider">("rider");
+  const [selectedRole, setSelectedRole] = useState<"crew" | "admin" | "rider">(
+    "rider",
+  );
 
   useEffect(() => {
     if (profile?.role) {
@@ -27,17 +32,17 @@ export default function OperationsDesk({ profile, setProfile }: OperationsDeskPr
     setIsSubmitting(true);
     try {
       const res = await profileService.issueStrike(profile.username);
-      setProfile((prev) => prev ? { ...prev, strikes: res.strikes } : prev);
+      setProfile((prev) => (prev ? { ...prev, strikes: res.strikes } : prev));
       showSuccess(`Strike issued. Current count: ${res.strikes}`);
     } catch (err: unknown) {
-        if (axios.isAxiosError(err) && err.response) {
-          showError(err.response.data.message || "Failed to issue strike.");
-        } else if (err instanceof Error) {
-          showError(err.message);
-        } else {
-          showError("An unexpected error occurred.");
-        }
-      } finally {
+      if (axios.isAxiosError(err) && err.response) {
+        showError(err.response.data.message || "Failed to issue strike.");
+      } else if (err instanceof Error) {
+        showError(err.message);
+      } else {
+        showError("An unexpected error occurred.");
+      }
+    } finally {
       setIsSubmitting(false);
     }
   };
@@ -47,17 +52,21 @@ export default function OperationsDesk({ profile, setProfile }: OperationsDeskPr
     setIsSubmitting(true);
     try {
       const res = await profileService.reduceStrike(profile.username, action);
-      setProfile((prev) => prev ? { ...prev, strikes: res.strikes } : prev);
-      showSuccess(action === "reset" ? "Strike record cleared." : `Strike reduced. Current count: ${res.strikes}`);
+      setProfile((prev) => (prev ? { ...prev, strikes: res.strikes } : prev));
+      showSuccess(
+        action === "reset"
+          ? "Strike record cleared."
+          : `Strike reduced. Current count: ${res.strikes}`,
+      );
     } catch (err: unknown) {
-        if (axios.isAxiosError(err) && err.response) {
-          showError(err.response.data.message || "Failed to reduce strike.");
-        } else if (err instanceof Error) {
-          showError(err.message);
-        } else {
-          showError("An unexpected error occurred.");
-        }
-      } finally {
+      if (axios.isAxiosError(err) && err.response) {
+        showError(err.response.data.message || "Failed to reduce strike.");
+      } else if (err instanceof Error) {
+        showError(err.message);
+      } else {
+        showError("An unexpected error occurred.");
+      }
+    } finally {
       setIsSubmitting(false);
     }
   };
@@ -66,18 +75,23 @@ export default function OperationsDesk({ profile, setProfile }: OperationsDeskPr
     if (!profile || isSubmitting) return;
     setIsSubmitting(true);
     try {
-      const res = await profileService.assignRole(profile.username, selectedRole);
-      setProfile((prev) => prev ? { ...prev, role: res.role, strikes: res.strikes } : prev);
+      const res = await profileService.assignRole(
+        profile.username,
+        selectedRole,
+      );
+      setProfile((prev) =>
+        prev ? { ...prev, role: res.role, strikes: res.strikes } : prev,
+      );
       showSuccess(`Role updated to '${res.role}' successfully.`);
     } catch (err: unknown) {
-        if (axios.isAxiosError(err) && err.response) {
-          showError(err.response.data.message || "Failed to update role.");
-        } else if (err instanceof Error) {
-          showError(err.message);
-        } else {
-          showError("An unexpected error occurred.");
-        }
-      } finally {
+      if (axios.isAxiosError(err) && err.response) {
+        showError(err.response.data.message || "Failed to update role.");
+      } else if (err instanceof Error) {
+        showError(err.message);
+      } else {
+        showError("An unexpected error occurred.");
+      }
+    } finally {
       setIsSubmitting(false);
     }
   };
@@ -86,17 +100,34 @@ export default function OperationsDesk({ profile, setProfile }: OperationsDeskPr
   const canIssueStrike = profile?.role !== "admin" && profile?.role !== "crew";
 
   const roleMeta = {
-    rider: { label: "Rider", desc: "Standard community member", dot: "bg-[var(--color-accent)]",      active: "border-[var(--color-accent)]/60 bg-[var(--color-accent)]/10 text-[var(--color-primary)]" },
-    crew:  { label: "Crew",  desc: "Elevated club member",     dot: "bg-blue-400",                    active: "border-blue-500/60 bg-blue-500/10 text-blue-300" },
-    admin: { label: "Admin", desc: "Full system access",       dot: "bg-[var(--color-highlight)]",    active: "border-[var(--color-highlight)]/60 bg-[var(--color-highlight)]/10 text-[var(--color-highlight)]" },
+    rider: {
+      label: "Rider",
+      desc: "Standard community member",
+      dot: "bg-[var(--color-accent)]",
+      active:
+        "border-[var(--color-accent)]/60 bg-[var(--color-accent)]/10 text-[var(--color-primary)]",
+    },
+    crew: {
+      label: "Crew",
+      desc: "Elevated club member",
+      dot: "bg-blue-400",
+      active: "border-blue-500/60 bg-blue-500/10 text-blue-300",
+    },
+    admin: {
+      label: "Admin",
+      desc: "Full system access",
+      dot: "bg-[var(--color-highlight)]",
+      active:
+        "border-[var(--color-highlight)]/60 bg-[var(--color-highlight)]/10 text-[var(--color-highlight)]",
+    },
   } as const;
 
   const roleBadgeClass =
     profile?.role === "admin"
       ? "text-[var(--color-highlight)] border-[var(--color-highlight)]/40 bg-[var(--color-highlight)]/10"
       : profile?.role === "crew"
-      ? "text-blue-400 border-blue-500/40 bg-blue-500/10"
-      : "text-[var(--color-accent)] border-[var(--color-accent)]/40 bg-[var(--color-accent)]/10";
+        ? "text-blue-400 border-blue-500/40 bg-blue-500/10"
+        : "text-[var(--color-accent)] border-[var(--color-accent)]/40 bg-[var(--color-accent)]/10";
 
   return (
     <motion.div
@@ -111,8 +142,7 @@ export default function OperationsDesk({ profile, setProfile }: OperationsDeskPr
                  gradient bg, subtle border, inset shadow, rounded-[2rem], p-10
       */}
       <div className="flex flex-col gap-6 md:gap-10 md:bg-gradient-to-b md:from-white/[0.04] md:to-transparent md:border md:border-white/[0.05] md:shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] md:rounded-[2rem] md:p-10 md:backdrop-blur-sm transition-all duration-500 md:hover:border-white/[0.08]">
-
-        {/* ── PANEL HEADER ──────────────────────────────────────────── */}
+        {/* PANEL HEADER */}
         <div>
           {/* Mobile: large accent heading */}
           <div className="md:hidden mt-4 pb-4 border-b border-white/10">
@@ -140,7 +170,7 @@ export default function OperationsDesk({ profile, setProfile }: OperationsDeskPr
           </div>
         </div>
 
-        {/* ── ROLE SECTION ──────────────────────────────────────────── */}
+        {/* ROLE SECTION */}
         <div>
           {/* Section label */}
           <span className="block font-heading font-black text-xl tracking-widest uppercase text-[var(--color-accent)] mb-2 md:font-accent md:text-xs lg:text-sm md:tracking-[0.25em] md:text-white/40 md:mb-3">
@@ -149,7 +179,9 @@ export default function OperationsDesk({ profile, setProfile }: OperationsDeskPr
 
           {/* Current role badge */}
           <div className="flex items-center gap-3 mb-5">
-            <span className={`inline-flex items-center px-4 py-1.5 rounded-full text-sm lg:text-base font-body font-bold uppercase tracking-wider border ${roleBadgeClass}`}>
+            <span
+              className={`inline-flex items-center px-4 py-1.5 rounded-full text-sm lg:text-base font-body font-bold uppercase tracking-wider border ${roleBadgeClass}`}
+            >
               {profile?.role ?? "rider"}
             </span>
             {isLocked && (
@@ -187,10 +219,14 @@ export default function OperationsDesk({ profile, setProfile }: OperationsDeskPr
                     >
                       {/* Selection dot absolutely positioned on top right */}
                       <div className="absolute top-4 right-4">
-                        <div className={`w-2 h-2 rounded-full transition-all ${isSelected ? dot : "bg-[var(--color-border)]"}`} />
+                        <div
+                          className={`w-2 h-2 rounded-full transition-all ${isSelected ? dot : "bg-[var(--color-border)]"}`}
+                        />
                       </div>
                       <div className="min-w-0">
-                        <p className={`text-sm lg:text-base font-[var(--font-sub)] font-bold leading-none ${isSelected ? "" : "text-[var(--color-text-secondary)]"}`}>
+                        <p
+                          className={`text-sm lg:text-base font-[var(--font-sub)] font-bold leading-none ${isSelected ? "" : "text-[var(--color-text-secondary)]"}`}
+                        >
                           {label}
                         </p>
                         <p className="text-[10px] sm:text-xs lg:text-sm font-body text-[var(--color-text-secondary)] opacity-70 mt-0.5 lg:mt-1 leading-snug">
@@ -213,13 +249,15 @@ export default function OperationsDesk({ profile, setProfile }: OperationsDeskPr
                     <Cliploader size={12} color="white" />
                     Applying…
                   </>
-                ) : "Apply Role"}
+                ) : (
+                  "Apply Role"
+                )}
               </button>
             </>
           )}
         </div>
 
-        {/* ── DISCIPLINARY ACTIONS SECTION ──────────────────────────── */}
+        {/* DISCIPLINARY ACTIONS SECTION */}
         <div>
           {/* Section label */}
           <span className="block font-heading font-black text-xl tracking-widest uppercase text-[var(--color-accent)] mb-2 md:font-accent md:text-xs lg:text-sm md:tracking-[0.25em] md:text-white/40 md:mb-3">
@@ -239,7 +277,19 @@ export default function OperationsDesk({ profile, setProfile }: OperationsDeskPr
                   disabled={isSubmitting || (profile?.strikes ?? 0) >= 3}
                   className="flex items-center justify-center gap-2 px-4 py-3 lg:py-4 rounded-xl border border-amber-500/40 bg-amber-500/8 text-amber-400 text-sm lg:text-base font-body font-semibold transition-all duration-200 hover:bg-amber-500/15 hover:border-amber-500/60 disabled:opacity-40 disabled:cursor-not-allowed"
                 >
-                  {isSubmitting && <svg className="animate-spin" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" /></svg>}
+                  {isSubmitting && (
+                    <svg
+                      className="animate-spin"
+                      width="13"
+                      height="13"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
+                    >
+                      <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
+                    </svg>
+                  )}
                   Issue Strike
                 </button>
 
@@ -249,7 +299,19 @@ export default function OperationsDesk({ profile, setProfile }: OperationsDeskPr
                   disabled={isSubmitting || (profile?.strikes ?? 0) === 0}
                   className="flex items-center justify-center gap-2 px-4 py-3 lg:py-4 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text-secondary)] text-sm lg:text-base font-body font-semibold transition-all duration-200 hover:text-[var(--color-primary)] hover:border-[var(--color-accent)] disabled:opacity-40 disabled:cursor-not-allowed"
                 >
-                  {isSubmitting && <svg className="animate-spin" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" /></svg>}
+                  {isSubmitting && (
+                    <svg
+                      className="animate-spin"
+                      width="13"
+                      height="13"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
+                    >
+                      <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
+                    </svg>
+                  )}
                   Reduce Strike
                 </button>
 
@@ -259,20 +321,32 @@ export default function OperationsDesk({ profile, setProfile }: OperationsDeskPr
                   disabled={isSubmitting || (profile?.strikes ?? 0) === 0}
                   className="flex items-center justify-center gap-2 px-4 py-3 lg:py-4 rounded-xl border border-red-500/30 bg-red-500/8 text-red-400 text-sm lg:text-base font-body font-semibold transition-all duration-200 hover:bg-red-500/15 hover:border-red-500/50 disabled:opacity-40 disabled:cursor-not-allowed"
                 >
-                  {isSubmitting && <svg className="animate-spin" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" /></svg>}
+                  {isSubmitting && (
+                    <svg
+                      className="animate-spin"
+                      width="13"
+                      height="13"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
+                    >
+                      <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
+                    </svg>
+                  )}
                   Clear Record
                 </button>
               </div>
 
               {(profile?.strikes ?? 0) >= 3 && (
                 <p className="text-[11px] font-body text-red-400/70">
-                  Maximum strike count reached (3/3). Clear the record to issue new strikes.
+                  Maximum strike count reached (3/3). Clear the record to issue
+                  new strikes.
                 </p>
               )}
             </div>
           )}
         </div>
-
       </div>
     </motion.div>
   );

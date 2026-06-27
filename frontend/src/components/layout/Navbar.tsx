@@ -5,7 +5,7 @@ import { motion, Variants } from "framer-motion";
 import StaggeredMenu from "./StaggeredMenu";
 import { Social } from "@/types/social";
 import { useUser } from "@/context/UserContext";
-import AvatarPlaceholderImg from "/assets/images/placeholders/avatar.png"
+import AvatarPlaceholderImg from "/assets/images/placeholders/avatar.png";
 
 const EASE_PREMIUM: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
@@ -65,7 +65,9 @@ interface NavbarProps {
 }
 const Navbar: React.FC<NavbarProps> = ({ socials, onUpdateSocials }) => {
   const { userDetails, isInitialized } = useUser();
-  const [scrolled, setScrolled] = useState<boolean>(() => typeof window !== 'undefined' ? window.scrollY > 20 : false);
+  const [scrolled, setScrolled] = useState<boolean>(() =>
+    typeof window !== "undefined" ? window.scrollY > 20 : false,
+  );
   const { width: windowWidth } = useWindowSize();
   const location = useLocation();
 
@@ -138,43 +140,44 @@ const Navbar: React.FC<NavbarProps> = ({ socials, onUpdateSocials }) => {
             <ul className="flex md:gap-5 xl:gap-8 items-center">
               {navLinks
                 .filter((item) => {
-                  if (item.to === "/contact" && isInitialized && userDetails) return false;
+                  if (item.to === "/contact" && isInitialized && userDetails)
+                    return false;
                   return true;
                 })
                 .map((item, i) => (
-                <motion.li
-                  key={item.to}
-                  custom={i + 1}
-                  variants={navItemVariants}
-                  initial="hidden"
-                  animate="visible"
-                >
-                  <NavLink
-                    to={item.to}
-                    end={item.to === "/"}
-                    className={({ isActive }) =>
-                      `relative font-[var(--font-body)] text-sm font-medium transition-colors duration-300 tracking-wide py-1 group ${
-                        isActive
-                          ? "text-[var(--color-primary)]"
-                          : "text-[var(--color-accent)] hover:text-[var(--color-accent-hover)]"
-                      }`
-                    }
+                  <motion.li
+                    key={item.to}
+                    custom={i + 1}
+                    variants={navItemVariants}
+                    initial="hidden"
+                    animate="visible"
                   >
-                    {({ isActive }) => (
-                      <>
-                        {item.label}
-                        <span
-                          className={`absolute left-0 bottom-0 h-[2px] rounded-full transition-all duration-300 ease-out ${
-                            isActive
-                              ? "w-full bg-[var(--color-primary)]"
-                              : "w-0 bg-[var(--color-accent-hover)] group-hover:w-full"
-                          }`}
-                        />
-                      </>
-                    )}
-                  </NavLink>
-                </motion.li>
-              ))}
+                    <NavLink
+                      to={item.to}
+                      end={item.to === "/"}
+                      className={({ isActive }) =>
+                        `relative font-[var(--font-body)] text-sm font-medium transition-colors duration-300 tracking-wide py-1 group ${
+                          isActive
+                            ? "text-[var(--color-primary)]"
+                            : "text-[var(--color-accent)] hover:text-[var(--color-accent-hover)]"
+                        }`
+                      }
+                    >
+                      {({ isActive }) => (
+                        <>
+                          {item.label}
+                          <span
+                            className={`absolute left-0 bottom-0 h-[2px] rounded-full transition-all duration-300 ease-out ${
+                              isActive
+                                ? "w-full bg-[var(--color-primary)]"
+                                : "w-0 bg-[var(--color-accent-hover)] group-hover:w-full"
+                            }`}
+                          />
+                        </>
+                      )}
+                    </NavLink>
+                  </motion.li>
+                ))}
             </ul>
 
             <motion.div
@@ -189,9 +192,9 @@ const Navbar: React.FC<NavbarProps> = ({ socials, onUpdateSocials }) => {
                   to={`/profile/@${userDetails.username}`}
                   className="hidden sm:flex items-center gap-3 group bg-white/5 hover:bg-white/10 p-1 pr-3 rounded-full border border-white/10 transition-all duration-300"
                 >
-                  <img 
-                    src={userDetails.avatar || AvatarPlaceholderImg} 
-                    alt={userDetails.username} 
+                  <img
+                    src={userDetails.avatar || AvatarPlaceholderImg}
+                    alt={userDetails.username}
                     className="rounded-full h-8 w-8 border border-white/10 object-cover"
                   />
                   <span className="font-[var(--font-body)] text-sm font-medium text-[var(--color-text-primary)]">

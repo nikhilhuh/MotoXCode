@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from "react";
 import { User } from "../types/user";
 
 interface UserContextType {
@@ -9,7 +15,9 @@ interface UserContextType {
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
-export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+export const UserProvider: React.FC<{ children: ReactNode }> = ({
+  children,
+}) => {
   const [userDetails, setUserDetails] = useState<User | null>(null);
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
 
@@ -66,7 +74,9 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   }, []);
 
   return (
-    <UserContext.Provider value={{ userDetails, setUserDetails, isInitialized }}>
+    <UserContext.Provider
+      value={{ userDetails, setUserDetails, isInitialized }}
+    >
       {children}
     </UserContext.Provider>
   );

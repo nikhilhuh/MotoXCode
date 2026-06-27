@@ -18,9 +18,9 @@ export const LegalSkeleton: React.FC = () => {
               <div className="h-4 bg-[var(--color-surface)] rounded w-5/6"></div>
             </div>
             <div className="space-y-2 mt-4 pl-6">
-               <div className="h-4 bg-[var(--color-surface)] rounded w-3/4"></div>
-               <div className="h-4 bg-[var(--color-surface)] rounded w-5/6"></div>
-               <div className="h-4 bg-[var(--color-surface)] rounded w-4/5"></div>
+              <div className="h-4 bg-[var(--color-surface)] rounded w-3/4"></div>
+              <div className="h-4 bg-[var(--color-surface)] rounded w-5/6"></div>
+              <div className="h-4 bg-[var(--color-surface)] rounded w-4/5"></div>
             </div>
           </section>
 

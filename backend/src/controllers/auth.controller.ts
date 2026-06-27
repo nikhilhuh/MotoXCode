@@ -15,8 +15,7 @@ import { MailService } from "../services/mail/mail.service";
 import { env } from "../config/env.config";
 import { AuthenticatedRequest } from "../middlewares/auth.middleware";
 
-// ─── Zod Validation Schemas ──────────────────────────────────────────────────
-
+// Zod Validation Schemas
 const RegisterSchema = z.object({
   username: z.string().min(3).max(30).trim().toLowerCase(),
   email: z.string().email().trim().toLowerCase(),
@@ -55,8 +54,7 @@ const LinkGoogleSchema = z.object({
   id_token: z.string().min(1, "Google ID token is required"),
 });
 
-// ─── Registration Flow Schemas ────────────────────────────────────────────────
-
+// Registration Flow Schemas
 const RegisterSendOTPSchema = z.object({
   email: z.string().email("A valid email is required").trim().toLowerCase(),
 });
@@ -93,8 +91,7 @@ const RegisterCompleteSchema = z.object({
     ),
 });
 
-// ─── Registration Verification Token Helpers ──────────────────────────────────
-
+// Registration Verification Token Helpers
 /** The claim shape embedded in registration verification JWTs. */
 interface RegistrationVerifyClaim {
   purpose: "registration";
@@ -135,8 +132,7 @@ function verifyRegistrationToken(token: string, expectedEmail: string): void {
   }
 }
 
-// ─── Shared Safe User Serializer ─────────────────────────────────────────────
-
+// Shared Safe User Serializer
 /**
  * Serializes a Member document into a public-safe DTO.
  * Extracts minimal fields necessary for frontend session tracking.
@@ -152,8 +148,7 @@ function serializeUser(member: InstanceType<typeof Member>) {
   };
 }
 
-// ─── Controllers ─────────────────────────────────────────────────────────────
-
+// Controllers
 /**
  * POST /api/auth/register
  * Create a new Member account with hashed password.
@@ -598,8 +593,7 @@ export async function unlinkGoogleAccount(
   }
 }
 
-// ─── Multi-Step Registration Controllers ──────────────────────────────────────
-
+// Multi-Step Registration Controllers
 /**
  * POST /api/auth/register/send-otp
  * Step 1: Validate email, ensure it is not already registered,

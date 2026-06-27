@@ -70,63 +70,80 @@ export default function Hero({ HeroBg, onUpdate }: HeroProp) {
       ? URL.createObjectURL(previewData.image)
       : (previewData.image as string);
 
-  // ─── Save Handler ───────────────────────────────────────────────────────────
-
+  // Save Handler
   async function handleSave(): Promise<void> {
     setIsSaving(true);
     try {
       const formData = new FormData();
-      const selectedFileBinary = editData.image instanceof File ? editData.image : null;
+      const selectedFileBinary =
+        editData.image instanceof File ? editData.image : null;
 
       // 1. Audit your file target binary object allocation
       if (selectedFileBinary) {
-        console.log("[CMS Frontend Form] Appending media asset binary file object.");
+        console.log(
+          "[CMS Frontend Form] Appending media asset binary file object.",
+        );
         // CRITICAL: Key MUST be exactly "image" to match backend upload.single("image")
         formData.append("image", selectedFileBinary, selectedFileBinary.name);
       } else {
-        throw new Error("No compressed file binary was found in your local preview state storage.");
+        throw new Error(
+          "No compressed file binary was found in your local preview state storage.",
+        );
       }
 
       // 2. Pass any additional textual property data if necessary
       formData.append("page", "home");
 
-      console.log("[CMS Frontend Form] Dispatching outbound patch network request to service layer...");
+      console.log(
+        "[CMS Frontend Form] Dispatching outbound patch network request to service layer...",
+      );
       const result = await cmsService.updateHomeCMSData("hero", formData);
 
       if (result.success) {
         showSuccess("Hero background image updated successfully!");
-        
-        const resultData = result.data as { _id?: string, image?: string } | undefined;
-        
+
+        const resultData = result.data as
+          | { _id?: string; image?: string }
+          | undefined;
+
         if (resultData && resultData.image) {
           setField({ image: resultData.image });
         }
         finishEditing();
-        
+
         // Update local hydrated page state with the fresh public URL returned from server response
         if (resultData && resultData.image && onUpdate) {
-          onUpdate({ _id: resultData?._id || "homeHero", page: "home", image: resultData.image });
+          onUpdate({
+            _id: resultData?._id || "homeHero",
+            page: "home",
+            image: resultData.image,
+          });
         } else if (onUpdate) {
-          onUpdate({_id: resultData?._id || "homeHero", page: "home", image: resolvedBg });
+          onUpdate({
+            _id: resultData?._id || "homeHero",
+            page: "home",
+            image: resolvedBg,
+          });
         }
       } else {
         showError(result.message || "Failed to update hero background.");
       }
     } catch (error: any) {
-        if (axios.isAxiosError(error) && error.response) {
-          showError(error.response.data.message || "Failed to update hero background.");
-        } else if (error instanceof Error) {
-          showError(error.message);
-        } else {
-          showError("An unexpected error occurred.");
-        }
-      } finally {
+      if (axios.isAxiosError(error) && error.response) {
+        showError(
+          error.response.data.message || "Failed to update hero background.",
+        );
+      } else if (error instanceof Error) {
+        showError(error.message);
+      } else {
+        showError("An unexpected error occurred.");
+      }
+    } finally {
       setIsSaving(false);
     }
   }
 
-  // ─── Render ─────────────────────────────────────────────────────────────────
-
+  // Render
   return (
     <section
       ref={heroRef}

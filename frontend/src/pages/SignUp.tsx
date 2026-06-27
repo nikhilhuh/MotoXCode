@@ -8,8 +8,7 @@ import GoogleLoginButton from "@/components/auth/GoogleLoginButton";
 import AlreadySignedIn from "@/components/auth/AlreadySignedIn";
 import { useUser } from "@/context/UserContext";
 
-// ─── Component ────────────────────────────────────────────────────────────────
-
+// Component
 const SignUp: React.FC = () => {
   const [signUpStep, setSignUpStep] = useState<number>(1);
   const [email, setEmail] = useState<string>("");
@@ -20,14 +19,13 @@ const SignUp: React.FC = () => {
     window.scrollTo(0, 0);
   }, []);
 
-  // ── Step progress bar segments ────────────────────────────────────────────
+  // Step progress bar segments
   const steps = [1, 2, 3];
 
   return (
     <section className="flex flex-col h-[100dvh] bg-[var(--color-bg)] text-[var(--color-text-primary)]">
       <main className="grid grid-cols-1 lg:grid-cols-2 h-[100dvh]">
-
-        {/* ── Left: Image Panel ────────────────────────────────────────────── */}
+        {/* Left: Image Panel  */}
         <div className="hidden lg:block relative">
           <img
             src={SignInImg}
@@ -47,8 +45,8 @@ const SignUp: React.FC = () => {
                   s < signUpStep
                     ? "opacity-50"
                     : s === signUpStep
-                    ? "opacity-100"
-                    : "opacity-25"
+                      ? "opacity-100"
+                      : "opacity-25"
                 }`}
               >
                 <div
@@ -56,8 +54,8 @@ const SignUp: React.FC = () => {
                     s < signUpStep
                       ? "bg-[var(--color-highlight)] border-[var(--color-highlight)] text-white"
                       : s === signUpStep
-                      ? "border-[var(--color-primary)] text-[var(--color-primary)]"
-                      : "border-white/30 text-white/30"
+                        ? "border-[var(--color-primary)] text-[var(--color-primary)]"
+                        : "border-white/30 text-white/30"
                   }`}
                 >
                   {s < signUpStep ? "✓" : s}
@@ -69,14 +67,18 @@ const SignUp: React.FC = () => {
                       : "text-white/50"
                   }`}
                 >
-                  {s === 1 ? "Email Verification" : s === 2 ? "Confirm OTP" : "Create Identity"}
+                  {s === 1
+                    ? "Email Verification"
+                    : s === 2
+                      ? "Confirm OTP"
+                      : "Create Identity"}
                 </span>
               </div>
             ))}
           </div>
         </div>
 
-        {/* ── Right: Form Panel ─────────────────────────────────────────────── */}
+        {/* Right: Form Panel */}
         <div className="h-full flex flex-col px-4 py-8 md:py-12 relative overflow-y-auto">
           {/* Mobile ambient glow */}
           <div className="absolute top-[10%] left-[5%] w-[60%] h-[40%] rounded-full bg-[var(--color-highlight)] blur-[120px] pointer-events-none lg:hidden opacity-20" />
@@ -85,7 +87,13 @@ const SignUp: React.FC = () => {
           <div className="text-center mb-6 relative z-10">
             <div className="flex gap-3 items-center justify-center text-[var(--color-primary)]">
               <div className="size-8 md:size-10 bg-[var(--color-primary)] rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="black" className="md:w-5 md:h-5">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 16 16"
+                  fill="black"
+                  className="md:w-5 md:h-5"
+                >
                   <path
                     d="M2 12L8 4L14 12H2Z"
                     fill="var(--color-bg)"
@@ -116,12 +124,11 @@ const SignUp: React.FC = () => {
           {/* Form Container */}
           <div className="flex flex-col flex-1 items-center justify-center relative z-10">
             <div className="flex flex-col justify-center gap-6 lg:text-lg w-[90vw] md:w-[70vw] lg:w-[40vw] xl:w-[30vw]">
-
               {userDetails ? (
                 <AlreadySignedIn />
               ) : (
                 <>
-                  {/* ── Dynamic Step Render ─────────────────────────────────── */}
+                  {/* Dynamic Step Render */}
                   <div className="flex items-center w-full">
                     {signUpStep === 1 && (
                       <SignUpStep1
@@ -159,7 +166,10 @@ const SignUp: React.FC = () => {
                       </div>
 
                       {/* Google OAuth — reuses existing component, handles upsert + redirect */}
-                      <GoogleLoginButton key={`mxc-auth-signup-state-${true}`} isSignUp={true} />
+                      <GoogleLoginButton
+                        key={`mxc-auth-signup-state-${true}`}
+                        isSignUp={true}
+                      />
                     </>
                   )}
                 </>

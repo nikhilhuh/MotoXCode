@@ -45,11 +45,11 @@ export default function JoinForm() {
   function handleInputChange(
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+    >,
   ) {
     const target = e.target;
     // Extract baseName: "membership-name" -> "name"
-    const baseName = target.name.split('-').pop() as keyof Membership;
+    const baseName = target.name.split("-").pop() as keyof Membership;
     const value =
       target instanceof HTMLInputElement && target.type === "checkbox"
         ? (target as HTMLInputElement).checked
@@ -114,17 +114,19 @@ export default function JoinForm() {
     setIsSubmitting(true);
     try {
       await intakeService.submitJoinForm(formData);
-      showSuccess("Application submitted! We'll review it and get back to you within 7 days.");
+      showSuccess(
+        "Application submitted! We'll review it and get back to you within 7 days.",
+      );
       setSubmitted(true);
     } catch (err) {
-        if (axios.isAxiosError(err) && err.response) {
-          showError(err.response.data.message || "Backend operation failed.");
-        } else if (err instanceof Error) {
-          showError(err.message);
-        } else {
-          showError("An unexpected error occurred.");
-        }
-      } finally {
+      if (axios.isAxiosError(err) && err.response) {
+        showError(err.response.data.message || "Backend operation failed.");
+      } else if (err instanceof Error) {
+        showError(err.message);
+      } else {
+        showError("An unexpected error occurred.");
+      }
+    } finally {
       setIsSubmitting(false);
     }
   }
@@ -141,7 +143,11 @@ export default function JoinForm() {
       <div className="max-w-7xl mx-auto px-6 lg:px-12 w-full relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0, transition: { duration: 0.9, ease: [0.22, 1, 0.36, 1] as const } }}
+          whileInView={{
+            opacity: 1,
+            y: 0,
+            transition: { duration: 0.9, ease: [0.22, 1, 0.36, 1] as const },
+          }}
           viewport={{ once: true, margin: "-50px" }}
           className="max-w-3xl mx-auto anim-item bg-transparent lg:bg-[var(--color-bg)]/40 lg:border lg:border-[var(--color-border)]/50 lg:backdrop-blur-2xl lg:p-6 lg:rounded-2xl lg:shadow-[0_20px_50px_-10px_rgba(0,0,0,0.8)] relative overflow-hidden flex flex-col justify-between"
         >
@@ -165,12 +171,17 @@ export default function JoinForm() {
                 Application Received
               </h2>
               <p className="font-body text-sm text-[var(--color-text-secondary)]">
-                Thank you, {formData.name}. We review every application personally.
-                You'll hear from us within 7 days.
+                Thank you, {formData.name}. We review every application
+                personally. You'll hear from us within 7 days.
               </p>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} id="membership-form" className="space-y-6 relative z-10" noValidate>
+            <form
+              onSubmit={handleSubmit}
+              id="membership-form"
+              className="space-y-6 relative z-10"
+              noValidate
+            >
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 <div>
                   <label
@@ -185,13 +196,15 @@ export default function JoinForm() {
                     type="text"
                     autoComplete="name"
                     aria-label="Full Name"
-                    className={`w-full bg-[var(--color-surface)]/50 border ${errors.name ? 'border-red-500' : 'border-[var(--color-border)]'} rounded-lg py-3.5 px-5 text-[var(--color-text-primary)] font-[var(--font-body)] text-[0.9375rem] transition-all duration-300 outline-none placeholder:text-[var(--color-text-secondary)] placeholder:opacity-50 focus:border-[var(--color-primary)] focus:bg-[var(--color-surface)] focus:shadow-[0_0_15px_rgba(248,250,252,0.05)]`}
+                    className={`w-full bg-[var(--color-surface)]/50 border ${errors.name ? "border-red-500" : "border-[var(--color-border)]"} rounded-lg py-3.5 px-5 text-[var(--color-text-primary)] font-[var(--font-body)] text-[0.9375rem] transition-all duration-300 outline-none placeholder:text-[var(--color-text-secondary)] placeholder:opacity-50 focus:border-[var(--color-primary)] focus:bg-[var(--color-surface)] focus:shadow-[0_0_15px_rgba(248,250,252,0.05)]`}
                     placeholder="Your name"
                     value={formData.name}
                     onChange={handleInputChange}
                   />
                   {errors.name && (
-                    <span className="text-[10px] text-red-400 block font-medium mt-1.5">{errors.name}</span>
+                    <span className="text-[10px] text-red-400 block font-medium mt-1.5">
+                      {errors.name}
+                    </span>
                   )}
                 </div>
                 <div>
@@ -207,13 +220,15 @@ export default function JoinForm() {
                     type="email"
                     autoComplete="email"
                     aria-label="Email"
-                    className={`w-full bg-[var(--color-surface)]/50 border ${errors.email ? 'border-red-500' : 'border-[var(--color-border)]'} rounded-lg py-3.5 px-5 text-[var(--color-text-primary)] font-[var(--font-body)] text-[0.9375rem] transition-all duration-300 outline-none placeholder:text-[var(--color-text-secondary)] placeholder:opacity-50 focus:border-[var(--color-primary)] focus:bg-[var(--color-surface)] focus:shadow-[0_0_15px_rgba(248,250,252,0.05)]`}
+                    className={`w-full bg-[var(--color-surface)]/50 border ${errors.email ? "border-red-500" : "border-[var(--color-border)]"} rounded-lg py-3.5 px-5 text-[var(--color-text-primary)] font-[var(--font-body)] text-[0.9375rem] transition-all duration-300 outline-none placeholder:text-[var(--color-text-secondary)] placeholder:opacity-50 focus:border-[var(--color-primary)] focus:bg-[var(--color-surface)] focus:shadow-[0_0_15px_rgba(248,250,252,0.05)]`}
                     placeholder="you@email.com"
                     value={formData.email}
                     onChange={handleInputChange}
                   />
                   {errors.email && (
-                    <span className="text-[10px] text-red-400 block font-medium mt-1.5">{errors.email}</span>
+                    <span className="text-[10px] text-red-400 block font-medium mt-1.5">
+                      {errors.email}
+                    </span>
                   )}
                 </div>
               </div>
@@ -231,13 +246,15 @@ export default function JoinForm() {
                     type="tel"
                     autoComplete="tel"
                     aria-label="Phone"
-                    className={`w-full bg-[var(--color-surface)]/50 border ${errors.phone ? 'border-red-500' : 'border-[var(--color-border)]'} rounded-lg py-3.5 px-5 text-[var(--color-text-primary)] font-[var(--font-body)] text-[0.9375rem] transition-all duration-300 outline-none placeholder:text-[var(--color-text-secondary)] placeholder:opacity-50 focus:border-[var(--color-primary)] focus:bg-[var(--color-surface)] focus:shadow-[0_0_15px_rgba(248,250,252,0.05)]`}
+                    className={`w-full bg-[var(--color-surface)]/50 border ${errors.phone ? "border-red-500" : "border-[var(--color-border)]"} rounded-lg py-3.5 px-5 text-[var(--color-text-primary)] font-[var(--font-body)] text-[0.9375rem] transition-all duration-300 outline-none placeholder:text-[var(--color-text-secondary)] placeholder:opacity-50 focus:border-[var(--color-primary)] focus:bg-[var(--color-surface)] focus:shadow-[0_0_15px_rgba(248,250,252,0.05)]`}
                     placeholder="+91 XXXXX XXXXX"
                     value={formData.phone}
                     onChange={handleInputChange}
                   />
                   {errors.phone && (
-                    <span className="text-[10px] text-red-400 block font-medium mt-1.5">{errors.phone}</span>
+                    <span className="text-[10px] text-red-400 block font-medium mt-1.5">
+                      {errors.phone}
+                    </span>
                   )}
                 </div>
                 <div>
@@ -253,13 +270,15 @@ export default function JoinForm() {
                     type="text"
                     autoComplete="address-level2"
                     aria-label="City or Location"
-                    className={`w-full bg-[var(--color-surface)]/50 border ${errors.location ? 'border-red-500' : 'border-[var(--color-border)]'} rounded-lg py-3.5 px-5 text-[var(--color-text-primary)] font-[var(--font-body)] text-[0.9375rem] transition-all duration-300 outline-none placeholder:text-[var(--color-text-secondary)] placeholder:opacity-50 focus:border-[var(--color-primary)] focus:bg-[var(--color-surface)] focus:shadow-[0_0_15px_rgba(248,250,252,0.05)]`}
+                    className={`w-full bg-[var(--color-surface)]/50 border ${errors.location ? "border-red-500" : "border-[var(--color-border)]"} rounded-lg py-3.5 px-5 text-[var(--color-text-primary)] font-[var(--font-body)] text-[0.9375rem] transition-all duration-300 outline-none placeholder:text-[var(--color-text-secondary)] placeholder:opacity-50 focus:border-[var(--color-primary)] focus:bg-[var(--color-surface)] focus:shadow-[0_0_15px_rgba(248,250,252,0.05)]`}
                     placeholder="Your city"
                     value={formData.location}
                     onChange={handleInputChange}
                   />
                   {errors.location && (
-                    <span className="text-[10px] text-red-400 block font-medium mt-1.5">{errors.location}</span>
+                    <span className="text-[10px] text-red-400 block font-medium mt-1.5">
+                      {errors.location}
+                    </span>
                   )}
                 </div>
               </div>
@@ -277,13 +296,15 @@ export default function JoinForm() {
                     type="text"
                     autoComplete="off"
                     aria-label="Your Bike"
-                    className={`w-full bg-[var(--color-surface)]/50 border ${errors.bike ? 'border-red-500' : 'border-[var(--color-border)]'} rounded-lg py-3.5 px-5 text-[var(--color-text-primary)] font-[var(--font-body)] text-[0.9375rem] transition-all duration-300 outline-none placeholder:text-[var(--color-text-secondary)] placeholder:opacity-50 focus:border-[var(--color-primary)] focus:bg-[var(--color-surface)] focus:shadow-[0_0_15px_rgba(248,250,252,0.05)]`}
+                    className={`w-full bg-[var(--color-surface)]/50 border ${errors.bike ? "border-red-500" : "border-[var(--color-border)]"} rounded-lg py-3.5 px-5 text-[var(--color-text-primary)] font-[var(--font-body)] text-[0.9375rem] transition-all duration-300 outline-none placeholder:text-[var(--color-text-secondary)] placeholder:opacity-50 focus:border-[var(--color-primary)] focus:bg-[var(--color-surface)] focus:shadow-[0_0_15px_rgba(248,250,252,0.05)]`}
                     placeholder="Make, model, year"
                     value={formData.bike}
                     onChange={handleInputChange}
                   />
                   {errors.bike && (
-                    <span className="text-[10px] text-red-400 block font-medium mt-1.5">{errors.bike}</span>
+                    <span className="text-[10px] text-red-400 block font-medium mt-1.5">
+                      {errors.bike}
+                    </span>
                   )}
                 </div>
                 <div>
@@ -299,11 +320,15 @@ export default function JoinForm() {
                       name="membership-experience"
                       autoComplete="off"
                       aria-label="Riding Experience"
-                      className={`w-full bg-[var(--color-surface)]/50 border ${errors.experience ? 'border-red-500' : 'border-[var(--color-border)]'} rounded-lg py-3.5 px-5 text-[var(--color-text-primary)] font-[var(--font-body)] text-[0.9375rem] transition-all duration-300 outline-none focus:border-[var(--color-primary)] focus:bg-[var(--color-surface)] focus:shadow-[0_0_15px_rgba(248,250,252,0.05)] appearance-none cursor-pointer`}
+                      className={`w-full bg-[var(--color-surface)]/50 border ${errors.experience ? "border-red-500" : "border-[var(--color-border)]"} rounded-lg py-3.5 px-5 text-[var(--color-text-primary)] font-[var(--font-body)] text-[0.9375rem] transition-all duration-300 outline-none focus:border-[var(--color-primary)] focus:bg-[var(--color-surface)] focus:shadow-[0_0_15px_rgba(248,250,252,0.05)] appearance-none cursor-pointer`}
                       value={formData.experience}
                       onChange={handleInputChange}
                     >
-                      <option value="" disabled className="bg-[var(--color-surface)]">
+                      <option
+                        value=""
+                        disabled
+                        className="bg-[var(--color-surface)]"
+                      >
                         Select experience
                       </option>
                       {experienceLevels.map((l) => (
@@ -331,7 +356,9 @@ export default function JoinForm() {
                     </div>
                   </div>
                   {errors.experience && (
-                    <span className="text-[10px] text-red-400 block font-medium mt-1.5">{errors.experience}</span>
+                    <span className="text-[10px] text-red-400 block font-medium mt-1.5">
+                      {errors.experience}
+                    </span>
                   )}
                 </div>
               </div>
@@ -366,14 +393,16 @@ export default function JoinForm() {
                   name="membership-why"
                   autoComplete="off"
                   aria-label="Why MotoXCode"
-                  className={`w-full bg-[var(--color-surface)]/50 border ${errors.why ? 'border-red-500' : 'border-[var(--color-border)]'} rounded-lg py-3.5 px-5 text-[var(--color-text-primary)] font-[var(--font-body)] text-[0.9375rem] transition-all duration-300 outline-none placeholder:text-[var(--color-text-secondary)] placeholder:opacity-50 focus:border-[var(--color-primary)] focus:bg-[var(--color-surface)] focus:shadow-[0_0_15px_rgba(248,250,252,0.05)] resize-none`}
+                  className={`w-full bg-[var(--color-surface)]/50 border ${errors.why ? "border-red-500" : "border-[var(--color-border)]"} rounded-lg py-3.5 px-5 text-[var(--color-text-primary)] font-[var(--font-body)] text-[0.9375rem] transition-all duration-300 outline-none placeholder:text-[var(--color-text-secondary)] placeholder:opacity-50 focus:border-[var(--color-primary)] focus:bg-[var(--color-surface)] focus:shadow-[0_0_15px_rgba(248,250,252,0.05)] resize-none`}
                   rows={4}
                   placeholder="Tell us why you want to ride with us..."
                   value={formData.why}
                   onChange={handleInputChange}
                 />
                 {errors.why && (
-                  <span className="text-[10px] text-red-400 block font-medium mt-1.5">{errors.why}</span>
+                  <span className="text-[10px] text-red-400 block font-medium mt-1.5">
+                    {errors.why}
+                  </span>
                 )}
               </div>
               {/* Agreement */}
@@ -389,12 +418,14 @@ export default function JoinForm() {
                     onChange={handleInputChange}
                   />
                   <span className="font-[var(--font-body)] text-xs lg:text-sm text-[var(--color-text-secondary)] select-none">
-                    I agree to uphold the MotoXCode riding code and understand that
-                    membership is subject to review.
+                    I agree to uphold the MotoXCode riding code and understand
+                    that membership is subject to review.
                   </span>
                 </label>
                 {errors.agree && (
-                  <span className="text-[10px] text-red-400 block font-medium mt-1.5">{errors.agree}</span>
+                  <span className="text-[10px] text-red-400 block font-medium mt-1.5">
+                    {errors.agree}
+                  </span>
                 )}
               </div>
 

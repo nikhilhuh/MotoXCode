@@ -35,10 +35,10 @@ const containerVariants = {
 
 const itemVariants = {
   hidden: { opacity: 0, y: 30 },
-  visible: { 
-    opacity: 1, 
-    y: 0, 
-    transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] as const } 
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] as const },
   },
 };
 
@@ -73,7 +73,8 @@ export default function CrewHero({ CrewHeroBg, onUpdate }: CrewHeroProps) {
   async function handleSave(): Promise<void> {
     setIsSaving(true);
     try {
-      const selectedFile = editData.image instanceof File ? editData.image : null;
+      const selectedFile =
+        editData.image instanceof File ? editData.image : null;
       if (!selectedFile) throw new Error("No file found to compress.");
 
       // Explicitly compress the image before uploading to backend
@@ -86,26 +87,38 @@ export default function CrewHero({ CrewHeroBg, onUpdate }: CrewHeroProps) {
       const result = await cmsService.updatePageHeroCMSData(formData);
       if (result.success) {
         showSuccess("Crew hero background updated successfully!");
-        const resultData = result.data as { _id?: string, image?: string } | undefined;
+        const resultData = result.data as
+          | { _id?: string; image?: string }
+          | undefined;
         if (resultData?.image) {
           setField({ image: resultData.image });
-          onUpdate?.({ _id: resultData?._id || "crewHero", page: "crew", image: resultData.image });
+          onUpdate?.({
+            _id: resultData?._id || "crewHero",
+            page: "crew",
+            image: resultData.image,
+          });
         } else {
-          onUpdate?.({ _id: resultData?._id || "crewHero", page: "crew", image: resolvedBg });
+          onUpdate?.({
+            _id: resultData?._id || "crewHero",
+            page: "crew",
+            image: resolvedBg,
+          });
         }
         finishEditing();
       } else {
         showError(result.message || "Failed to update hero background.");
       }
     } catch (error: unknown) {
-        if (axios.isAxiosError(error) && error.response) {
-          showError(error.response.data.message || "Failed to update hero background.");
-        } else if (error instanceof Error) {
-          showError(error.message);
-        } else {
-          showError("An unexpected error occurred.");
-        }
-      } finally {
+      if (axios.isAxiosError(error) && error.response) {
+        showError(
+          error.response.data.message || "Failed to update hero background.",
+        );
+      } else if (error instanceof Error) {
+        showError(error.message);
+      } else {
+        showError("An unexpected error occurred.");
+      }
+    } finally {
       setIsSaving(false);
     }
   }
@@ -189,8 +202,8 @@ export default function CrewHero({ CrewHeroBg, onUpdate }: CrewHeroProps) {
         </div>
       )}
 
-      <motion.div 
-        className="relative z-10 w-full" 
+      <motion.div
+        className="relative z-10 w-full"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
@@ -217,16 +230,23 @@ export default function CrewHero({ CrewHeroBg, onUpdate }: CrewHeroProps) {
               uppercase
             "
           >
-            People Who<br />
+            People Who
+            <br />
             <span className="text-[var(--color-accent)]">Make It Move</span>
           </motion.h1>
 
-          <motion.p variants={itemVariants} className="font-[var(--font-body)] font-medium max-w-2xl mx-auto text-sm md:text-base lg:text-xl text-[var(--color-text-primary)] opacity-90 leading-relaxed mb-10">
-            Behind every great ride is an even greater team. Meet the core crew 
+          <motion.p
+            variants={itemVariants}
+            className="font-[var(--font-body)] font-medium max-w-2xl mx-auto text-sm md:text-base lg:text-xl text-[var(--color-text-primary)] opacity-90 leading-relaxed mb-10"
+          >
+            Behind every great ride is an even greater team. Meet the core crew
             of MotoXCode: the architects of your next adventure.
           </motion.p>
 
-          <motion.div variants={itemVariants} className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 w-full max-w-[16rem] sm:max-w-none mx-auto">
+          <motion.div
+            variants={itemVariants}
+            className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 w-full max-w-[16rem] sm:max-w-none mx-auto"
+          >
             <a
               href="#crew-grid"
               className="btn-primary w-full sm:w-auto px-8 py-4 text-sm lg:text-base"
@@ -252,7 +272,7 @@ export default function CrewHero({ CrewHeroBg, onUpdate }: CrewHeroProps) {
         </div>
       </motion.div>
 
-      <motion.div 
+      <motion.div
         variants={itemVariants}
         initial="hidden"
         animate="visible"

@@ -55,11 +55,9 @@ export default function AboutRidingCode({
 
   const hasChanges =
     JSON.stringify(
-      ridingCode.map((e) => ({ rule: e.rule, detail: e.detail }))
+      ridingCode.map((e) => ({ rule: e.rule, detail: e.detail })),
     ) !==
-    JSON.stringify(
-      draftCodes.map((e) => ({ rule: e.rule, detail: e.detail }))
-    );
+    JSON.stringify(draftCodes.map((e) => ({ rule: e.rule, detail: e.detail })));
 
   function handleStartEditing() {
     setDraftCodes(ridingCode.map((r) => ({ ...r })));
@@ -136,14 +134,16 @@ export default function AboutRidingCode({
         showError(result.message || "Failed to update riding code.");
       }
     } catch (error: unknown) {
-        if (axios.isAxiosError(error) && error.response) {
-          showError(error.response.data.message || "Failed to update riding code.");
-        } else if (error instanceof Error) {
-          showError(error.message);
-        } else {
-          showError("An unexpected error occurred.");
-        }
-      } finally {
+      if (axios.isAxiosError(error) && error.response) {
+        showError(
+          error.response.data.message || "Failed to update riding code.",
+        );
+      } else if (error instanceof Error) {
+        showError(error.message);
+      } else {
+        showError("An unexpected error occurred.");
+      }
+    } finally {
       setIsSaving(false);
     }
   }
@@ -200,7 +200,10 @@ export default function AboutRidingCode({
                 <div className="flex-1 flex flex-col gap-4">
                   {/* Row 1: Rule Name */}
                   <div className="flex flex-col gap-1">
-                    <label htmlFor={`code-rule-${draft._id}`} className="text-[var(--color-text-secondary)] text-xs uppercase tracking-wider">
+                    <label
+                      htmlFor={`code-rule-${draft._id}`}
+                      className="text-[var(--color-text-secondary)] text-xs uppercase tracking-wider"
+                    >
                       Rule Name
                     </label>
                     <input
@@ -214,10 +217,13 @@ export default function AboutRidingCode({
                       className="w-full bg-black/60 border border-[var(--color-border)] text-[var(--color-text-primary)] font-heading font-black text-2xl rounded-xl px-4 py-2.5 outline-none focus:border-[var(--color-primary)]/60 transition-colors"
                     />
                   </div>
-                  
+
                   {/* Row 2: Description */}
                   <div className="flex flex-col gap-1">
-                    <label htmlFor={`code-detail-${draft._id}`} className="text-[var(--color-text-secondary)] text-xs uppercase tracking-wider">
+                    <label
+                      htmlFor={`code-detail-${draft._id}`}
+                      className="text-[var(--color-text-secondary)] text-xs uppercase tracking-wider"
+                    >
                       Rule Description
                     </label>
                     <textarea

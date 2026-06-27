@@ -6,8 +6,8 @@ import PasswordRequirements from "@/components/ui/PasswordRequirements";
 import { checkUsernameAvailability, registerComplete } from "@/services/auth.service";
 import { useUser } from "@/context/UserContext";
 import { useFeedback } from "@/context/FeedbackContext";
-// ─── Types ────────────────────────────────────────────────────────────────────
 
+// Types
 type UsernameStatus = "idle" | "checking" | "available" | "taken" | "invalid";
 
 interface SignUpStep3Props {
@@ -15,8 +15,7 @@ interface SignUpStep3Props {
   verifiedToken: string;
 }
 
-// ─── Component ────────────────────────────────────────────────────────────────
-
+// Component
 const SignUpStep3: React.FC<SignUpStep3Props> = ({ email, verifiedToken }) => {
   const navigate = useNavigate();
   const { setUserDetails } = useUser();
@@ -32,7 +31,7 @@ const SignUpStep3: React.FC<SignUpStep3Props> = ({ email, verifiedToken }) => {
   // Debounce timer ref
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // ── Username validation regex (matches backend Zod schema) ────────────────
+  // Username validation regex (matches backend Zod schema)
   const USERNAME_REGEX = /^[a-z0-9_]+$/;
 
   const checkUsername = useCallback(async (value: string) => {
@@ -59,7 +58,7 @@ const SignUpStep3: React.FC<SignUpStep3Props> = ({ email, verifiedToken }) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // ── Debounce username check at 400ms ──────────────────────────────────────
+  // Debounce username check at 400ms
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
 
@@ -77,7 +76,7 @@ const SignUpStep3: React.FC<SignUpStep3Props> = ({ email, verifiedToken }) => {
     };
   }, [username, checkUsername]);
 
-  // ── Username status indicator ─────────────────────────────────────────────
+  // Username status indicator
   const UsernameIndicator: React.FC = () => {
     if (usernameStatus === "idle") return null;
 
@@ -124,7 +123,7 @@ const SignUpStep3: React.FC<SignUpStep3Props> = ({ email, verifiedToken }) => {
     return null;
   };
 
-  // ── Form submission ───────────────────────────────────────────────────────
+  // Form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (loading) return;

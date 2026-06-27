@@ -1,6 +1,6 @@
-import { Member } from '@/types/member';
-import RiderCard from '../../ui/RiderCard';
-import { motion } from 'framer-motion';
+import { Member } from "@/types/member";
+import RiderCard from "../../ui/RiderCard";
+import { motion } from "framer-motion";
 
 interface RiderGridProps {
   riders: Member[];
@@ -29,7 +29,6 @@ const itemVariants = {
 };
 
 export default function RiderGrid({ riders }: RiderGridProps) {
-
   if (riders.length === 0) return null;
 
   return (
@@ -38,8 +37,8 @@ export default function RiderGrid({ riders }: RiderGridProps) {
         <h2 className="font-heading font-black text-3xl md:text-5xl text-[var(--color-primary)] mb-12 text-center uppercase tracking-wider">
           Our Riders <span className="text-[var(--color-accent)]">Roster</span>
         </h2>
-        
-        <motion.div 
+
+        <motion.div
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-50px" }}

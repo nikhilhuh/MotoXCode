@@ -6,8 +6,7 @@ interface CrewGridProps {
   crew: Member[];
 }
 
-// ─── Animation Variants ───────────────────────────────────────────────────────
-
+// Animation Variants
 const containerVariants = {
   hidden: {},
   visible: {
@@ -25,8 +24,7 @@ const itemVariants = {
   },
 };
 
-// ─── Component ────────────────────────────────────────────────────────────────
-
+// Component
 export default function CrewGrid({ crew }: CrewGridProps) {
   return (
     <section
@@ -48,7 +46,8 @@ export default function CrewGrid({ crew }: CrewGridProps) {
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10"
         >
           {crew.map((member) => {
-            const displayAvatar = member.avatar ?? "/assets/images/placeholders/avatar.png";
+            const displayAvatar =
+              member.avatar ?? "/assets/images/placeholders/avatar.png";
 
             return (
               <motion.div variants={itemVariants} key={member.username}>
@@ -77,7 +76,7 @@ export default function CrewGrid({ crew }: CrewGridProps) {
                     </h3>
                     {member.years !== undefined && (
                       <p className="font-heading font-black text-xl text-[var(--color-accent)]">
-                        {member.years}{' '}
+                        {member.years}{" "}
                         <span className="text-xs font-accent tracking-[0.15em] text-[var(--color-secondary)] uppercase font-semibold">
                           yrs riding
                         </span>
@@ -85,7 +84,12 @@ export default function CrewGrid({ crew }: CrewGridProps) {
                     )}
                     {member.location && (
                       <div className="flex items-center gap-1.5 mt-2 text-sm font-accent text-[var(--color-secondary)]">
-                        <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor">
+                        <svg
+                          width="13"
+                          height="13"
+                          viewBox="0 0 16 16"
+                          fill="currentColor"
+                        >
                           <path d="M8 1a5 5 0 0 0-5 5c0 3.5 5 9 5 9s5-5.5 5-9a5 5 0 0 0-5-5zm0 7a2 2 0 1 1 0-4 2 2 0 0 1 0 4z" />
                         </svg>
                         {member.location}
@@ -93,8 +97,20 @@ export default function CrewGrid({ crew }: CrewGridProps) {
                     )}
                     <div className="mt-6 opacity-0 group-hover:opacity-100 transition-all duration-500 delay-100 font-accent text-xs tracking-[0.2em] text-[var(--color-accent)] uppercase flex items-center gap-2 translate-y-2 group-hover:translate-y-0">
                       View Profile
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="transition-transform duration-300 group-hover:translate-x-1">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M12 5l7 7-7 7" />
+                      <svg
+                        width="14"
+                        height="14"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        className="transition-transform duration-300 group-hover:translate-x-1"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M5 12h14M12 5l7 7-7 7"
+                        />
                       </svg>
                     </div>
                   </div>

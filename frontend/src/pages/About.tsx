@@ -34,19 +34,34 @@ export default function About() {
     setAboutData((prev) => (prev ? { ...prev, hero: updatedHero } : prev));
   }, []);
 
-  const handlePhilosophyUpdate = useCallback((updatedPhilosophy: Philosophy) => {
+  const handlePhilosophyUpdate = useCallback(
+    (updatedPhilosophy: Philosophy) => {
+      setAboutData((prev) =>
+        prev
+          ? {
+              ...prev,
+              philosophy: [updatedPhilosophy, ...prev.philosophy.slice(1)],
+            }
+          : prev,
+      );
+    },
+    [],
+  );
+
+  const handleTimelineUpdate = useCallback((updatedTimeline: Timeline[]) => {
     setAboutData((prev) =>
-      prev ? { ...prev, philosophy: [updatedPhilosophy, ...prev.philosophy.slice(1)] } : prev
+      prev ? { ...prev, timeline: updatedTimeline } : prev,
     );
   }, []);
 
-  const handleTimelineUpdate = useCallback((updatedTimeline: Timeline[]) => {
-    setAboutData((prev) => (prev ? { ...prev, timeline: updatedTimeline } : prev));
-  }, []);
-
-  const handleRidingCodeUpdate = useCallback((updatedRidingCode: RidingCode[]) => {
-    setAboutData((prev) => (prev ? { ...prev, ridingCode: updatedRidingCode } : prev));
-  }, []);
+  const handleRidingCodeUpdate = useCallback(
+    (updatedRidingCode: RidingCode[]) => {
+      setAboutData((prev) =>
+        prev ? { ...prev, ridingCode: updatedRidingCode } : prev,
+      );
+    },
+    [],
+  );
 
   if (isLoading || !aboutData) {
     return <AboutSkeleton />;
@@ -54,7 +69,10 @@ export default function About() {
 
   return (
     <>
-      <AboutHero AboutHeroBg={aboutData.hero.image} onUpdate={handleHeroUpdate} />
+      <AboutHero
+        AboutHeroBg={aboutData.hero.image}
+        onUpdate={handleHeroUpdate}
+      />
       <AboutPhilosophy
         philosophy={aboutData.philosophy[0]}
         onUpdate={handlePhilosophyUpdate}
@@ -63,9 +81,9 @@ export default function About() {
         timeline={aboutData.timeline}
         onUpdate={handleTimelineUpdate}
       />
-      <AboutRidingCode 
-        ridingCode={aboutData.ridingCode} 
-        onUpdate={handleRidingCodeUpdate} 
+      <AboutRidingCode
+        ridingCode={aboutData.ridingCode}
+        onUpdate={handleRidingCodeUpdate}
       />
     </>
   );

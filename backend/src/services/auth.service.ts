@@ -3,8 +3,7 @@ import jwt from "jsonwebtoken";
 import { OAuth2Client } from "google-auth-library";
 import { env } from "../config/env.config";
 
-// ─── Types ───────────────────────────────────────────────────────────────────
-
+// Types
 export interface JwtPayload {
   sub: string;       // Crew _id
   username: string;
@@ -18,12 +17,10 @@ export interface GooglePayload {
   picture?: string;
 }
 
-// ─── Google Client (singleton) ───────────────────────────────────────────────
-
+// Google Client (singleton)
 const googleClient = new OAuth2Client(env.GOOGLE_CLIENT_ID);
 
-// ─── Password Utilities ───────────────────────────────────────────────────────
-
+// Password Utilities
 const SALT_ROUNDS = 12;
 
 /**
@@ -40,8 +37,7 @@ export async function comparePassword(plain: string, hash: string): Promise<bool
   return bcrypt.compare(plain, hash);
 }
 
-// ─── JWT Utilities ────────────────────────────────────────────────────────────
-
+// JWT Utilities
 /**
  * Issue a stateless JWT access token signed with the application secret.
  */
@@ -59,8 +55,7 @@ export function verifyToken(token: string): JwtPayload {
   return jwt.verify(token, env.JWT_SECRET) as JwtPayload;
 }
 
-// ─── Google OAuth Verification ────────────────────────────────────────────────
-
+// Google OAuth Verification
 /**
  * Shape of the Google tokeninfo endpoint response used in the access-token
  * fallback path.
@@ -87,7 +82,7 @@ interface GoogleTokenInfoResponse {
  *   "Wrong number of segments in token".
  */
 export async function verifyGoogleToken(credential: string): Promise<GooglePayload> {
-  // ── Robustness guard: access_token fallback ───────────────────────────────
+  // Robustness guard: access_token fallback
   if (credential.startsWith("ya29.")) {
     const url = `https://oauth2.googleapis.com/tokeninfo?access_token=${encodeURIComponent(credential)}`;
     const res = await fetch(url);
@@ -108,7 +103,7 @@ export async function verifyGoogleToken(credential: string): Promise<GooglePaylo
     };
   }
 
-  // ── Primary path: id_token (3-segment JWT) ────────────────────────────────
+  // Primary path: id_token (3-segment JWT)
   const ticket = await googleClient.verifyIdToken({
     idToken: credential,
     audience: env.GOOGLE_CLIENT_ID,
@@ -128,8 +123,7 @@ export async function verifyGoogleToken(credential: string): Promise<GooglePaylo
   };
 }
 
-// ─── OTP Generator ────────────────────────────────────────────────────────────
-
+// OTP Generator
 /**
  * Generate a cryptographically secure 6-digit numeric OTP string.
  * Uses crypto.getRandomValues for a uniform distribution.

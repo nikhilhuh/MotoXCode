@@ -1,7 +1,6 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
 
-// ─── TypeScript Interface ─────────────────────────────────────────────────────
-
+// TypeScript Interface
 export type EventType = "Ride" | "Meetup" | "Workshop" | "Social";
 
 export interface IEventDocument extends Document {
@@ -14,8 +13,7 @@ export interface IEventDocument extends Document {
   spotsLeft: number;
 }
 
-// ─── Mongoose Schema ──────────────────────────────────────────────────────────
-
+// Mongoose Schema
 const eventSchema = new Schema<IEventDocument>(
   {
     date: {
@@ -62,8 +60,7 @@ const eventSchema = new Schema<IEventDocument>(
   }
 );
 
-// ─── Model ────────────────────────────────────────────────────────────────────
-
+// Model
 export const EventModel: Model<IEventDocument> = mongoose.model<IEventDocument>(
   "Event",
   eventSchema

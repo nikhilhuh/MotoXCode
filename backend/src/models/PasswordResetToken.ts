@@ -1,15 +1,13 @@
 import { Schema, model, Document } from "mongoose";
 
-// ─── Interface ──────────────────────────────────────────────────────────────
-
+// Interface
 export interface IPasswordResetToken extends Document {
   email: string;
   token: string;
   createdAt: Date;
 }
 
-// ─── Schema ─────────────────────────────────────────────────────────────────
-
+// Schema
 const PasswordResetTokenSchema = new Schema<IPasswordResetToken>({
   email: {
     type: String,
@@ -35,6 +33,7 @@ const PasswordResetTokenSchema = new Schema<IPasswordResetToken>({
   },
 });
 
+// Model
 export const PasswordResetToken = model<IPasswordResetToken>(
   "PasswordResetToken",
   PasswordResetTokenSchema

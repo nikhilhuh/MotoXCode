@@ -31,16 +31,36 @@ export default function ProfileGarage({ profile }: ProfileGarageProps) {
         <div className="flex flex-col">
           {profile.bike && profile.bike.length > 0 ? (
             profile.bike.map((bikeStr, idx) => (
-              <div key={idx} className="flex items-center gap-4 py-4 border-b border-white/5 last:border-0 md:gap-6 md:px-6 md:bg-gradient-to-r md:from-white/[0.05] md:to-transparent md:border-l-4 md:border-y-0 md:border-r-0 md:border-[var(--color-accent)] md:rounded-r-2xl relative overflow-hidden md:backdrop-blur-sm md:mb-3">
+              <div
+                key={idx}
+                className="flex items-center gap-4 py-4 border-b border-white/5 last:border-0 md:gap-6 md:px-6 md:bg-gradient-to-r md:from-white/[0.05] md:to-transparent md:border-l-4 md:border-y-0 md:border-r-0 md:border-[var(--color-accent)] md:rounded-r-2xl relative overflow-hidden md:backdrop-blur-sm md:mb-3"
+              >
                 {/* Subtle background texture/pattern on desktop */}
                 <div className="absolute inset-0 opacity-[0.03] bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px] pointer-events-none hidden md:block"></div>
-                
+
                 <div className="w-2 h-2 rounded-full bg-[var(--color-accent)] md:w-10 md:h-10 md:bg-white/5 flex items-center justify-center text-white/50 shrink-0">
-                  <svg className="hidden md:block" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>
+                  <svg
+                    className="hidden md:block"
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <circle cx="12" cy="12" r="10" />
+                    <circle cx="12" cy="12" r="3" />
+                  </svg>
                 </div>
                 <div className="flex flex-col">
-                  <span className="hidden md:block font-accent text-[10px] tracking-[0.2em] uppercase text-white/40 mb-1">Machine {idx + 1}</span>
-                  <span className="font-heading font-black tracking-widest text-lg md:text-xl text-white uppercase drop-shadow-md">{bikeStr}</span>
+                  <span className="hidden md:block font-accent text-[10px] tracking-[0.2em] uppercase text-white/40 mb-1">
+                    Machine {idx + 1}
+                  </span>
+                  <span className="font-heading font-black tracking-widest text-lg md:text-xl text-white uppercase drop-shadow-md">
+                    {bikeStr}
+                  </span>
                 </div>
               </div>
             ))

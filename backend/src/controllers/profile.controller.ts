@@ -6,8 +6,7 @@ import { AppError } from "../middlewares/error.middleware";
 import { AuthenticatedRequest } from "../middlewares/auth.middleware";
 import { supabaseStorageService } from "../services/supabaseStorage.service";
 
-// ─── Admin Action Response Shapes ─────────────────────────────────────────────
-
+// Admin Action Response Shapes
 interface StrikeActionResponse {
   success: boolean;
   message: string;
@@ -281,8 +280,7 @@ export class ProfileController {
     }
   }
 
-  // ─── Administrative Disciplinary Handlers ─────────────────────────────────
-
+  // Administrative Disciplinary Handlers
   /**
    * PATCH /api/profiles/:username/strike
    * Admin-only: Atomically increments the strike count by 1.

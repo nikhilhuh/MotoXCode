@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { FaPencil, FaPlus } from 'react-icons/fa6'
-import RideCard from '../../ui/RideCard'
-import RideForm from './RideForm'
-import { Ride, RideFilter } from '@/types/ride'
-import { useUser } from '@/context/UserContext'
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { FaPencil, FaPlus } from "react-icons/fa6";
+import RideCard from "../../ui/RideCard";
+import RideForm from "./RideForm";
+import { Ride, RideFilter } from "@/types/ride";
+import { useUser } from "@/context/UserContext";
 
 interface RidesGridProps {
   rides: Ride[];
@@ -19,41 +19,41 @@ export default function RidesGrid({
   onRideUpdated,
   onRideDeleted,
 }: RidesGridProps) {
-  const [filter, setFilter] = useState<RideFilter>('all')
-  const [isEditing, setIsEditing] = useState<boolean>(false)
-  const [isAddFormOpen, setIsAddFormOpen] = useState<boolean>(false)
-  const [editingRide, setEditingRide] = useState<Ride | null>(null)
+  const [filter, setFilter] = useState<RideFilter>("all");
+  const [isEditing, setIsEditing] = useState<boolean>(false);
+  const [isAddFormOpen, setIsAddFormOpen] = useState<boolean>(false);
+  const [editingRide, setEditingRide] = useState<Ride | null>(null);
 
-  const { userDetails } = useUser()
+  const { userDetails } = useUser();
   const isPrivileged =
-    userDetails?.role === 'admin' || userDetails?.role === 'crew'
+    userDetails?.role === "admin" || userDetails?.role === "crew";
 
   const filtered = rides.filter((r) => {
-    if (filter === 'upcoming') return !r.past
-    if (filter === 'past') return r.past
-    return true
-  })
+    if (filter === "upcoming") return !r.past;
+    if (filter === "past") return r.past;
+    return true;
+  });
 
   function handleCancelEditing() {
-    setIsEditing(false)
+    setIsEditing(false);
   }
 
-  // ── Lock body scroll when either add or edit form is open ──────────────────
+  // Lock body scroll when either add or edit form is open
   useEffect(() => {
     if (isAddFormOpen || editingRide) {
-      document.body.style.overflow = 'hidden'
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = ''
+      document.body.style.overflow = "";
     }
     return () => {
-      document.body.style.overflow = ''
-    }
-  }, [isAddFormOpen, editingRide])
+      document.body.style.overflow = "";
+    };
+  }, [isAddFormOpen, editingRide]);
 
   return (
     <section
       id="rides-grid"
-      className={`${isPrivileged ? 'py-16' : 'py-12'} lg:py-22 relative overflow-hidden bg-gradient-to-b from-[var(--color-bg)] via-[var(--color-section)] to-[var(--color-surface)]`}
+      className={`${isPrivileged ? "py-16" : "py-12"} lg:py-22 relative overflow-hidden bg-gradient-to-b from-[var(--color-bg)] via-[var(--color-section)] to-[var(--color-surface)]`}
     >
       {/* Decorative premium ambient lighting */}
       <div className="absolute -top-[10%] right-[10%] size-[40%] rounded-full bg-[var(--color-primary)]/5 blur-[120px] pointer-events-none z-0" />
@@ -82,7 +82,7 @@ export default function RidesGrid({
         {/* Filter tabs */}
         <div className="flex justify-center mb-10 lg:mb-16 relative z-10">
           <div className="inline-flex p-1 rounded-full bg-[var(--color-surface)]/30 backdrop-blur-xl border border-[var(--color-border)]/40 shadow-[0_8px_32px_rgba(0,0,0,0.4)]">
-            {(['all', 'upcoming', 'past'] as RideFilter[]).map((f) => (
+            {(["all", "upcoming", "past"] as RideFilter[]).map((f) => (
               <button
                 key={f}
                 type="button"
@@ -90,15 +90,15 @@ export default function RidesGrid({
                 onClick={() => setFilter(f)}
                 className={`relative font-accent font-bold text-xs uppercase tracking-[0.12em] px-6 py-2.5 rounded-full transition-colors duration-300 cursor-pointer ${
                   filter === f
-                    ? 'text-[var(--color-bg)] z-10'
-                    : 'text-[var(--color-text-secondary)] hover:text-[var(--color-primary)] z-10'
+                    ? "text-[var(--color-bg)] z-10"
+                    : "text-[var(--color-text-secondary)] hover:text-[var(--color-primary)] z-10"
                 }`}
               >
                 {filter === f && (
                   <motion.span
                     layoutId="active-ride-tab"
                     className="absolute inset-0 bg-[var(--color-primary)] rounded-full -z-10 shadow-[0_4px_12px_rgba(248,250,252,0.2)]"
-                    transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                    transition={{ type: "spring", stiffness: 380, damping: 30 }}
                   />
                 )}
                 {f.charAt(0).toUpperCase() + f.slice(1)}
@@ -161,7 +161,7 @@ export default function RidesGrid({
                   Add Ride
                 </span>
                 <span className="text-[var(--color-text-secondary)] text-xs mt-1 font-[var(--font-accent)]">
-                  Add a new ride of the community 
+                  Add a new ride of the community
                 </span>
               </button>
             </motion.div>
@@ -195,8 +195,8 @@ export default function RidesGrid({
       {isAddFormOpen && (
         <RideForm
           onSuccess={(newRide) => {
-            onRideCreated(newRide)
-            setIsAddFormOpen(false)
+            onRideCreated(newRide);
+            setIsAddFormOpen(false);
           }}
           onClose={() => setIsAddFormOpen(false)}
         />
@@ -207,12 +207,12 @@ export default function RidesGrid({
         <RideForm
           editRide={editingRide}
           onSuccess={(updatedRide) => {
-            onRideUpdated(updatedRide)
-            setEditingRide(null)
+            onRideUpdated(updatedRide);
+            setEditingRide(null);
           }}
           onClose={() => setEditingRide(null)}
         />
       )}
     </section>
-  )
+  );
 }

@@ -5,7 +5,7 @@ import SignInStep2 from "./SignInStep2";
 type Props = {
   step: number;
   setStep: React.Dispatch<React.SetStateAction<number>>;
-}
+};
 const OTPLogin: React.FC<Props> = ({ step, setStep }) => {
   const [email, setEmail] = useState<string>("");
   const [verifying, setVerifying] = useState<boolean>(false);

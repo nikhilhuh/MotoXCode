@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useState, useCallback, ReactNode } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useCallback,
+  ReactNode,
+} from "react";
 import toast from "react-hot-toast";
 import NotSignedInModal from "../components/ui/NotSignedInModal";
 
@@ -8,9 +14,13 @@ interface FeedbackContextType {
   showNotSignedIn: (message: string) => void;
 }
 
-const FeedbackContext = createContext<FeedbackContextType | undefined>(undefined);
+const FeedbackContext = createContext<FeedbackContextType | undefined>(
+  undefined,
+);
 
-export const FeedbackProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+export const FeedbackProvider: React.FC<{ children: ReactNode }> = ({
+  children,
+}) => {
   const [notSignedInMessage, setNotSignedInMessage] = useState<string>("");
 
   const showError = useCallback((message: string) => {
@@ -44,9 +54,14 @@ export const FeedbackProvider: React.FC<{ children: ReactNode }> = ({ children }
   }, []);
 
   return (
-    <FeedbackContext.Provider value={{ showError, showSuccess, showNotSignedIn }}>
+    <FeedbackContext.Provider
+      value={{ showError, showSuccess, showNotSignedIn }}
+    >
       {children}
-      <NotSignedInModal message={notSignedInMessage} onClose={handleCloseModal} />
+      <NotSignedInModal
+        message={notSignedInMessage}
+        onClose={handleCloseModal}
+      />
     </FeedbackContext.Provider>
   );
 };

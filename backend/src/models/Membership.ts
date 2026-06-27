@@ -1,7 +1,6 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
 
-// ─── TypeScript Interface ─────────────────────────────────────────────────────
-
+// TypeScript Interface
 export type ApplicationStatus = "pending" | "approved" | "rejected";
 
 export interface IMembershipDocument extends Document {
@@ -19,8 +18,7 @@ export interface IMembershipDocument extends Document {
   updatedAt: Date;
 }
 
-// ─── Mongoose Schema ──────────────────────────────────────────────────────────
-
+// Mongoose Schema
 const membershipSchema = new Schema<IMembershipDocument>(
   {
     name: {
@@ -87,7 +85,6 @@ const membershipSchema = new Schema<IMembershipDocument>(
   }
 );
 
-// ─── Model ────────────────────────────────────────────────────────────────────
-
+// Model
 export const MembershipModel: Model<IMembershipDocument> =
   mongoose.model<IMembershipDocument>("Membership", membershipSchema);

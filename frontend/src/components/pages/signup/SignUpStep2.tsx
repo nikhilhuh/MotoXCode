@@ -4,16 +4,15 @@ import { BiCheck, BiEdit } from "react-icons/bi";
 import Cliploader from "@/components/ui/Cliploader";
 import { registerVerifyOTP, registerSendOTP } from "@/services/auth.service";
 import { useFeedback } from "@/context/FeedbackContext";
-// ─── Props ────────────────────────────────────────────────────────────────────
 
+// Props
 interface SignUpStep2Props {
   email: string;
   onSuccess: (verifiedToken: string) => void;
   onBack: () => void;
 }
 
-// ─── Component ────────────────────────────────────────────────────────────────
-
+// Component
 const SignUpStep2: React.FC<SignUpStep2Props> = ({ email, onSuccess, onBack }) => {
   const { showError, showSuccess } = useFeedback();
 

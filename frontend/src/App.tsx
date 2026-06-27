@@ -27,7 +27,6 @@ const PrivacyPolicy = lazy(() => import("./pages/legal/PrivacyPolicy"));
 const TermsOfService = lazy(() => import("./pages/legal/TermsOfService"));
 
 export default function App() {
-
   return (
     <BrowserRouter>
       <Routes>

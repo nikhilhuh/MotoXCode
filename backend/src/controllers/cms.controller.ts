@@ -754,8 +754,7 @@ export class CmsController {
     }
   }
 
-  // ─── New Page-Specific Mutation Methods ──────────────────────────────────────
-
+  // New Page-Specific Mutation Methods
   /**
    * PATCH /api/cms/hero
    * Admin-only: updates the hero backdrop image for any named page.

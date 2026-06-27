@@ -121,14 +121,17 @@ export default function Profile() {
       }
       showSuccess("Profile updated successfully!");
     } catch (err: any) {
-        if (axios.isAxiosError(err) && err.response) {
-          showError(err.response.data.message || "Failed to update profile. Please try again.");
-        } else if (err instanceof Error) {
-          showError(err.message);
-        } else {
-          showError("An unexpected error occurred.");
-        }
+      if (axios.isAxiosError(err) && err.response) {
+        showError(
+          err.response.data.message ||
+            "Failed to update profile. Please try again.",
+        );
+      } else if (err instanceof Error) {
+        showError(err.message);
+      } else {
+        showError("An unexpected error occurred.");
       }
+    }
   };
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -184,14 +187,17 @@ export default function Profile() {
       }
       showSuccess("Image updated successfully!");
     } catch (err: any) {
-        if (axios.isAxiosError(err) && err.response) {
-          showError(err.response.data.message || "Failed to upload image. Please try again.");
-        } else if (err instanceof Error) {
-          showError(err.message);
-        } else {
-          showError("An unexpected error occurred.");
-        }
-      } finally {
+      if (axios.isAxiosError(err) && err.response) {
+        showError(
+          err.response.data.message ||
+            "Failed to upload image. Please try again.",
+        );
+      } else if (err instanceof Error) {
+        showError(err.message);
+      } else {
+        showError("An unexpected error occurred.");
+      }
+    } finally {
       setUploading(false);
       setCropImageSrc(null);
       setCropType(null);
@@ -226,14 +232,17 @@ export default function Profile() {
       }
       showSuccess("Image removed successfully!");
     } catch (err: any) {
-        if (axios.isAxiosError(err) && err.response) {
-          showError(err.response.data.message || "Failed to remove image. Please try again.");
-        } else if (err instanceof Error) {
-          showError(err.message);
-        } else {
-          showError("An unexpected error occurred.");
-        }
-      } finally {
+      if (axios.isAxiosError(err) && err.response) {
+        showError(
+          err.response.data.message ||
+            "Failed to remove image. Please try again.",
+        );
+      } else if (err instanceof Error) {
+        showError(err.message);
+      } else {
+        showError("An unexpected error occurred.");
+      }
+    } finally {
       setUploading(false);
       setConfirmModal(null);
     }
@@ -302,9 +311,10 @@ export default function Profile() {
             />
           )}
 
-          {(isOwner || userDetails?.role === "admin") && (profile.strikes ?? 0) >= 3 && (
-            <MaxStrikesStatus isOwner={!!isOwner} />
-          )}
+          {(isOwner || userDetails?.role === "admin") &&
+            (profile.strikes ?? 0) >= 3 && (
+              <MaxStrikesStatus isOwner={!!isOwner} />
+            )}
         </div>
 
         {/* Content Grid */}

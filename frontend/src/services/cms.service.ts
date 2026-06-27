@@ -46,8 +46,7 @@ interface AboutApiResponse {
   };
 }
 
-// ─── Return Types ─────────────────────────────────────────────────────────────
-
+// Return Types
 interface HomeData {
   hero: PageHero;
   stats: Stat[];
@@ -64,8 +63,7 @@ interface AboutData {
   ridingCode: RidingCode[];
 }
 
-// ─── CMS Mutation Response Types ─────────────────────────────────────────────
-
+// CMS Mutation Response Types
 interface CmsMutationResponse {
   success: boolean;
   message: string;
@@ -175,8 +173,7 @@ export const cmsService = {
     return response.data;
   },
 
-  // ─── Expanded CMS Mutation Methods ─────────────────────────────────────────
-
+  // Expanded CMS Mutation Methods
   /**
    * PATCH /api/cms/hero
    *

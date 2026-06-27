@@ -7,7 +7,7 @@
  * Usage:
  *   import { RideModel, IRideDocument } from '../models';
  *
- * ─── Ecosystem Map ──────────────────────────────────────────────────────────
+ * Ecosystem Map
  *
  *  Content CMS          → PageHero, Stat, Value, Philosophy,
  *                         Social, RidingCode, Timeline, ContactInfo
@@ -15,8 +15,7 @@
  *  User Intake Pipeline → Membership, Contact
  */
 
-// ─── Content CMS ─────────────────────────────────────────────────────────────
-
+// Content CMS
 export { PageHeroModel, IPageHero, PageHeroPage } from "./PageHero";
 export { StatModel, IStatDocument } from "./Stat";
 export { ValueModel, IValueDocument } from "./Value";
@@ -26,14 +25,12 @@ export { RidingCodeModel, IRidingCodeDocument } from "./RidingCode";
 export { TimelineModel, ITimelineDocument } from "./Timeline";
 export { ContactInfoModel, IContactInfoDocument } from "./ContactInfo";
 
-// ─── Community Operations ─────────────────────────────────────────────────────
-
+// Community Operations
 export { RideModel, IRideDocument, RouteType } from "./Ride";
 export { EventModel, IEventDocument, EventType } from "./Event";
 export { GalleryModel, IGalleryDocument, GalleryPageType } from "./Gallery";
 
-// ─── User Intake Pipeline ─────────────────────────────────────────────────────
-
+// User Intake Pipeline
 export {
   MembershipModel,
   IMembershipDocument,
@@ -41,7 +38,6 @@ export {
 } from "./Membership";
 export { ContactModel, IContactDocument } from "./Contact";
 
-// ─── Auth Ecosystem ───────────────────────────────────────────────────────────
-
+// Auth Ecosystem
 export { Member, IMember } from "./Member";
 export { VerificationToken, IVerificationToken } from "./VerificationToken";

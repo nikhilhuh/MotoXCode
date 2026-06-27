@@ -7,7 +7,9 @@ import { EventsSkeleton } from "../components/skeletons/EventsSkeleton";
 import type { PageHero } from "@/services/cms.service";
 import type { GalleryImage } from "@/types/galleryImage";
 
-type EventsPageData = Awaited<ReturnType<typeof eventsService.fetchEventsPageData>>;
+type EventsPageData = Awaited<
+  ReturnType<typeof eventsService.fetchEventsPageData>
+>;
 
 export default function Events() {
   const [eventsData, setEventsData] = useState<EventsPageData | null>(null);
@@ -32,7 +34,9 @@ export default function Events() {
   }, []);
 
   const handleGalleryUpdate = useCallback((updatedGallery: GalleryImage[]) => {
-    setEventsData((prev) => (prev ? { ...prev, galleryPreview: updatedGallery } : prev));
+    setEventsData((prev) =>
+      prev ? { ...prev, galleryPreview: updatedGallery } : prev,
+    );
   }, []);
 
   if (isLoading || !eventsData) {
@@ -41,8 +45,11 @@ export default function Events() {
 
   return (
     <>
-      <EventsHero EventsHeroBg={eventsData.hero.image} onUpdate={handleHeroUpdate} />
-      <EventsList events={eventsData.events}/>
+      <EventsHero
+        EventsHeroBg={eventsData.hero.image}
+        onUpdate={handleHeroUpdate}
+      />
+      <EventsList events={eventsData.events} />
       <GalleryPreview
         galleryPreviewImages={eventsData.galleryPreview}
         page="events"

@@ -39,7 +39,9 @@ export default function Home() {
    * without a full re-fetch.
    */
   const handleHeroUpdate = useCallback((updatedHero: Partial<PageHero>) => {
-    setHomeData((prev) => (prev ? { ...prev, hero: { ...prev.hero, ...updatedHero } } : prev));
+    setHomeData((prev) =>
+      prev ? { ...prev, hero: { ...prev.hero, ...updatedHero } } : prev,
+    );
   }, []);
 
   const handleStatsUpdate = useCallback((updatedStats: Stat[]) => {

@@ -41,7 +41,9 @@ export default function Crew() {
       {crewData.mvpMembers.length > 0 && (
         <CrewGrid crew={crewData.mvpMembers} />
       )}
-      {crewData.normalMembers.length > 0 && <RiderGrid riders={crewData.normalMembers} />}
+      {crewData.normalMembers.length > 0 && (
+        <RiderGrid riders={crewData.normalMembers} />
+      )}
       <CrewCTA />
     </>
   );

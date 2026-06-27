@@ -9,8 +9,7 @@ import ConfirmModal from "@/components/ui/ConfirmModal";
 import Cliploader from "@/components/ui/Cliploader";
 import axios from "axios";
 
-// ─── Types ────────────────────────────────────────────────────────────────────
-
+// Types
 interface TimelineEditEntry {
   _id: string;
   year: string;
@@ -23,8 +22,7 @@ interface AboutJourneyProps {
   onUpdate?: (updated: Timeline[]) => void;
 }
 
-// ─── Helper ───────────────────────────────────────────────────────────────────
-
+// Helper
 const getStepProps = (index: number, total: number) => {
   const yBase = 5;
   const yEnd = 95;
@@ -35,8 +33,7 @@ const getStepProps = (index: number, total: number) => {
   return { x, y, side };
 };
 
-// ─── Animation Variants ───────────────────────────────────────────────────────
-
+// Animation Variants
 const pinVariants = {
   hidden: { scale: 0, opacity: 0, filter: "blur(4px)" },
   visible: {
@@ -65,8 +62,7 @@ const cardVariants = {
   },
 };
 
-// ─── Component ────────────────────────────────────────────────────────────────
-
+// Component
 export default function AboutJourney({
   timeline,
   onUpdate,
@@ -94,10 +90,18 @@ export default function AboutJourney({
 
   const hasChanges =
     JSON.stringify(
-      timeline.map((e) => ({ year: e.year, location: e.location, event: e.event }))
+      timeline.map((e) => ({
+        year: e.year,
+        location: e.location,
+        event: e.event,
+      })),
     ) !==
     JSON.stringify(
-      draftTimeline.map((e) => ({ year: e.year, location: e.location, event: e.event }))
+      draftTimeline.map((e) => ({
+        year: e.year,
+        location: e.location,
+        event: e.event,
+      })),
     );
 
   const dynamicHeight = Math.max(800, timeline.length * 300);
@@ -179,24 +183,23 @@ export default function AboutJourney({
         showError(result.message || "Failed to update timeline.");
       }
     } catch (error: unknown) {
-        if (axios.isAxiosError(error) && error.response) {
-          showError(error.response.data.message || "Failed to update timeline.");
-        } else if (error instanceof Error) {
-          showError(error.message);
-        } else {
-          showError("An unexpected error occurred.");
-        }
-      } finally {
+      if (axios.isAxiosError(error) && error.response) {
+        showError(error.response.data.message || "Failed to update timeline.");
+      } else if (error instanceof Error) {
+        showError(error.message);
+      } else {
+        showError("An unexpected error occurred.");
+      }
+    } finally {
       setIsSaving(false);
     }
   }
 
-  // ─── Render ─────────────────────────────────────────────────────────────────
-
+  // Render
   return (
     <section
       ref={containerRef}
-      className={`${isAdmin? "py-16" : "py-12"} lg:py-22 bg-[var(--color-bg)] relative overflow-hidden`}
+      className={`${isAdmin ? "py-16" : "py-12"} lg:py-22 bg-[var(--color-bg)] relative overflow-hidden`}
     >
       {/* Topographic Map Mesh */}
       <div
@@ -241,7 +244,12 @@ export default function AboutJourney({
                   {/* Row 1: Year and Location */}
                   <div className="flex flex-col sm:flex-row gap-4">
                     <div className="flex flex-col gap-1 sm:w-1/3">
-                      <label htmlFor={`timeline-year-${draft._id}`} className="text-[var(--color-text-secondary)] text-xs uppercase tracking-wider">Year</label>
+                      <label
+                        htmlFor={`timeline-year-${draft._id}`}
+                        className="text-[var(--color-text-secondary)] text-xs uppercase tracking-wider"
+                      >
+                        Year
+                      </label>
                       <input
                         id={`timeline-year-${draft._id}`}
                         type="text"
@@ -254,7 +262,12 @@ export default function AboutJourney({
                       />
                     </div>
                     <div className="flex flex-col gap-1 sm:w-2/3">
-                      <label htmlFor={`timeline-location-${draft._id}`} className="text-[var(--color-text-secondary)] text-xs uppercase tracking-wider">Location / Title</label>
+                      <label
+                        htmlFor={`timeline-location-${draft._id}`}
+                        className="text-[var(--color-text-secondary)] text-xs uppercase tracking-wider"
+                      >
+                        Location / Title
+                      </label>
                       <input
                         id={`timeline-location-${draft._id}`}
                         type="text"
@@ -269,7 +282,12 @@ export default function AboutJourney({
                   </div>
                   {/* Row 2: Description */}
                   <div className="flex flex-col gap-1">
-                    <label htmlFor={`timeline-event-${draft._id}`} className="text-[var(--color-text-secondary)] text-xs uppercase tracking-wider">Description</label>
+                    <label
+                      htmlFor={`timeline-event-${draft._id}`}
+                      className="text-[var(--color-text-secondary)] text-xs uppercase tracking-wider"
+                    >
+                      Description
+                    </label>
                     <textarea
                       id={`timeline-event-${draft._id}`}
                       rows={3}
@@ -300,35 +318,35 @@ export default function AboutJourney({
             >
               <FaPlus /> Add New Timeline Event
             </button>
-          
-          {/* Save / Cancel */}
-          <div className="flex gap-3 justify-end">
-            <button
-              onClick={handleCancelAll}
-              disabled={isSaving}
-              className="px-6 py-2.5 text-sm font-bold rounded-xl border border-[var(--color-border)] text-[var(--color-primary)] transition-all hover:bg-[var(--color-bg)]/60 hover:cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={handleSaveAll}
-              disabled={isSaving || !hasChanges}
-              className={`px-6 py-2.5 text-sm font-bold rounded-xl transition-all ${
-                isSaving || !hasChanges
-                  ? "bg-[var(--color-primary)]/50 text-[var(--color-bg)]/70 cursor-not-allowed opacity-60"
-                  : "bg-[var(--color-primary)] text-[var(--color-bg)] hover:opacity-90 hover:cursor-pointer"
-              }`}
-            >
-              {isSaving ? (
-                <span className="flex gap-1 items-center justify-denter">
-                  <Cliploader size={12} color="blue" />
-                  Saving..
-                </span>
-              ) : (
-                "Save"
-              )}
-            </button>
-          </div>
+
+            {/* Save / Cancel */}
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={handleCancelAll}
+                disabled={isSaving}
+                className="px-6 py-2.5 text-sm font-bold rounded-xl border border-[var(--color-border)] text-[var(--color-primary)] transition-all hover:bg-[var(--color-bg)]/60 hover:cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSaveAll}
+                disabled={isSaving || !hasChanges}
+                className={`px-6 py-2.5 text-sm font-bold rounded-xl transition-all ${
+                  isSaving || !hasChanges
+                    ? "bg-[var(--color-primary)]/50 text-[var(--color-bg)]/70 cursor-not-allowed opacity-60"
+                    : "bg-[var(--color-primary)] text-[var(--color-bg)] hover:opacity-90 hover:cursor-pointer"
+                }`}
+              >
+                {isSaving ? (
+                  <span className="flex gap-1 items-center justify-denter">
+                    <Cliploader size={12} color="blue" />
+                    Saving..
+                  </span>
+                ) : (
+                  "Save"
+                )}
+              </button>
+            </div>
           </div>
         ) : (
           /* ── STANDARD MAP PRESENTATION ── */

@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 export interface CliploaderProps {
   size?: number | string;
@@ -6,10 +6,10 @@ export interface CliploaderProps {
   className?: string;
 }
 
-const Cliploader: React.FC<CliploaderProps> = ({ 
-  size = 24, 
-  color = 'currentColor',
-  className = '' 
+const Cliploader: React.FC<CliploaderProps> = ({
+  size = 24,
+  color = "currentColor",
+  className = "",
 }) => {
   return (
     <svg

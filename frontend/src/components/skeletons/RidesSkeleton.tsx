@@ -17,7 +17,10 @@ export const RidesSkeleton: React.FC = () => {
           {/* Filters Bar Placeholder */}
           <div className="flex flex-wrap gap-3 pb-4 border-b border-[var(--color-border)]/20">
             {[...Array(4)].map((_, i) => (
-              <div key={i} className="w-24 h-10 rounded-full shimmer-box opacity-30" />
+              <div
+                key={i}
+                className="w-24 h-10 rounded-full shimmer-box opacity-30"
+              />
             ))}
           </div>
 

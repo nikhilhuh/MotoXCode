@@ -1,14 +1,16 @@
 import { useEffect, useState, useCallback } from "react";
-import RidesHero from '../components/pages/rides/RidesHero'
-import RidesGrid from '../components/pages/rides/RidesGrid'
-import GalleryPreview from '@/components/ui/GalleryPreview';
-import { ridesService } from '@/services';
+import RidesHero from "../components/pages/rides/RidesHero";
+import RidesGrid from "../components/pages/rides/RidesGrid";
+import GalleryPreview from "@/components/ui/GalleryPreview";
+import { ridesService } from "@/services";
 import { RidesSkeleton } from "../components/skeletons/RidesSkeleton";
 import type { PageHero } from "@/services/cms.service";
 import type { GalleryImage } from "@/types/galleryImage";
 import type { Ride } from "@/types/ride";
 
-type RidesPageData = Awaited<ReturnType<typeof ridesService.fetchRidesPageData>>;
+type RidesPageData = Awaited<
+  ReturnType<typeof ridesService.fetchRidesPageData>
+>;
 
 export default function Rides() {
   const [ridesData, setRidesData] = useState<RidesPageData | null>(null);
@@ -35,7 +37,9 @@ export default function Rides() {
   }, []);
 
   const handleGalleryUpdate = useCallback((updatedGallery: GalleryImage[]) => {
-    setRidesData((prev) => (prev ? { ...prev, galleryPreview: updatedGallery } : prev));
+    setRidesData((prev) =>
+      prev ? { ...prev, galleryPreview: updatedGallery } : prev,
+    );
   }, []);
 
   /** Prepend the newly created ride to the top of the local list. */
@@ -46,7 +50,7 @@ export default function Rides() {
   /** Merge the updated ride document into the existing list. */
   const handleRideUpdated = useCallback((updatedRide: Ride) => {
     setRides((prev) =>
-      prev.map((r) => (r._id === updatedRide._id ? updatedRide : r))
+      prev.map((r) => (r._id === updatedRide._id ? updatedRide : r)),
     );
   }, []);
 
@@ -61,7 +65,10 @@ export default function Rides() {
 
   return (
     <>
-      <RidesHero RidesHeroBg={ridesData.hero.image} onUpdate={handleHeroUpdate} />
+      <RidesHero
+        RidesHeroBg={ridesData.hero.image}
+        onUpdate={handleHeroUpdate}
+      />
       <RidesGrid
         rides={rides}
         onRideCreated={handleRideCreated}
@@ -75,5 +82,5 @@ export default function Rides() {
         className="bg-gradient-to-b from-[var(--color-surface)] to-black"
       />
     </>
-  )
+  );
 }

@@ -1,15 +1,13 @@
 import { Schema, model, Document } from "mongoose";
 
-// ─── Interface ──────────────────────────────────────────────────────────────
-
+// Interface
 export interface IVerificationToken extends Document {
   email: string;
   otp: string;
   expiresAt: Date;
 }
 
-// ─── Schema ─────────────────────────────────────────────────────────────────
-
+// Schema
 const VerificationTokenSchema = new Schema<IVerificationToken>({
   email: {
     type: String,
@@ -37,6 +35,7 @@ const VerificationTokenSchema = new Schema<IVerificationToken>({
 // Ensure only one OTP token per email at a time
 VerificationTokenSchema.index({ email: 1 }, { unique: true });
 
+// Model
 export const VerificationToken = model<IVerificationToken>(
   "VerificationToken",
   VerificationTokenSchema

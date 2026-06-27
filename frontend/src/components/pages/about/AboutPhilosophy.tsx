@@ -8,8 +8,7 @@ import type { Philosophy } from "@/types/philosophy";
 import Cliploader from "@/components/ui/Cliploader";
 import axios from "axios";
 
-// ─── Types ────────────────────────────────────────────────────────────────────
-
+// Types
 interface PhilosophyEditData {
   quote: string;
   author: string;
@@ -21,8 +20,7 @@ interface AboutPhilosophyProps {
   onUpdate?: (updated: Philosophy) => void;
 }
 
-// ─── Component ────────────────────────────────────────────────────────────────
-
+// Component
 export default function AboutPhilosophy({
   philosophy,
   onUpdate,
@@ -96,14 +94,16 @@ export default function AboutPhilosophy({
         showError(result.message || "Failed to update philosophy.");
       }
     } catch (error: unknown) {
-        if (axios.isAxiosError(error) && error.response) {
-          showError(error.response.data.message || "Failed to update philosophy.");
-        } else if (error instanceof Error) {
-          showError(error.message);
-        } else {
-          showError("An unexpected error occurred.");
-        }
-      } finally {
+      if (axios.isAxiosError(error) && error.response) {
+        showError(
+          error.response.data.message || "Failed to update philosophy.",
+        );
+      } else if (error instanceof Error) {
+        showError(error.message);
+      } else {
+        showError("An unexpected error occurred.");
+      }
+    } finally {
       setIsSaving(false);
     }
   }

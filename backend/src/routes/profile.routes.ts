@@ -33,8 +33,7 @@ profileRouter.delete("/:username/image", requireAuth as any, profileController.r
 // PUT /api/profiles/:username/change-email - Change the user's email with OTP verification
 profileRouter.put("/:username/change-email", requireAuth as any, profileController.changeEmail.bind(profileController));
 
-// ─── Admin-Only Disciplinary & Role Mutation Routes ──────────────────────────
-
+// Admin-Only Disciplinary & Role Mutation Routes
 // PATCH /api/profiles/:username/strike — issue a disciplinary strike (riders only)
 profileRouter.patch(
   "/:username/strike",

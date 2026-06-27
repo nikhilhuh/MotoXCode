@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from "axios";
 import React, { useState } from "react";
 import Cliploader from "@/components/ui/Cliploader";
 import { forgotPassword } from "@/services/auth.service";
@@ -7,7 +7,9 @@ interface ForgotPasswordFormProps {
   onCancel: () => void;
 }
 
-const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = ({ onCancel }) => {
+const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = ({
+  onCancel,
+}) => {
   const { showSuccess, showError } = useFeedback();
 
   const [email, setEmail] = useState<string>("");
@@ -30,14 +32,14 @@ const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = ({ onCancel }) => 
       showSuccess(response.data.message);
       onCancel(); // Go back to login
     } catch (err) {
-        if (axios.isAxiosError(err) && err.response) {
-          showError(err.response.data.message || "Backend operation failed.");
-        } else if (err instanceof Error) {
-          showError(err.message);
-        } else {
-          showError("An unexpected error occurred.");
-        }
-      } finally {
+      if (axios.isAxiosError(err) && err.response) {
+        showError(err.response.data.message || "Backend operation failed.");
+      } else if (err instanceof Error) {
+        showError(err.message);
+      } else {
+        showError("An unexpected error occurred.");
+      }
+    } finally {
       setLoading(false);
     }
   };
@@ -53,7 +55,8 @@ const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = ({ onCancel }) => 
           Reset Password
         </h2>
         <p className="text-sm text-[var(--color-text-secondary)] font-[var(--font-body)]">
-          Enter your registered email address and we'll send you a secure link to reset your password.
+          Enter your registered email address and we'll send you a secure link
+          to reset your password.
         </p>
       </div>
 
@@ -106,7 +109,11 @@ const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = ({ onCancel }) => 
           disabled={loading}
           className="btn-primary px-6 py-3 text-sm flex-1"
         >
-          {loading ? <Cliploader size={20} color="currentColor" /> : "Send Link"}
+          {loading ? (
+            <Cliploader size={20} color="currentColor" />
+          ) : (
+            "Send Link"
+          )}
         </button>
       </div>
     </form>

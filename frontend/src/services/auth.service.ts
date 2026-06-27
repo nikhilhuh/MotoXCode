@@ -2,8 +2,7 @@ import { apiClient } from "./apiClient";
 import { User } from "../types/user";
 import { AxiosResponse } from "axios";
 
-// ─── Response Shapes ──────────────────────────────────────────────────────────
-
+// Response Shapes
 export interface AuthResponse {
   success: boolean;
   message: string;
@@ -18,8 +17,7 @@ export interface RegisterVerifyResponse {
   verifiedToken: string;
 }
 
-// ─── Auth Service Methods ─────────────────────────────────────────────────────
-
+// Auth Service Methods
 /**
  * Authenticate with username or email + password.
  */
@@ -65,8 +63,7 @@ export async function unlinkGoogleAccount(): Promise<AxiosResponse<{ success: bo
   return apiClient.post<{ success: boolean; message: string; user: User }>("/auth/unlink-google");
 }
 
-// ─── Registration Flow Methods ────────────────────────────────────────────────
-
+// Registration Flow Methods
 /**
  * Step 1: Send a registration OTP to the given email.
  * Fails with 409 if the email is already registered.
@@ -113,8 +110,7 @@ export async function registerComplete(payload: {
   return apiClient.post<AuthResponse>("/auth/register/complete", payload);
 }
 
-// ─── Password Reset Flow Methods ──────────────────────────────────────────────
-
+// Password Reset Flow Methods
 export async function forgotPassword(
   email: string
 ): Promise<AxiosResponse<{ success: boolean; message: string }>> {

@@ -9,8 +9,7 @@ import { cmsService } from "@/services";
 import Cliploader from "@/components/ui/Cliploader";
 import axios from "axios";
 
-// ─── Types ────────────────────────────────────────────────────────────────────
-
+// Types
 interface StatEditRow {
   _id: string;
   label: string;
@@ -27,8 +26,7 @@ interface StatsProps {
   onStatsUpdate?: (updatedStats: Stat[]) => void;
 }
 
-// ─── Component ────────────────────────────────────────────────────────────────
-
+// Component
 export default function Stats({ statsData, onStatsUpdate }: StatsProps) {
   const { userDetails } = useUser();
   const { showSuccess, showError } = useFeedback();
@@ -58,8 +56,7 @@ export default function Stats({ statsData, onStatsUpdate }: StatsProps) {
     return false;
   }, [editRows, statsData]);
 
-  // ─── Start / Cancel ─────────────────────────────────────────────────────────
-
+  // Start / Cancel
   function startEditing(): void {
     setEditRows(
       statsData.map((s) => ({
@@ -69,7 +66,7 @@ export default function Stats({ statsData, onStatsUpdate }: StatsProps) {
         target: s.target,
         isFloat: s.isFloat ?? false,
         image: s.image,
-      }))
+      })),
     );
     setIsEditing(true);
   }
@@ -80,11 +77,10 @@ export default function Stats({ statsData, onStatsUpdate }: StatsProps) {
     setIsSaving(false);
   }
 
-  // ─── Field Mutation ─────────────────────────────────────────────────────────
-
+  // Field Mutation
   function updateRow(id: string, patch: Partial<StatEditRow>): void {
     setEditRows((prev) =>
-      prev.map((row) => (row._id === id ? { ...row, ...patch } : row))
+      prev.map((row) => (row._id === id ? { ...row, ...patch } : row)),
     );
   }
 
@@ -101,30 +97,35 @@ export default function Stats({ statsData, onStatsUpdate }: StatsProps) {
     }
   }
 
-  // ─── Save Handler ───────────────────────────────────────────────────────────
-
+  // Save Handler
   async function handleSave(): Promise<void> {
     setIsSaving(true);
     try {
       const formData = new FormData();
-      
-      const statsPayload = editRows.map(row => ({
+
+      const statsPayload = editRows.map((row) => ({
         id: row._id,
         label: row.label,
         suffix: row.suffix,
         target: String(row.target),
-        isFloat: String(row.isFloat)
+        isFloat: String(row.isFloat),
       }));
-      
+
       formData.append("stats", JSON.stringify(statsPayload));
 
-      editRows.forEach(row => {
+      editRows.forEach((row) => {
         if (row.pendingImageFile) {
-          formData.append(`image_${row._id}`, row.pendingImageFile, row.pendingImageFile.name);
+          formData.append(
+            `image_${row._id}`,
+            row.pendingImageFile,
+            row.pendingImageFile.name,
+          );
         }
       });
 
-      console.log("[Stats CMS] Dispatching unified bulk update patch request to service layer.");
+      console.log(
+        "[Stats CMS] Dispatching unified bulk update patch request to service layer.",
+      );
       const result = await cmsService.updateHomeCMSData("stat", formData);
 
       if (result.success) {
@@ -145,23 +146,23 @@ export default function Stats({ statsData, onStatsUpdate }: StatsProps) {
         showError(result.message || "Failed to save data");
       }
     } catch (err: any) {
-        if (axios.isAxiosError(err) && err.response) {
-          showError(err.response.data.message || "Failed to update stats.");
-        } else if (err instanceof Error) {
-          showError(err.message);
-        } else {
-          showError("An unexpected error occurred.");
-        }
-      } finally {
+      if (axios.isAxiosError(err) && err.response) {
+        showError(err.response.data.message || "Failed to update stats.");
+      } else if (err instanceof Error) {
+        showError(err.message);
+      } else {
+        showError("An unexpected error occurred.");
+      }
+    } finally {
       setIsSaving(false);
     }
   }
 
-  // ─── Render ─────────────────────────────────────────────────────────────────
-
+  // Render
   return (
-    <section className={`${isAdmin? "py-16" : "py-12"} lg:py-22 relative overflow-hidden bg-gradient-to-b from-black via-[var(--color-bg)] to-[var(--color-section)] border-b border-[var(--color-border)]/50`}>
-
+    <section
+      className={`${isAdmin ? "py-16" : "py-12"} lg:py-22 relative overflow-hidden bg-gradient-to-b from-black via-[var(--color-bg)] to-[var(--color-section)] border-b border-[var(--color-border)]/50`}
+    >
       {/* ── Floating Admin Pencil ── */}
       {isAdmin && !isEditing && (
         <button
@@ -175,15 +176,13 @@ export default function Stats({ statsData, onStatsUpdate }: StatsProps) {
       )}
 
       {/* ── Section Header ── */}
-        <div
-          className="mb-12 lg:mb-22 text-center max-w-4xl mx-auto"
-        >
-          <h2 className="section-heading">BY THE NUMBERS</h2>
-          <p className="section-subheading">
-            Riding hard, growing fast, and pushing limits every single day.
-          </p>
-        </div>
-        
+      <div className="mb-12 lg:mb-22 text-center max-w-4xl mx-auto">
+        <h2 className="section-heading">BY THE NUMBERS</h2>
+        <p className="section-subheading">
+          Riding hard, growing fast, and pushing limits every single day.
+        </p>
+      </div>
+
       {/* ── Read Mode ── */}
       {!isEditing && (
         <div className="px-6 lg:px-12 w-full relative z-10">
@@ -221,7 +220,9 @@ export default function Stats({ statsData, onStatsUpdate }: StatsProps) {
                         <FaPencil size={18} />
                       </div>
                       <input
-                        ref={(el) => { fileInputRefs.current[row._id] = el; }}
+                        ref={(el) => {
+                          fileInputRefs.current[row._id] = el;
+                        }}
                         type="file"
                         accept="image/*"
                         className="hidden"
@@ -241,7 +242,9 @@ export default function Stats({ statsData, onStatsUpdate }: StatsProps) {
                   autoComplete="off"
                   type="text"
                   value={row.label}
-                  onChange={(e) => updateRow(row._id, { label: e.target.value })}
+                  onChange={(e) =>
+                    updateRow(row._id, { label: e.target.value })
+                  }
                   placeholder="Label"
                   className="w-full bg-[var(--color-bg)]/60 border border-[var(--color-border)] text-[var(--color-text-primary)] rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-[var(--color-primary)] transition-colors"
                 />
@@ -255,7 +258,11 @@ export default function Stats({ statsData, onStatsUpdate }: StatsProps) {
                     type="number"
                     value={row.target}
                     step={row.isFloat ? "0.1" : "1"}
-                    onChange={(e) => updateRow(row._id, { target: parseFloat(e.target.value) || 0 })}
+                    onChange={(e) =>
+                      updateRow(row._id, {
+                        target: parseFloat(e.target.value) || 0,
+                      })
+                    }
                     placeholder="Target"
                     className="flex-1 bg-[var(--color-bg)]/60 border border-[var(--color-border)] text-[var(--color-text-primary)] rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-[var(--color-primary)] transition-colors"
                   />
@@ -265,7 +272,9 @@ export default function Stats({ statsData, onStatsUpdate }: StatsProps) {
                     autoComplete="off"
                     type="text"
                     value={row.suffix}
-                    onChange={(e) => updateRow(row._id, { suffix: e.target.value })}
+                    onChange={(e) =>
+                      updateRow(row._id, { suffix: e.target.value })
+                    }
                     placeholder="Suffix"
                     className="w-1/3 bg-[var(--color-bg)]/60 border border-[var(--color-border)] text-[var(--color-text-primary)] rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-[var(--color-primary)] transition-colors"
                   />

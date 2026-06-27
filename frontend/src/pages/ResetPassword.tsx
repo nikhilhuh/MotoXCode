@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useSearchParams, useNavigate, Link } from "react-router-dom";
 import { verifyResetToken, resetPassword } from "@/services/auth.service";
@@ -35,14 +35,14 @@ const ResetPassword: React.FC = () => {
         await verifyResetToken(email, token);
         setIsTokenValid(true);
       } catch (err) {
-          if (axios.isAxiosError(err) && err.response) {
-            showError(err.response.data.message || "Backend operation failed.");
-          } else if (err instanceof Error) {
-            showError(err.message);
-          } else {
-            showError("An unexpected error occurred.");
-          }
-        } finally {
+        if (axios.isAxiosError(err) && err.response) {
+          showError(err.response.data.message || "Backend operation failed.");
+        } else if (err instanceof Error) {
+          showError(err.message);
+        } else {
+          showError("An unexpected error occurred.");
+        }
+      } finally {
         setVerifying(false);
       }
     };
@@ -57,8 +57,11 @@ const ResetPassword: React.FC = () => {
     const errors: Record<string, string> = {};
     if (!newPassword) {
       errors.newPassword = "Password is required.";
-    } else if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/.test(newPassword)) {
-      errors.newPassword = "Password must contain uppercase, lowercase, a number, and a special character.";
+    } else if (
+      !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/.test(newPassword)
+    ) {
+      errors.newPassword =
+        "Password must contain uppercase, lowercase, a number, and a special character.";
     }
 
     if (!confirmPassword) {
@@ -80,14 +83,14 @@ const ResetPassword: React.FC = () => {
       showSuccess(response.data.message);
       navigate("/signin");
     } catch (err) {
-        if (axios.isAxiosError(err) && err.response) {
-          showError(err.response.data.message || "Backend operation failed.");
-        } else if (err instanceof Error) {
-          showError(err.message);
-        } else {
-          showError("An unexpected error occurred.");
-        }
-      } finally {
+      if (axios.isAxiosError(err) && err.response) {
+        showError(err.response.data.message || "Backend operation failed.");
+      } else if (err instanceof Error) {
+        showError(err.message);
+      } else {
+        showError("An unexpected error occurred.");
+      }
+    } finally {
       setSubmitting(false);
     }
   };
@@ -113,10 +116,23 @@ const ResetPassword: React.FC = () => {
 
           {/* Header Branding */}
           <div className="text-center mb-8 relative z-10">
-            <Link to="/" className="flex gap-3 items-center justify-center text-[var(--color-primary)]">
+            <Link
+              to="/"
+              className="flex gap-3 items-center justify-center text-[var(--color-primary)]"
+            >
               <div className="size-8 md:size-10 bg-[var(--color-primary)] rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="black" className="md:w-5 md:h-5">
-                  <path d="M2 12L8 4L14 12H2Z" fill="var(--color-bg)" fillOpacity="0.9" />
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 16 16"
+                  fill="black"
+                  className="md:w-5 md:h-5"
+                >
+                  <path
+                    d="M2 12L8 4L14 12H2Z"
+                    fill="var(--color-bg)"
+                    fillOpacity="0.9"
+                  />
                 </svg>
               </div>
               <h1 className="text-2xl md:text-3xl lg:text-4xl text-[var(--color-primary)] font-[var(--font-heading)] font-bold tracking-widest uppercase mt-1">
@@ -142,7 +158,8 @@ const ResetPassword: React.FC = () => {
                       Link Invalid
                     </h2>
                     <p className="text-sm text-[var(--color-text-secondary)] font-[var(--font-body)]">
-                      The password reset link is invalid or has expired. Please request a new one.
+                      The password reset link is invalid or has expired. Please
+                      request a new one.
                     </p>
                     <button
                       onClick={() => navigate("/signin")}
@@ -152,7 +169,11 @@ const ResetPassword: React.FC = () => {
                     </button>
                   </div>
                 ) : (
-                  <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-5">
+                  <form
+                    onSubmit={handleSubmit}
+                    noValidate
+                    className="flex flex-col gap-5"
+                  >
                     <div className="flex flex-col gap-2 mb-2 text-center">
                       <h2 className="text-xl md:text-2xl font-[var(--font-heading)] font-bold text-[var(--color-primary)] tracking-wide uppercase">
                         Create New Password
@@ -178,10 +199,15 @@ const ResetPassword: React.FC = () => {
                         value={newPassword}
                         onChange={(e) => {
                           setNewPassword(e.target.value);
-                          setFormErrors((prev) => ({ ...prev, newPassword: "" }));
+                          setFormErrors((prev) => ({
+                            ...prev,
+                            newPassword: "",
+                          }));
                         }}
                         className={`w-full bg-white/5 border ${
-                          formErrors.newPassword ? "border-red-500/50" : "border-white/10"
+                          formErrors.newPassword
+                            ? "border-red-500/50"
+                            : "border-white/10"
                         } rounded-xl py-3.5 px-4 pr-10 text-[var(--color-primary)] font-[var(--font-body)] text-sm focus:outline-none focus:border-[var(--color-highlight)] focus:ring-1 focus:ring-[var(--color-highlight)]/50 transition-all duration-300 placeholder:text-[var(--color-text-secondary)]/50`}
                         placeholder="Enter new password"
                       />
@@ -209,10 +235,15 @@ const ResetPassword: React.FC = () => {
                         value={confirmPassword}
                         onChange={(e) => {
                           setConfirmPassword(e.target.value);
-                          setFormErrors((prev) => ({ ...prev, confirmPassword: "" }));
+                          setFormErrors((prev) => ({
+                            ...prev,
+                            confirmPassword: "",
+                          }));
                         }}
                         className={`w-full bg-white/5 border ${
-                          formErrors.confirmPassword ? "border-red-500/50" : "border-white/10"
+                          formErrors.confirmPassword
+                            ? "border-red-500/50"
+                            : "border-white/10"
                         } rounded-xl py-3.5 px-4 pr-10 text-[var(--color-primary)] font-[var(--font-body)] text-sm focus:outline-none focus:border-[var(--color-highlight)] focus:ring-1 focus:ring-[var(--color-highlight)]/50 transition-all duration-300 placeholder:text-[var(--color-text-secondary)]/50`}
                         placeholder="Confirm new password"
                       />
@@ -228,7 +259,11 @@ const ResetPassword: React.FC = () => {
                       disabled={submitting}
                       className="btn-primary px-6 py-3 text-sm mt-2"
                     >
-                      {submitting ? <Cliploader size={20} color="currentColor" /> : "Save Password"}
+                      {submitting ? (
+                        <Cliploader size={20} color="currentColor" />
+                      ) : (
+                        "Save Password"
+                      )}
                     </button>
                   </form>
                 )}

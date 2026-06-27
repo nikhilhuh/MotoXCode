@@ -5,8 +5,7 @@ import type { Ride } from "../types/ride";
 import type { GalleryImage } from "../types/galleryImage";
 import type { PageHero } from "./cms.service";
 
-// ─── API Response Payloads ────────────────────────────────────────────────────
-
+// API Response Payloads
 interface RidesApiResponse {
   success: boolean;
   data: {
@@ -22,16 +21,14 @@ interface RideMutationApiResponse {
   data?: Ride;
 }
 
-// ─── Return Type ──────────────────────────────────────────────────────────────
-
+// Return Type
 interface RidesPageData {
   hero: PageHero;
   allRides: Ride[];
   galleryPreview: GalleryImage[];
 }
 
-// ─── Service ──────────────────────────────────────────────────────────────────
-
+// Service
 export const ridesService = {
   /**
    * GET /api/rides

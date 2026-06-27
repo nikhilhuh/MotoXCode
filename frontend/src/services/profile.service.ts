@@ -60,8 +60,7 @@ export const profileService = {
     return response.data;
   },
 
-  // ─── Administrative Disciplinary & Role Methods ───────────────────────────
-
+  // Administrative Disciplinary & Role Methods
   /**
    * Issues a disciplinary strike to a rider account.
    * Returns 403 if the target is crew/admin (server enforces this too).

@@ -1,17 +1,20 @@
-import React from 'react';
+import React from "react";
 
 interface NotSignedInModalProps {
   message: string;
   onClose: () => void;
 }
 
-export const NotSignedInModal: React.FC<NotSignedInModalProps> = ({ message, onClose }) => {
+export const NotSignedInModal: React.FC<NotSignedInModalProps> = ({
+  message,
+  onClose,
+}) => {
   if (!message) return null;
 
   return (
     <div className="fixed inset-0 z-[99999] flex items-center justify-center bg-[var(--color-bg)]/80 backdrop-blur-md">
       <div className="bg-[var(--color-surface)] border border-[var(--color-border)] p-8 rounded-lg shadow-2xl max-w-sm w-full text-center relative mx-4">
-        <button 
+        <button
           onClick={onClose}
           className="absolute top-4 right-4 text-[var(--color-accent)] hover:text-[var(--color-primary)] transition-colors"
         >
@@ -23,10 +26,7 @@ export const NotSignedInModal: React.FC<NotSignedInModalProps> = ({ message, onC
         <p className="text-[var(--color-text-secondary)] font-[var(--font-body)] mb-6">
           {message}
         </p>
-        <button 
-          onClick={onClose}
-          className="btn-primary w-full py-3"
-        >
+        <button onClick={onClose} className="btn-primary w-full py-3">
           Acknowledge
         </button>
       </div>
