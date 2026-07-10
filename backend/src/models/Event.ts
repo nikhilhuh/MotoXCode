@@ -11,6 +11,10 @@ export interface IEventDocument extends Document {
   time: string;
   spots: number;
   spotsLeft: number;
+  description: string;
+  image: string;
+  past: boolean;
+  attendees: mongoose.Types.ObjectId[];
 }
 
 // Mongoose Schema
@@ -52,6 +56,26 @@ const eventSchema = new Schema<IEventDocument>(
       required: [true, "spotsLeft is required"],
       min: [0, "spotsLeft cannot be negative"],
     },
+    description: {
+      type: String,
+      required: [true, "description is required"],
+      trim: true,
+    },
+    image: {
+      type: String,
+      required: [true, "image is required"],
+    },
+    past: {
+      type: Boolean,
+      default: false,
+    },
+    attendees: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Member",
+        default: [],
+      },
+    ],
   },
   {
     collection: "events",

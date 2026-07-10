@@ -420,11 +420,11 @@ const eventsHero: PageHero = {
 };
 
 const allEvents: Event[] = [
-  { _id: "evt-001", date: "2026-05-10", title: "Ghats of Fire — Group Ride", location: "Western Ghats, Maharashtra", type: "Ride", time: "05:30 AM departure", spots: 20, spotsLeft: 7 },
-  { _id: "evt-002", date: "2026-05-17", title: "Gear Check & Safety Workshop", location: "Pune, Maharashtra", type: "Workshop", time: "10:00 AM – 1:00 PM", spots: 30, spotsLeft: 15 },
-  { _id: "evt-003", date: "2026-05-24", title: "Desert Thunder — Rajasthan Ride", location: "Jaisalmer, Rajasthan", type: "Ride", time: "06:00 AM departure", spots: 25, spotsLeft: 12 },
-  { _id: "evt-004", date: "2026-06-01", title: "Community Meetup & New Member Welcome", location: "Mumbai, Maharashtra", type: "Meetup", time: "07:00 PM", spots: 60, spotsLeft: 34 },
-  { _id: "evt-005", date: "2026-06-14", title: "Himalayan Vigil Expedition", location: "Spiti Valley, Himachal Pradesh", type: "Ride", time: "05:00 AM departure (Day 1)", spots: 15, spotsLeft: 3 },
+  { _id: "evt-001", date: "2026-05-10", title: "Ghats of Fire — Group Ride", location: "Western Ghats, Maharashtra", type: "Ride", time: "05:30 AM departure", spots: 20, spotsLeft: 7, description: "A thrilling ride through the Western Ghats.", image: "", past: false },
+  { _id: "evt-002", date: "2026-05-17", title: "Gear Check & Safety Workshop", location: "Pune, Maharashtra", type: "Workshop", time: "10:00 AM – 1:00 PM", spots: 30, spotsLeft: 15, description: "Learn about safety gear and motorcycle maintenance.", image: "", past: false },
+  { _id: "evt-003", date: "2026-05-24", title: "Desert Thunder — Rajasthan Ride", location: "Jaisalmer, Rajasthan", type: "Ride", time: "06:00 AM departure", spots: 25, spotsLeft: 12, description: "Experience the desert on two wheels.", image: "", past: false },
+  { _id: "evt-004", date: "2026-06-01", title: "Community Meetup & New Member Welcome", location: "Mumbai, Maharashtra", type: "Meetup", time: "07:00 PM", spots: 60, spotsLeft: 34, description: "Meet and greet with fellow riders in the community.", image: "", past: false },
+  { _id: "evt-005", date: "2026-06-14", title: "Himalayan Vigil Expedition", location: "Spiti Valley, Himachal Pradesh", type: "Ride", time: "05:00 AM departure (Day 1)", spots: 15, spotsLeft: 3, description: "A challenging expedition to the Himalayas.", image: "", past: false },
 ];
 
 const eventsGallery: GalleryImage[] = [
@@ -497,7 +497,7 @@ export const fallbackData = {
   },
   events: {
     hero: eventsHero,
-    events: allEvents,
+    allEvents: allEvents,
     galleryPreview: eventsGallery,
   },
   contact: {

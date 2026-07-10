@@ -9,4 +9,9 @@ export interface Event {
   time: string;
   spots: number;
   spotsLeft: number;
+  description: string;
+  image: string;
+  past: boolean;
+  isJoined?: boolean;
+  attendees?: { username: string }[];
 }

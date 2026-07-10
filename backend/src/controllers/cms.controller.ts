@@ -132,14 +132,15 @@ export class CmsController {
         user && (user.role === "admin" || user.role === "crew");
 
       let rideQuery = RideModel.find({ past: false })
+        .select("-__v")
         .sort({ date: 1 })
         .limit(3);
 
       if (!isAdminOrCrew) {
-        rideQuery = rideQuery.select("-riders -__v") as any;
+        rideQuery = rideQuery.select("-__v") as any;
       } else rideQuery = rideQuery.populate("riders", "-_id username") as any;
 
-      const [hero, stats, values, upcomingRides, mvpMembers, gallery] =
+      const [hero, stats, values, upcomingRidesRaw, mvpMembers, gallery] =
         await Promise.all([
           PageHeroModel.findOne({ page: "home" }).lean<IPageHero | null>(),
           StatModel.find().lean<IStatDocument[]>(),
@@ -152,6 +153,29 @@ export class CmsController {
             .select("-__v")
             .lean<IGalleryDocument[]>(),
         ]);
+
+      const userId = user?._id;
+      const username = user?.username;
+
+      const upcomingRides = upcomingRidesRaw.map((ride) => {
+        let isJoined = false;
+        const riders = ride.riders || [];
+
+        if (userId) {
+          isJoined = riders.some(
+            (r: any) =>
+              r.username === username ||
+              r._id?.toString() === userId ||
+              r.toString() === userId,
+          );
+        }
+
+        return {
+          ...ride,
+          isJoined,
+          riders: isAdminOrCrew ? ride.riders : undefined,
+        };
+      }) as unknown as IRideDocument[];
 
       const body: HomeDataResponse = {
         success: true,
@@ -237,12 +261,10 @@ export class CmsController {
       const hero = await PageHeroModel.findOne({ page: "home" });
 
       if (!hero) {
-        res
-          .status(404)
-          .json({
-            success: false,
-            message: "Hero document database row not found.",
-          });
+        res.status(404).json({
+          success: false,
+          message: "Hero document database row not found.",
+        });
         return;
       }
 
@@ -809,12 +831,10 @@ export class CmsController {
       const hero = await PageHeroModel.findOne({ page });
 
       if (!hero) {
-        res
-          .status(404)
-          .json({
-            success: false,
-            message: `Hero document for page '${page}' not found.`,
-          });
+        res.status(404).json({
+          success: false,
+          message: `Hero document for page '${page}' not found.`,
+        });
         return;
       }
 
@@ -900,12 +920,10 @@ export class CmsController {
 
         const doc = await PhilosophyModel.findById(id);
         if (!doc) {
-          res
-            .status(404)
-            .json({
-              success: false,
-              message: `Philosophy document ${id} not found.`,
-            });
+          res.status(404).json({
+            success: false,
+            message: `Philosophy document ${id} not found.`,
+          });
           return;
         }
 
@@ -1211,12 +1229,10 @@ export class CmsController {
   ): Promise<void> {
     try {
       if (!req.body.items) {
-        res
-          .status(400)
-          .json({
-            success: false,
-            message: "Contact items payload is required.",
-          });
+        res.status(400).json({
+          success: false,
+          message: "Contact items payload is required.",
+        });
         return;
       }
 

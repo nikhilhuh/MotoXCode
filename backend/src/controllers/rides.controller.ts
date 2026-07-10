@@ -55,13 +55,14 @@ export class RidesController {
   async getRidesPageData(
     req: AuthenticatedRequest,
     res: Response<RidesPageDataResponse>,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> {
     try {
-      const isAdminOrCrew = req.user?.role === "admin" || req.user?.role === "crew";
+      const isAdminOrCrew =
+        req.user?.role === "admin" || req.user?.role === "crew";
 
-      let ridesQuery = RideModel.find();
-      
+      let ridesQuery = RideModel.find().select("-__v");
+
       if (isAdminOrCrew) {
         ridesQuery = ridesQuery.populate("riders", "username -_id");
       }
@@ -76,23 +77,22 @@ export class RidesController {
       const username = req.user?.username;
 
       // Map rides to include isJoined logic
-      const mappedRides = ridesRaw.map(ride => {
+      const mappedRides = ridesRaw.map((ride) => {
         let isJoined = false;
         const riders = ride.riders || [];
-        
+
         if (userId) {
           isJoined = riders.some(
-            (r: any) => 
-              r.username === username || 
-              r._id?.toString() === userId || 
-              r.toString() === userId
+            (r: any) =>
+              r.username === username ||
+              r._id?.toString() === userId ||
+              r.toString() === userId,
           );
         }
 
         return {
           ...ride,
           isJoined,
-          // Strip out riders array if not admin/crew to save bandwidth and maintain privacy
           riders: isAdminOrCrew ? ride.riders : undefined,
         };
       }) as unknown as IRideDocument[];
@@ -123,13 +123,14 @@ export class RidesController {
   async createRide(
     req: Request,
     res: Response<RideMutationResponse>,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> {
     try {
       if (!req.file) {
         res.status(400).json({
           success: false,
-          message: "Validation Error: No image file detected in multi-part form-data payload.",
+          message:
+            "Validation Error: No image file detected in multi-part form-data payload.",
         });
         return;
       }
@@ -150,21 +151,25 @@ export class RidesController {
       ) {
         res.status(400).json({
           success: false,
-          message: "Validation Error: All required ride fields must be provided.",
+          message:
+            "Validation Error: All required ride fields must be provided.",
         });
         return;
       }
 
-      const { supabaseStorageService } = await import("../services/supabaseStorage.service");
+      const { supabaseStorageService } =
+        await import("../services/supabaseStorage.service");
 
-      const ext = (req.file.originalname.split(".").pop() ?? "jpg").toLowerCase();
+      const ext = (
+        req.file.originalname.split(".").pop() ?? "jpg"
+      ).toLowerCase();
       const uniqueName = `rides/${crypto.randomUUID()}.${ext}`;
 
       const imageUrl = await supabaseStorageService.uploadFileToBucket(
         BUCKET,
         uniqueName,
         req.file.buffer,
-        req.file.mimetype
+        req.file.mimetype,
       );
 
       const newRide = new RideModel({
@@ -179,18 +184,23 @@ export class RidesController {
         image: imageUrl,
         meetupTime: body.meetupTime,
         meetupLocation: body.meetupLocation,
-        membersJoined: body.membersJoined ? parseInt(body.membersJoined, 10) : 0,
+        membersJoined: body.membersJoined
+          ? parseInt(body.membersJoined, 10)
+          : 0,
         description: body.description,
         duration: body.duration,
         past: body.past === "true",
       });
 
       await newRide.save();
+      const rideData: any = newRide.toObject();
+      delete rideData.__v;
+      delete rideData.id;
 
       res.status(201).json({
         success: true,
         message: "Ride created successfully.",
-        data: newRide.toObject(),
+        data: rideData,
       });
     } catch (err) {
       next(err);
@@ -211,21 +221,24 @@ export class RidesController {
   async updateRide(
     req: Request,
     res: Response<RideMutationResponse>,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> {
     try {
       const { id } = req.params;
       const ride = await RideModel.findById(id);
 
       if (!ride) {
-        res.status(404).json({ success: false, message: "Ride document not found." });
+        res
+          .status(404)
+          .json({ success: false, message: "Ride document not found." });
         return;
       }
 
       const body = req.body as RideBodyPayload;
 
       if (req.file) {
-        const { supabaseStorageService } = await import("../services/supabaseStorage.service");
+        const { supabaseStorageService } =
+          await import("../services/supabaseStorage.service");
 
         // ── Purge old cloud asset ─────────────────────────────────────────────
         if (ride.image) {
@@ -233,49 +246,68 @@ export class RidesController {
             const urlParts = ride.image.split("/public/images/");
             if (urlParts.length === 2) {
               const oldFileName = urlParts[1];
-              console.log("[Rides Purge Loop] Destroying old ride asset:", oldFileName);
-              await supabaseStorageService.deleteFileFromBucket(BUCKET, oldFileName);
-              console.log("[Rides Purge Loop] Old asset successfully destroyed.");
+              console.log(
+                "[Rides Purge Loop] Destroying old ride asset:",
+                oldFileName,
+              );
+              await supabaseStorageService.deleteFileFromBucket(
+                BUCKET,
+                oldFileName,
+              );
+              console.log(
+                "[Rides Purge Loop] Old asset successfully destroyed.",
+              );
             }
           } catch (e) {
-            console.error("[Rides Purge Loop Fault] Failed to drop old ride image:", e);
+            console.error(
+              "[Rides Purge Loop Fault] Failed to drop old ride image:",
+              e,
+            );
           }
         }
 
         // ── Upload fresh asset ────────────────────────────────────────────────
-        const ext = (req.file.originalname.split(".").pop() ?? "jpg").toLowerCase();
+        const ext = (
+          req.file.originalname.split(".").pop() ?? "jpg"
+        ).toLowerCase();
         const uniqueName = `rides/${crypto.randomUUID()}.${ext}`;
 
         ride.image = await supabaseStorageService.uploadFileToBucket(
           BUCKET,
           uniqueName,
           req.file.buffer,
-          req.file.mimetype
+          req.file.mimetype,
         );
         console.log("[Rides Upload] New CDN URL committed:", ride.image);
       }
 
-      // ── Apply text field mutations ────────────────────────────────────────
+      // Apply text field mutations
       if (body.title !== undefined) ride.title = body.title;
-      if (body.locationFrom !== undefined) ride.location.from = body.locationFrom;
+      if (body.locationFrom !== undefined)
+        ride.location.from = body.locationFrom;
       if (body.locationTo !== undefined) ride.location.to = body.locationTo;
       if (body.date !== undefined) ride.date = body.date;
       if (body.distance !== undefined) ride.distance = body.distance;
       if (body.routeType !== undefined) ride.routeType = body.routeType;
       if (body.meetupTime !== undefined) ride.meetupTime = body.meetupTime;
-      if (body.meetupLocation !== undefined) ride.meetupLocation = body.meetupLocation;
-      if (body.membersJoined !== undefined) ride.membersJoined = parseInt(body.membersJoined, 10);
+      if (body.meetupLocation !== undefined)
+        ride.meetupLocation = body.meetupLocation;
+      if (body.membersJoined !== undefined)
+        ride.membersJoined = parseInt(body.membersJoined, 10);
       if (body.description !== undefined) ride.description = body.description;
       if (body.duration !== undefined) ride.duration = body.duration;
       if (body.past !== undefined) ride.past = body.past === "true";
 
       await ride.save();
       await ride.populate("riders", "username -_id");
+      const rideData: any = ride.toObject();
+      delete rideData.__v;
+      delete rideData.id;
 
       res.status(200).json({
         success: true,
         message: "Ride updated successfully.",
-        data: ride.toObject(),
+        data: rideData,
       });
     } catch (err) {
       next(err);
@@ -295,30 +327,41 @@ export class RidesController {
   async deleteRide(
     req: Request,
     res: Response<RideMutationResponse>,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> {
     try {
       const { id } = req.params;
       const ride = await RideModel.findById(id);
 
       if (!ride) {
-        res.status(404).json({ success: false, message: "Ride document not found." });
+        res
+          .status(404)
+          .json({ success: false, message: "Ride document not found." });
         return;
       }
 
       // ── Purge cloud asset ─────────────────────────────────────────────────
       if (ride.image) {
         try {
-          const { supabaseStorageService } = await import("../services/supabaseStorage.service");
+          const { supabaseStorageService } =
+            await import("../services/supabaseStorage.service");
           const urlParts = ride.image.split("/public/images/");
           if (urlParts.length === 2) {
             const filename = urlParts[1];
-            console.log("[Rides Purge Loop] Destroying ride image asset:", filename);
+            console.log(
+              "[Rides Purge Loop] Destroying ride image asset:",
+              filename,
+            );
             await supabaseStorageService.deleteFileFromBucket(BUCKET, filename);
-            console.log("[Rides Purge Loop] Cloud image successfully destroyed.");
+            console.log(
+              "[Rides Purge Loop] Cloud image successfully destroyed.",
+            );
           }
         } catch (e) {
-          console.error("[Rides Purge Loop Fault] Failed to delete cloud image:", e);
+          console.error(
+            "[Rides Purge Loop Fault] Failed to delete cloud image:",
+            e,
+          );
         }
       }
 
@@ -340,7 +383,7 @@ export class RidesController {
   async joinRide(
     req: AuthenticatedRequest,
     res: Response<RideMutationResponse>,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> {
     try {
       const { id } = req.params;
@@ -359,26 +402,35 @@ export class RidesController {
       }
 
       if (ride.past) {
-        res.status(400).json({ success: false, message: "Cannot join a past ride." });
+        res
+          .status(400)
+          .json({ success: false, message: "Cannot join a past ride." });
         return;
       }
 
       const alreadyJoined = ride.riders.some((r) => r.toString() === userId);
       if (alreadyJoined) {
-        res.status(400).json({ success: false, message: "You have already joined this ride." });
+        res.status(400).json({
+          success: false,
+          message: "You have already joined this ride.",
+        });
         return;
       }
 
-      const updatedRideRaw = await RideModel.findByIdAndUpdate(id, {
-        $addToSet: { riders: userId },
-        $inc: { membersJoined: 1 },
-      }, { new: true });
+      const updatedRideRaw = await RideModel.findByIdAndUpdate(
+        id,
+        {
+          $addToSet: { riders: userId },
+          $inc: { membersJoined: 1 },
+        },
+        { new: true },
+      );
 
       let finalRide: any = updatedRideRaw?.toObject();
       let isJoined = false;
       const finalRiders = finalRide.riders || [];
       const username = req.user?.username;
-      
+
       if (req.user?.role === "admin" || req.user?.role === "crew") {
         await updatedRideRaw?.populate("riders", "username -_id");
         finalRide = updatedRideRaw?.toObject();
@@ -388,8 +440,14 @@ export class RidesController {
         delete finalRide.riders;
       }
       finalRide.isJoined = isJoined;
+      delete finalRide.__v;
+      delete finalRide.id;
 
-      res.status(200).json({ success: true, message: "Successfully joined the ride.", data: finalRide });
+      res.status(200).json({
+        success: true,
+        message: "Successfully joined the ride.",
+        data: finalRide,
+      });
     } catch (err) {
       next(err);
     }
@@ -402,7 +460,7 @@ export class RidesController {
   async withdrawFromRide(
     req: AuthenticatedRequest,
     res: Response<RideMutationResponse>,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> {
     try {
       const { id } = req.params;
@@ -422,20 +480,27 @@ export class RidesController {
 
       const alreadyJoined = ride.riders.some((r) => r.toString() === userId);
       if (!alreadyJoined) {
-        res.status(400).json({ success: false, message: "You are not a participant of this ride." });
+        res.status(400).json({
+          success: false,
+          message: "You are not a participant of this ride.",
+        });
         return;
       }
 
-      const updatedRideRaw = await RideModel.findByIdAndUpdate(id, {
-        $pull: { riders: userId },
-        $inc: { membersJoined: -1 },
-      }, { new: true });
+      const updatedRideRaw = await RideModel.findByIdAndUpdate(
+        id,
+        {
+          $pull: { riders: userId },
+          $inc: { membersJoined: -1 },
+        },
+        { new: true },
+      );
 
       let finalRide: any = updatedRideRaw?.toObject();
       let isJoined = false;
       const finalRiders = finalRide.riders || [];
       const username = req.user?.username;
-      
+
       if (req.user?.role === "admin" || req.user?.role === "crew") {
         await updatedRideRaw?.populate("riders", "username -_id");
         finalRide = updatedRideRaw?.toObject();
@@ -445,8 +510,14 @@ export class RidesController {
         delete finalRide.riders;
       }
       finalRide.isJoined = isJoined;
+      delete finalRide.__v;
+      delete finalRide.id;
 
-      res.status(200).json({ success: true, message: "Successfully withdrawn from the ride.", data: finalRide });
+      res.status(200).json({
+        success: true,
+        message: "Successfully withdrawn from the ride.",
+        data: finalRide,
+      });
     } catch (err) {
       next(err);
     }

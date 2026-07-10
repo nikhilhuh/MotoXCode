@@ -1,216 +1,206 @@
-import { Event, EventType } from "@/types/event";
-import { useState } from "react";
-import JoinFormModal from "@/components/ui/JoinFormModal";
-
-const typeColors: Record<EventType, string> = {
-  Ride: "var(--color-highlight)",
-  Meetup: "#38bdf8",
-  Workshop: "#c084fc",
-  Social: "#34d399",
-};
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { FaPencil, FaPlus } from "react-icons/fa6";
+import EventCard from "@/components/ui/EventCard";
+import EventForm from "./EventForm";
+import { Event } from "@/types/event";
+import { useUser } from "@/context/UserContext";
 
 interface EventsListProps {
   events: Event[];
+  onEventCreated?: (event: Event) => void;
+  onEventUpdated?: (event: Event) => void;
+  onEventDeleted?: (id: string) => void;
 }
-export default function EventsList({ events }: EventsListProps) {
-  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
 
-  const targetDetails = selectedEvent
-    ? {
-        _id: selectedEvent._id,
-        title: selectedEvent.title,
-        date: new Date(selectedEvent.date).toLocaleDateString("en-IN", {
-          day: "numeric",
-          month: "short",
-          year: "numeric",
-        }),
-        time: selectedEvent.time,
-        location: selectedEvent.location,
-        type: "event" as const,
-      }
-    : null;
-  function formatDate(dateStr: string) {
-    const d = new Date(dateStr);
-    return {
-      day: d.toLocaleDateString("en-IN", { day: "2-digit" }),
-      month: d.toLocaleDateString("en-IN", { month: "short" }),
-      weekday: d.toLocaleDateString("en-IN", { weekday: "long" }),
-    };
+type EventFilter = "all" | "upcoming" | "past";
+
+export default function EventsList({ 
+  events,
+  onEventCreated,
+  onEventUpdated,
+  onEventDeleted 
+}: EventsListProps) {
+  const [filter, setFilter] = useState<EventFilter>("all");
+  const [isEditing, setIsEditing] = useState<boolean>(false);
+  const [isAddFormOpen, setIsAddFormOpen] = useState<boolean>(false);
+  const [editingEvent, setEditingEvent] = useState<Event | null>(null);
+
+  const { userDetails } = useUser();
+  const isPrivileged = userDetails?.role === "admin" || userDetails?.role === "crew";
+
+  const filtered = events.filter((e) => {
+    if (filter === "upcoming") return !e.past;
+    if (filter === "past") return e.past;
+    return true;
+  });
+
+  function handleCancelEditing() {
+    setIsEditing(false);
   }
+
+  useEffect(() => {
+    if (isAddFormOpen || editingEvent) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isAddFormOpen, editingEvent]);
 
   return (
     <section
-      id="events-list"
-      className="py-12 lg:py-22 relative overflow-hidden bg-gradient-to-b from-[var(--color-bg)] via-[var(--color-section)] to-[var(--color-surface)]"
+      id="events-grid"
+      className={`${isPrivileged ? "py-16" : "py-12"} lg:py-22 relative overflow-hidden bg-gradient-to-b from-[var(--color-bg)] via-[var(--color-section)] to-[var(--color-surface)]`}
     >
       {/* Decorative premium ambient lighting */}
-      <div className="absolute -top-[10%] right-[10%] w-[40%] h-[40%] rounded-full bg-[var(--color-primary)]/5 blur-[120px] pointer-events-none z-0"></div>
-      <div className="absolute top-[35%] -left-[10%] w-[40%] h-[50%] rounded-full bg-[var(--color-accent)]/5 blur-[120px] pointer-events-none z-0"></div>
+      <div className="absolute -top-[10%] right-[10%] size-[40%] rounded-full bg-[var(--color-primary)]/5 blur-[120px] pointer-events-none z-0" />
+      <div className="absolute top-[30%] -left-[10%] w-[40%] h-[50%] rounded-full bg-[var(--color-accent)]/5 blur-[120px] pointer-events-none z-0" />
+
+      {/* Pencil FAB */}
+      {isPrivileged && !isEditing && (
+        <button
+          type="button"
+          onClick={() => setIsEditing(true)}
+          title="Manage Events"
+          className="absolute top-4 right-4 z-30 btn-admin-edit"
+        >
+          <FaPencil size={18} />
+        </button>
+      )}
 
       <div className="max-w-7xl mx-auto px-6 lg:px-12 w-full relative z-10">
-        {/* Section header — centered */}
-        <div className="mb-12 lg:mb-20 text-center max-w-4xl mx-auto">
+        <div className="mb-10 lg:mb-16 text-center max-w-4xl mx-auto">
           <h2 className="section-heading">Upcoming Gatherings</h2>
-          <span className="section-subheading">Calendar</span>
+          <p className="section-subheading">Calendar</p>
         </div>
 
-        <div className="space-y-6 md:space-y-8 relative z-10">
-          {events.map((event) => {
-            const { day, month, weekday } = formatDate(event.date);
-            const fillPercent =
-              ((event.spots - event.spotsLeft) / event.spots) * 100;
-            const isAlmostFull = event.spotsLeft <= 5;
-
-            return (
-              <div
-                key={event._id}
-                className="event-item group flex flex-col lg:flex-row items-stretch lg:items-center gap-6 p-6 md:p-8 transition-all duration-300 rounded-3xl bg-[var(--color-surface)]/20 backdrop-blur-xl border border-[var(--color-border)]/30 hover:border-[var(--color-primary)]/30 hover:bg-[var(--color-surface)]/35 relative overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.2)] hover:shadow-[0_12px_40px_rgba(0,0,0,0.4)] hover:-translate-y-1 z-10"
+        {/* Filter tabs */}
+        <div className="flex justify-center mb-10 lg:mb-16 relative z-10">
+          <div className="inline-flex p-1 rounded-full bg-[var(--color-surface)]/30 backdrop-blur-xl border border-[var(--color-border)]/40 shadow-[0_8px_32px_rgba(0,0,0,0.4)]">
+            {(["all", "upcoming", "past"] as EventFilter[]).map((f) => (
+              <button
+                key={f}
+                type="button"
+                onClick={() => setFilter(f)}
+                className={`relative font-accent font-bold text-xs uppercase tracking-[0.12em] px-6 py-2.5 rounded-full transition-colors duration-300 cursor-pointer ${
+                  filter === f
+                    ? "text-[var(--color-bg)] z-10"
+                    : "text-[var(--color-text-secondary)] hover:text-[var(--color-primary)] z-10"
+                }`}
               >
-                {/* Visual side glow accent on hover */}
-                <div
-                  className="absolute left-0 top-0 bottom-0 w-[4px] opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                  style={{ backgroundColor: typeColors[event.type] }}
-                />
-
-                {/* Left: Date Block */}
-                <div className="flex-shrink-0 flex lg:flex-col items-center justify-center gap-3 lg:gap-0 w-full lg:w-28 h-16 lg:h-28 rounded-2xl bg-black/45 border border-white/5 shadow-inner">
-                  <span
-                    className="font-heading font-black text-4xl lg:text-5xl leading-none"
-                    style={{ color: typeColors[event.type] }}
-                  >
-                    {day}
-                  </span>
-                  <span className="font-accent text-xs font-bold uppercase tracking-[0.2em] lg:mt-1.5 text-[var(--color-text-secondary)]">
-                    {month}
-                  </span>
-                </div>
-
-                {/* Middle: Info Content */}
-                <div className="flex-grow flex flex-col justify-center min-w-0">
-                  {/* Badges */}
-                  <div className="flex flex-wrap items-center gap-2 mb-3">
-                    <span
-                      className="inline-flex items-center gap-1.5 text-[0.6rem] font-bold tracking-[0.15em] uppercase px-3 py-1 rounded-full border bg-transparent"
-                      style={{
-                        color: typeColors[event.type],
-                        borderColor: typeColors[event.type] + "40",
-                      }}
-                    >
-                      {event.type}
-                    </span>
-                    {isAlmostFull && (
-                      <span className="inline-flex items-center gap-1.5 text-[0.6rem] font-bold tracking-[0.15em] uppercase px-3 py-1 rounded-full border border-red-500/50 text-red-500 bg-red-500/10 animate-pulse">
-                        Almost Full
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Title */}
-                  <h3 className="font-accent font-bold text-xl md:text-2xl mb-3 text-[var(--color-text-primary)] group-hover:text-[var(--color-primary)] transition-colors duration-200 leading-snug">
-                    {event.title}
-                  </h3>
-
-                  {/* Metadata Row */}
-                  <div className="flex flex-wrap gap-x-6 gap-y-2.5 font-accent text-xs text-[var(--color-text-secondary)]">
-                    <span className="flex items-center gap-2">
-                      <svg
-                        className="size-4 opacity-70"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                        />
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                        />
-                      </svg>
-                      {event.location}
-                    </span>
-                    <span className="flex items-center gap-2">
-                      <svg
-                        className="size-4 opacity-70"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                        />
-                      </svg>
-                      {weekday}, {event.time}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Right: Progress Meter & RSVP Button */}
-                <div className="flex-shrink-0 flex flex-col md:flex-row lg:flex-col items-stretch md:items-center lg:items-end justify-between lg:justify-center gap-6 w-full lg:w-72 lg:pl-6 lg:border-l border-[var(--color-border)]/20">
-                  {/* Spots Gauge */}
-                  <div className="flex-grow w-full md:max-w-xs lg:max-w-none">
-                    <div className="flex justify-between items-center mb-1.5">
-                      <span className="font-accent text-[0.65rem] uppercase tracking-[0.1em] font-semibold text-[var(--color-text-secondary)]">
-                        Spots Filled
-                      </span>
-                      <span className="font-accent text-xs font-bold text-[var(--color-text-primary)]">
-                        {event.spots - event.spotsLeft} / {event.spots} (
-                        {Math.round(fillPercent)}%)
-                      </span>
-                    </div>
-                    <div className="h-2 rounded-full overflow-hidden bg-black/40 border border-white/5 p-[1px]">
-                      <div
-                        className="h-full rounded-full transition-all duration-700 ease-out shadow-[0_0_8px_currentColor]"
-                        style={{
-                          width: `${fillPercent}%`,
-                          backgroundColor: isAlmostFull
-                            ? "#ef4444"
-                            : "var(--color-highlight)",
-                          color: isAlmostFull
-                            ? "#ef4444"
-                            : "var(--color-highlight)",
-                        }}
-                      />
-                    </div>
-                    <p className="mt-1.5 font-accent text-[0.68rem] text-[var(--color-text-secondary)] flex items-center gap-1.5">
-                      {isAlmostFull ? (
-                        <span className="size-1.5 rounded-full bg-red-500 animate-pulse"></span>
-                      ) : (
-                        <span className="size-1.5 rounded-full bg-green-500"></span>
-                      )}
-                      {event.spotsLeft} slots left. Grab yours now!
-                    </p>
-                  </div>
-
-                  {/* RSVP Action */}
-                  <div className="w-full md:w-auto lg:w-full">
-                    <button
-                      type="button"
-                      onClick={() => setSelectedEvent(event)}
-                      className="btn-primary w-full block text-center px-6 py-3.5 rounded-xl font-bold uppercase tracking-wider text-xs shadow-md transition-all duration-300 hover:shadow-[0_4px_20px_rgba(248,250,252,0.2)] hover:scale-[1.02] cursor-pointer"
-                    >
-                      RSVP Now
-                    </button>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
+                {filter === f && (
+                  <motion.span
+                    layoutId="active-event-tab"
+                    className="absolute inset-0 bg-[var(--color-primary)] rounded-full -z-10 shadow-[0_4px_12px_rgba(248,250,252,0.2)]"
+                    transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                  />
+                )}
+                {f.charAt(0).toUpperCase() + f.slice(1)}
+              </button>
+            ))}
+          </div>
         </div>
+
+        {isEditing && (
+          <p className="text-[var(--color-text-secondary)] text-xs font-mono uppercase tracking-widest mb-6">
+            Editing Events
+          </p>
+        )}
+
+        {/* Grid */}
+        <motion.div
+          layout
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8"
+        >
+          <AnimatePresence mode="popLayout">
+            {filtered.map((event) => (
+              <motion.div
+                key={event._id}
+                layout
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.9 }}
+                transition={{ duration: 0.4 }}
+              >
+                <EventCard 
+                  event={event} 
+                  isEditing={isEditing}
+                  onDelete={onEventDeleted}
+                  onEditClick={(e) => setEditingEvent(e)}
+                />
+              </motion.div>
+            ))}
+          </AnimatePresence>
+
+          {isEditing && (
+            <motion.div
+              layout
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              transition={{ duration: 0.3 }}
+            >
+              <button
+                type="button"
+                onClick={() => setIsAddFormOpen(true)}
+                className="group relative overflow-hidden rounded-2xl shadow-[0_10px_30px_rgba(0,0,0,0.4)] cursor-pointer aspect-[4/5] w-full flex flex-col items-center justify-center border-2 border-dashed border-[var(--color-primary)]/50 bg-[var(--color-bg)]/30 hover:bg-[var(--color-bg)]/60 transition-all duration-300 hover:border-[var(--color-primary)]/80"
+              >
+                <div className="size-14 rounded-full bg-[var(--color-primary)]/15 flex items-center justify-center mb-4 group-hover:scale-110 group-hover:bg-[var(--color-primary)]/25 transition-all duration-300">
+                  <FaPlus size={22} className="text-[var(--color-primary)]" />
+                </div>
+                <span className="text-[var(--color-primary)] text-sm font-bold uppercase tracking-widest font-[var(--font-accent)]">
+                  Add Event
+                </span>
+                <span className="text-[var(--color-text-secondary)] text-xs mt-1 font-[var(--font-accent)]">
+                  Create a new community gathering
+                </span>
+              </button>
+            </motion.div>
+          )}
+        </motion.div>
+
+        {filtered.length === 0 && !isEditing && (
+          <div className="text-center py-20">
+            <p className="font-accent text-base text-[var(--color-text-secondary)]">
+              No events in this category yet.
+            </p>
+          </div>
+        )}
+
+        {isEditing && (
+          <div className="flex gap-3 justify-end mt-8">
+            <button
+              type="button"
+              onClick={handleCancelEditing}
+              className="px-6 py-2.5 text-sm font-bold rounded-xl border border-[var(--color-border)] text-[var(--color-primary)] transition-all hover:bg-[var(--color-bg)]/60 hover:cursor-pointer"
+            >
+              Done
+            </button>
+          </div>
+        )}
       </div>
 
-      {targetDetails && (
-        <JoinFormModal
-          isOpen={!!selectedEvent}
-          onClose={() => setSelectedEvent(null)}
-          target={targetDetails}
+      {isAddFormOpen && (
+        <EventForm
+          onSuccess={(newEvent) => {
+            onEventCreated?.(newEvent);
+            setIsAddFormOpen(false);
+          }}
+          onClose={() => setIsAddFormOpen(false)}
+        />
+      )}
+
+      {editingEvent && (
+        <EventForm
+          editEvent={editingEvent}
+          onSuccess={(updatedEvent) => {
+            onEventUpdated?.(updatedEvent);
+            setEditingEvent(null);
+          }}
+          onClose={() => setEditingEvent(null)}
         />
       )}
     </section>
