@@ -13,7 +13,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
         <Toaster
           position="bottom-right"
           reverseOrder={false}
-          containerStyle={{ zIndex: 99999 }}
+          containerStyle={{ 
+            zIndex: 99999,
+          }}
+          toastOptions={{
+            style: {
+              maxWidth: "calc(100vw - 2rem)",
+            }
+          }}
         />
       </FeedbackProvider>
     </UserProvider>

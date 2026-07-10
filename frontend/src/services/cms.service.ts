@@ -1,6 +1,6 @@
 import { AxiosResponse } from "axios";
 import { apiClient } from "./apiClient";
-import { fallbackData } from "./fallbackData";
+
 import type { Social } from "../types/social";
 import type { Stat } from "../types/stat";
 import type { Value } from "../types/value";
@@ -73,51 +73,36 @@ interface CmsMutationResponse {
 // Service
 export const cmsService = {
   async fetchSocials(): Promise<Social[]> {
-    try {
-      const response: AxiosResponse<SocialsApiResponse> =
-        await apiClient.get<SocialsApiResponse>("/socials");
-      return response.data.data;
-    } catch {
-      console.warn("Backend unreachable. Activating local fallback mode.");
-      return [...fallbackData.socials];
-    }
+    const response: AxiosResponse<SocialsApiResponse> =
+      await apiClient.get<SocialsApiResponse>("/socials");
+    return response.data.data;
   },
 
   async fetchHomeData(): Promise<HomeData> {
-    try {
-      const response: AxiosResponse<HomeApiResponse> =
-        await apiClient.get<HomeApiResponse>("/home");
-      const { hero, stats, values, upcomingRides, mvpMembers, gallery } =
-        response.data.data;
-      return {
-        hero,
-        stats,
-        values,
-        upcomingRides,
-        mvpCrew: mvpMembers,
-        galleryPreview: gallery,
-      };
-    } catch {
-      console.warn("Backend unreachable. Activating local fallback mode.");
-      return { ...fallbackData.home };
-    }
+    const response: AxiosResponse<HomeApiResponse> =
+      await apiClient.get<HomeApiResponse>("/home");
+    const { hero, stats, values, upcomingRides, mvpMembers, gallery } =
+      response.data.data;
+    return {
+      hero,
+      stats,
+      values,
+      upcomingRides,
+      mvpCrew: mvpMembers,
+      galleryPreview: gallery,
+    };
   },
 
   async fetchAboutData(): Promise<AboutData> {
-    try {
-      const response: AxiosResponse<AboutApiResponse> =
-        await apiClient.get<AboutApiResponse>("/about");
-      const { hero, philosophies, timeline, ridingCodes } = response.data.data;
-      return {
-        hero,
-        philosophy: philosophies,
-        timeline,
-        ridingCode: ridingCodes,
-      };
-    } catch {
-      console.warn("Backend unreachable. Activating local fallback mode.");
-      return { ...fallbackData.about };
-    }
+    const response: AxiosResponse<AboutApiResponse> =
+      await apiClient.get<AboutApiResponse>("/about");
+    const { hero, philosophies, timeline, ridingCodes } = response.data.data;
+    return {
+      hero,
+      philosophy: philosophies,
+      timeline,
+      ridingCode: ridingCodes,
+    };
   },
 
   /**

@@ -14,9 +14,6 @@
 // Core Client
 export { apiClient } from "./apiClient";
 
-// Fallback Data
-export { fallbackData } from "./fallbackData";
-
 // Page Service Modules
 export { cmsService } from "./cms.service";
 export { crewService } from "./crew.service";

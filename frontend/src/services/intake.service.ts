@@ -1,6 +1,6 @@
 import { AxiosResponse } from "axios";
 import { apiClient } from "./apiClient";
-import { fallbackData } from "./fallbackData";
+
 import type { ContactInfoItem } from "../types/contactInfo";
 import type { ContactFormData } from "../types/contactForm";
 import type { Membership } from "../types/membership";
@@ -48,29 +48,19 @@ interface FormSubmissionResult {
 // Service
 export const intakeService = {
   async fetchContactPageData(): Promise<ContactPageData> {
-    try {
-      const response: AxiosResponse<ContactPageApiResponse> =
-        await apiClient.get<ContactPageApiResponse>("/contact");
-      return response.data.data;
-    } catch {
-      console.warn("Backend unreachable. Activating local fallback mode.");
-      return { ...fallbackData.contact };
-    }
+    const response: AxiosResponse<ContactPageApiResponse> =
+      await apiClient.get<ContactPageApiResponse>("/contact");
+    return response.data.data;
   },
 
   async fetchJoinPageData(): Promise<JoinPageData> {
-    try {
-      const response: AxiosResponse<JoinPageApiResponse> =
-        await apiClient.get<JoinPageApiResponse>("/join");
-      const { hero, gallery } = response.data.data;
-      return {
-        hero,
-        galleryPreview: gallery,
-      };
-    } catch {
-      console.warn("Backend unreachable. Activating local fallback mode.");
-      return { ...fallbackData.join };
-    }
+    const response: AxiosResponse<JoinPageApiResponse> =
+      await apiClient.get<JoinPageApiResponse>("/join");
+    const { hero, gallery } = response.data.data;
+    return {
+      hero,
+      galleryPreview: gallery,
+    };
   },
 
   /**

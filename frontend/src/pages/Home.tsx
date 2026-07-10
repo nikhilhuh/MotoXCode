@@ -8,24 +8,31 @@ import GalleryPreview from "../components/ui/GalleryPreview";
 import Cta from "../components/pages/home/CTA";
 import { cmsService } from "@/services";
 import { HomeSkeleton } from "../components/skeletons/HomeSkeleton";
+import DataError from "../components/ui/DataError";
 import type { PageHero } from "@/services/cms.service";
 import type { Stat } from "@/types/stat";
 import type { Value } from "@/types/value";
 import { GalleryImage } from "@/types/galleryImage";
+import { useFeedback } from "@/context/FeedbackContext";
 
 type HomeData = Awaited<ReturnType<typeof cmsService.fetchHomeData>>;
 
 export default function Home() {
   const [homeData, setHomeData] = useState<HomeData | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [error, setError] = useState<boolean>(false);
+  const { showError } = useFeedback();
 
   useEffect(() => {
     async function hydrate() {
       try {
+        setError(false);
         const data = await cmsService.fetchHomeData();
         setHomeData(data);
       } catch (error) {
-        console.error("Failed to load home data", error);
+        showError("Failed to load home data");
+        console.error("Failed to laod hoem data: ", error);
+        setError(true);
       } finally {
         setIsLoading(false);
       }
@@ -58,8 +65,17 @@ export default function Home() {
     );
   }, []);
 
-  if (isLoading || !homeData) {
+  if (isLoading) {
     return <HomeSkeleton />;
+  }
+
+  if (error || !homeData) {
+    return (
+      <DataError
+        message="Failed to load home data. Please try again later."
+        onRetry={() => window.location.reload()}
+      />
+    );
   }
 
   return (

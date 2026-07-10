@@ -1,6 +1,5 @@
 import { AxiosResponse } from "axios";
 import { apiClient } from "./apiClient";
-import { fallbackData } from "./fallbackData";
 import type { Ride } from "../types/ride";
 import type { GalleryImage } from "../types/galleryImage";
 import type { PageHero } from "./cms.service";
@@ -36,19 +35,14 @@ export const ridesService = {
    * Falls back to local static data when the backend is unreachable.
    */
   async fetchRidesPageData(): Promise<RidesPageData> {
-    try {
-      const response: AxiosResponse<RidesApiResponse> =
-        await apiClient.get<RidesApiResponse>("/rides");
-      const { hero, rides, gallery } = response.data.data;
-      return {
-        hero,
-        allRides: rides,
-        galleryPreview: gallery,
-      };
-    } catch {
-      console.warn("Backend unreachable. Activating local fallback mode.");
-      return { ...fallbackData.rides };
-    }
+    const response: AxiosResponse<RidesApiResponse> =
+      await apiClient.get<RidesApiResponse>("/rides");
+    const { hero, rides, gallery } = response.data.data;
+    return {
+      hero,
+      allRides: rides,
+      galleryPreview: gallery,
+    };
   },
 
   /**

@@ -4,6 +4,7 @@ import RidesGrid from "../components/pages/rides/RidesGrid";
 import GalleryPreview from "@/components/ui/GalleryPreview";
 import { ridesService } from "@/services";
 import { RidesSkeleton } from "../components/skeletons/RidesSkeleton";
+import DataError from "../components/ui/DataError";
 import type { PageHero } from "@/services/cms.service";
 import type { GalleryImage } from "@/types/galleryImage";
 import type { Ride } from "@/types/ride";
@@ -16,15 +17,18 @@ export default function Rides() {
   const [ridesData, setRidesData] = useState<RidesPageData | null>(null);
   const [rides, setRides] = useState<Ride[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [error, setError] = useState<boolean>(false);
 
   useEffect(() => {
     async function hydrate() {
       try {
+        setError(false);
         const data = await ridesService.fetchRidesPageData();
         setRidesData(data);
         setRides(data.allRides);
       } catch (error) {
         console.error("Failed to load rides data", error);
+        setError(true);
       } finally {
         setIsLoading(false);
       }
@@ -59,8 +63,12 @@ export default function Rides() {
     setRides((prev) => prev.filter((r) => r._id !== id));
   }, []);
 
-  if (isLoading || !ridesData) {
+  if (isLoading) {
     return <RidesSkeleton />;
+  }
+
+  if (error || !ridesData) {
+    return <DataError message="Failed to load rides data. Please try again later." onRetry={() => window.location.reload()} />;
   }
 
   return (

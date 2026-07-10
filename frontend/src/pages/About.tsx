@@ -5,6 +5,7 @@ import AboutJourney from "../components/pages/about/AboutJourney";
 import AboutRidingCode from "../components/pages/about/AboutRidingCode";
 import { cmsService } from "@/services";
 import { AboutSkeleton } from "../components/skeletons/AboutSkeleton";
+import DataError from "../components/ui/DataError";
 import type { PageHero } from "@/services/cms.service";
 import type { Philosophy } from "@/types/philosophy";
 import type { Timeline } from "@/types/timeline";
@@ -15,14 +16,17 @@ type AboutData = Awaited<ReturnType<typeof cmsService.fetchAboutData>>;
 export default function About() {
   const [aboutData, setAboutData] = useState<AboutData | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [error, setError] = useState<boolean>(false);
 
   useEffect(() => {
     async function hydrate() {
       try {
+        setError(false);
         const data = await cmsService.fetchAboutData();
         setAboutData(data);
       } catch (error) {
         console.error("Failed to load about data", error);
+        setError(true);
       } finally {
         setIsLoading(false);
       }
@@ -63,8 +67,12 @@ export default function About() {
     [],
   );
 
-  if (isLoading || !aboutData) {
+  if (isLoading) {
     return <AboutSkeleton />;
+  }
+
+  if (error || !aboutData) {
+    return <DataError message="Failed to load about data. Please try again later." onRetry={() => window.location.reload()} />;
   }
 
   return (

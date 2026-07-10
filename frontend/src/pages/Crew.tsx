@@ -5,6 +5,7 @@ import RiderGrid from "../components/pages/crew/RiderGrid";
 import CrewCTA from "../components/pages/crew/CrewCTA";
 import { crewService } from "@/services";
 import { CrewSkeleton } from "../components/skeletons/CrewSkeleton";
+import DataError from "../components/ui/DataError";
 import type { PageHero } from "@/services/cms.service";
 
 type CrewData = Awaited<ReturnType<typeof crewService.fetchCrewData>>;
@@ -12,14 +13,17 @@ type CrewData = Awaited<ReturnType<typeof crewService.fetchCrewData>>;
 export default function Crew() {
   const [crewData, setCrewData] = useState<CrewData | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [error, setError] = useState<boolean>(false);
 
   useEffect(() => {
     async function hydrate() {
       try {
+        setError(false);
         const data = await crewService.fetchCrewData();
         setCrewData(data);
       } catch (error) {
         console.error("Failed to load crew data", error);
+        setError(true);
       } finally {
         setIsLoading(false);
       }
@@ -31,8 +35,12 @@ export default function Crew() {
     setCrewData((prev) => (prev ? { ...prev, hero: updatedHero } : prev));
   }, []);
 
-  if (isLoading || !crewData) {
+  if (isLoading) {
     return <CrewSkeleton />;
+  }
+
+  if (error || !crewData) {
+    return <DataError message="Failed to load crew data. Please try again later." onRetry={() => window.location.reload()} />;
   }
 
   return (

@@ -4,6 +4,7 @@ import EventsList from "../components/pages/events/EventsList";
 import GalleryPreview from "@/components/ui/GalleryPreview";
 import { eventsService } from "@/services";
 import { EventsSkeleton } from "../components/skeletons/EventsSkeleton";
+import DataError from "../components/ui/DataError";
 import type { PageHero } from "@/services/cms.service";
 import type { GalleryImage } from "@/types/galleryImage";
 
@@ -14,14 +15,17 @@ type EventsPageData = Awaited<
 export default function Events() {
   const [eventsData, setEventsData] = useState<EventsPageData | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [error, setError] = useState<boolean>(false);
 
   useEffect(() => {
     async function hydrate() {
       try {
+        setError(false);
         const data = await eventsService.fetchEventsPageData();
         setEventsData(data);
       } catch (error) {
         console.error("Failed to load events data", error);
+        setError(true);
       } finally {
         setIsLoading(false);
       }
@@ -69,8 +73,12 @@ export default function Events() {
     );
   }, []);
 
-  if (isLoading || !eventsData) {
+  if (isLoading) {
     return <EventsSkeleton />;
+  }
+
+  if (error || !eventsData) {
+    return <DataError message="Failed to load events data. Please try again later." onRetry={() => window.location.reload()} />;
   }
 
   return (

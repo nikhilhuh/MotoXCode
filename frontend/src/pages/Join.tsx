@@ -5,6 +5,7 @@ import SignInCTA from "../components/pages/join/SignInCTA";
 import GalleryPreview from "@/components/ui/GalleryPreview";
 import { intakeService } from "@/services";
 import { JoinSkeleton } from "../components/skeletons/JoinSkeleton";
+import DataError from "../components/ui/DataError";
 import type { PageHero } from "@/services/cms.service";
 import type { GalleryImage } from "@/types/galleryImage";
 
@@ -13,14 +14,17 @@ type JoinPageData = Awaited<ReturnType<typeof intakeService.fetchJoinPageData>>;
 export default function Join() {
   const [joinData, setJoinData] = useState<JoinPageData | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [error, setError] = useState<boolean>(false);
 
   useEffect(() => {
     async function hydrate() {
       try {
+        setError(false);
         const data = await intakeService.fetchJoinPageData();
         setJoinData(data);
       } catch (error) {
         console.error("Failed to load join data", error);
+        setError(true);
       } finally {
         setIsLoading(false);
       }
@@ -38,8 +42,12 @@ export default function Join() {
     );
   }, []);
 
-  if (isLoading || !joinData) {
+  if (isLoading) {
     return <JoinSkeleton />;
+  }
+
+  if (error || !joinData) {
+    return <DataError message="Failed to load join data. Please try again later." onRetry={() => window.location.reload()} />;
   }
 
   return (
